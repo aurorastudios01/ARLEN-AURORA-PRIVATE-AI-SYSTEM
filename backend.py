@@ -998,3 +998,12 @@ class Backend(QObject):
 
     @staticmethod
     def _center_crop(image: Image.Image, target_ratio: float) -> Image.Image:
+        width, height = image.size
+        ratio = width / height
+        if ratio > target_ratio:
+            new_width = int(height * target_ratio)
+            left = (width - new_width) // 2
+            return image.crop((left, 0, left + new_width, height))
+        new_height = int(width / target_ratio)
+        top = (height - new_height) // 2
+        return image.crop((0, top, width, top + new_height))
