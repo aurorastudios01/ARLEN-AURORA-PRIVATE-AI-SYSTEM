@@ -1,0 +1,3 @@
+# Optional local conversational brain. Install only after a compatible wheel is available.
+llama-cpp-python>=0.3
+
