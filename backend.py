@@ -516,10 +516,12 @@ class Backend(QObject):
 
     @Slot(result=bool)
     def verifyStagedUpdate(self):
-        manifest = ROOT / "updates" / "manifest.json"
-        staging = ROOT / "updates" / "staging"
-        if not manifest.exists():
-            self.updateStatusChanged.emit("No staged update is available to verify.")
+        try:
+            data, _files = self._read_verified_update()
+            self.updateStatusChanged.emit(f"Update {data.get('version', 'Unknown')} verified. Apply remains owner-confirmed and rollback-protected.")
+            return True
+        except Exception as exc:
+            self.updateStatusChanged.emit(f"Update verification failed safely: {exc}")
             return False
 
     @staticmethod
@@ -530,8 +532,10 @@ class Backend(QObject):
         own working directory, absolute paths, traversal, and symlink targets are
         deliberately outside this contract.
         """
-        relative = Path(str(value).replace("\\", "/"))
-        if not value or relative.is_absolute() or ".." in relative.parts:
+        normalized = str(value).replace("\\", "/")
+        relative = Path(normalized)
+        if (not normalized or normalized.startswith("/") or re.match(r"^[A-Za-z]:/", normalized)
+                or ".." in relative.parts):
             raise ValueError("unsafe update path")
         if relative.parts[0].lower() in {"data", "userdata", "updates"}:
             raise ValueError("protected update path")
@@ -642,27 +646,6 @@ class Backend(QObject):
             return True
         except Exception as exc:
             self.updateStatusChanged.emit(f"Rollback could not complete: {exc}")
-            return False
-        try:
-            data = json.loads(manifest.read_text(encoding="utf-8"))
-            files = data.get("files", [])
-            if not files:
-                raise ValueError("manifest contains no files")
-            for item in files:
-                relative = Path(str(item["path"]))
-                if relative.is_absolute() or ".." in relative.parts:
-                    raise ValueError("unsafe update path")
-                candidate = staging / relative
-                if not candidate.is_file():
-                    raise ValueError(f"missing staged file: {relative}")
-                expected = str(item.get("sha256", "")).lower()
-                actual = hashlib.sha256(candidate.read_bytes()).hexdigest()
-                if not expected or actual != expected:
-                    raise ValueError(f"checksum failed: {relative}")
-            self.updateStatusChanged.emit(f"Update {data.get('version', 'Unknown')} verified. Apply remains owner-confirmed and rollback-protected.")
-            return True
-        except Exception as exc:
-            self.updateStatusChanged.emit(f"Update verification failed safely: {exc}")
             return False
 
     @Slot(result=str)
@@ -1015,12 +998,3 @@ class Backend(QObject):
 
     @staticmethod
     def _center_crop(image: Image.Image, target_ratio: float) -> Image.Image:
-        width, height = image.size
-        ratio = width / height
-        if ratio > target_ratio:
-            new_width = int(height * target_ratio)
-            left = (width - new_width) // 2
-            return image.crop((left, 0, left + new_width, height))
-        new_height = int(width / target_ratio)
-        top = (height - new_height) // 2
-        return image.crop((0, top, width, top + new_height))
