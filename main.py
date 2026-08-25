@@ -4,7 +4,7 @@ import os
 import sys
 from pathlib import Path
 
-from PySide6.QtCore import QTimer, QUrl
+from PySide6.QtCore import QSize, QTimer, QUrl
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 
@@ -17,6 +17,9 @@ ROOT = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
 def main():
     os.environ.setdefault("QT_QUICK_CONTROLS_STYLE", "Basic")
     capture_mode = "--capture-ui" in sys.argv
+    if capture_mode:
+        os.environ.setdefault("QT_QUICK_BACKEND", "software")
+        os.environ.setdefault("QSG_RHI_BACKEND", "software")
     app = QGuiApplication([sys.argv[0]] if capture_mode else sys.argv)
     app.setApplicationName("ARLEN NEXUS")
     app.setOrganizationName("Jubaer Hossain")
@@ -42,15 +45,29 @@ def main():
         window.setHeight(height)
         window.setPosition(0, 0)
 
-        def save_capture():
+        finished = {"value": False}
+
+        def save_result(result):
+            if finished["value"]:
+                return
+            finished["value"] = True
             output.parent.mkdir(parents=True, exist_ok=True)
-            image = window.grabWindow()
+            image = result.image()
             if image.isNull() or not image.save(str(output)):
                 app.exit(2)
             else:
                 app.quit()
 
-        QTimer.singleShot(2500, save_capture)
+        def start_capture():
+            window.contentItem().grabToImage(save_result, QSize(width, height))
+
+        def capture_timeout():
+            if not finished["value"]:
+                finished["value"] = True
+                app.exit(3)
+
+        QTimer.singleShot(1200, start_capture)
+        QTimer.singleShot(15000, capture_timeout)
     return app.exec()
 
 
