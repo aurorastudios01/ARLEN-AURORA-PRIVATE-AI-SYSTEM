@@ -77,7 +77,7 @@ ApplicationWindow {
         height: 72; color: theme.bg; border.color: theme.line
         MouseArea { anchors.fill: parent; acceptedButtons: Qt.LeftButton; onPressed: root.startSystemMove() }
         Row { anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 12
-            Rectangle { width: 38; height: 38; radius: 19; color: "transparent"; border.color: theme.accent; Text { anchors.centerIn: parent; text: "A"; color: theme.accent; font.pixelSize: 19; font.weight: Font.DemiBold } }
+            Image { width: 42; height: 42; source: "../assets/arlen-nexus-icon.png"; fillMode: Image.PreserveAspectFit; mipmap: true }
             Column { spacing: 1
                 Text { text: "ARLEN NEXUS"; color: theme.text; font.pixelSize: 19; font.weight: Font.DemiBold }
                 Text { text: "PERSONAL INTELLIGENCE & SYSTEM CONTROL ENVIRONMENT"; color: theme.muted; font.pixelSize: 9 }
@@ -115,8 +115,47 @@ ApplicationWindow {
             contentWidth: availableWidth
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             Column { width: parent.width; padding: 12; spacing: 3
-            Repeater { model: ["⌂   HOME","◈   CHAT","◉   VOICE","▣   SYSTEM","⌁   NETWORK","▤   FILES","↻   AUTOMATION","◇   CLEANUP","⬡   SECURITY","⚙   ADMIN","▧   IMAGE STUDIO","◉   VISION / OCR","▤   PDF STUDIO","✦   THEME STUDIO","ⓘ   ABOUT"]
-                AppButton { required property string modelData; required property int index; width: parent.width; text: modelData; selected: root.activePage === index; onClicked: root.activePage = index }
+            Repeater {
+                model: [
+                    {icon:"⌂", title:"Home", sub:"Dashboard"},
+                    {icon:"◈", title:"Chat", sub:"AI Conversation"},
+                    {icon:"◉", title:"Voice", sub:"Push-to-Talk"},
+                    {icon:"▣", title:"System", sub:"Monitor & Control"},
+                    {icon:"⌁", title:"Network", sub:"Connection & Data"},
+                    {icon:"▤", title:"Files", sub:"Documents & Storage"},
+                    {icon:"↻", title:"Automation", sub:"Tasks & Macros"},
+                    {icon:"◇", title:"Cleanup", sub:"System Refresh"},
+                    {icon:"⬡", title:"Security", sub:"Protection Center"},
+                    {icon:"⚙", title:"Admin", sub:"Control Panel"},
+                    {icon:"▧", title:"Image Studio", sub:"Local Editing"},
+                    {icon:"◉", title:"Vision / OCR", sub:"Local Reading"},
+                    {icon:"▤", title:"PDF Studio", sub:"Document Tools"},
+                    {icon:"✦", title:"Themes", sub:"Customize ARLEN"},
+                    {icon:"ⓘ", title:"About", sub:"System Information"}
+                ]
+                delegate: Button {
+                    required property var modelData
+                    required property int index
+                    width: parent.width - 24
+                    height: 58
+                    text: modelData.title
+                    onClicked: root.activePage = index
+                    background: Rectangle {
+                        radius: 10
+                        color: root.activePage === index ? Qt.rgba(.05,.35,.58,.34) : (parent.hovered ? theme.card : "transparent")
+                        border.color: root.activePage === index ? theme.accent : "transparent"
+                    }
+                    contentItem: Row {
+                        spacing: 12
+                        Text { width: 22; anchors.verticalCenter: parent.verticalCenter; text: modelData.icon; color: root.activePage === index ? theme.accent : theme.text; font.pixelSize: 18; horizontalAlignment: Text.AlignHCenter }
+                        Column {
+                            anchors.verticalCenter: parent.verticalCenter
+                            spacing: 2
+                            Text { text: modelData.title; color: root.activePage === index ? theme.accent : theme.text; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: modelData.sub; color: theme.muted; font.pixelSize: 10 }
+                        }
+                    }
+                }
             }
             Item { width: 1; height: 14 }
             Rectangle { width: parent.width; height: 1; color: theme.line }
