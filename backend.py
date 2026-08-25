@@ -106,6 +106,10 @@ class Backend(QObject):
         self._session_in = self._last_net.bytes_recv
         self._session_out = self._last_net.bytes_sent
         self._uptime = "00:00:00"
+        self._battery_percent = -1.0
+        self._battery_state = "NOT AVAILABLE"
+        self._power_source = "UNKNOWN"
+        self._battery_time = "N/A"
         self._top_apps = "Scanning processes…"
         self._brain = None
         self._brain_loading = False
@@ -165,6 +169,18 @@ class Backend(QObject):
 
     @Property(str, notify=statsChanged)
     def uptime(self): return self._uptime
+
+    @Property(float, notify=statsChanged)
+    def batteryPercent(self): return self._battery_percent
+
+    @Property(str, notify=statsChanged)
+    def batteryState(self): return self._battery_state
+
+    @Property(str, notify=statsChanged)
+    def powerSource(self): return self._power_source
+
+    @Property(str, notify=statsChanged)
+    def batteryTime(self): return self._battery_time
 
     @Property(str, notify=statsChanged)
     def topApps(self): return self._top_apps
@@ -239,6 +255,24 @@ class Backend(QObject):
         seconds = int(time.time() - psutil.boot_time())
         self._uptime = f"{seconds//3600:02}:{(seconds%3600)//60:02}:{seconds%60:02}"
         self._network = "Online" if self._has_network() else "Offline"
+        try:
+            battery = psutil.sensors_battery()
+        except (AttributeError, OSError):
+            battery = None
+        if battery is None:
+            self._battery_percent = -1.0
+            self._battery_state = "NOT AVAILABLE"
+            self._power_source = "NO BATTERY"
+            self._battery_time = "N/A"
+        else:
+            self._battery_percent = float(battery.percent)
+            self._power_source = "CHARGER CONNECTED" if battery.power_plugged else "BATTERY POWER"
+            self._battery_state = "CHARGING" if battery.power_plugged and battery.percent < 100 else ("FULL" if battery.power_plugged else "DISCHARGING")
+            if battery.secsleft in (psutil.POWER_TIME_UNKNOWN, psutil.POWER_TIME_UNLIMITED) or battery.secsleft < 0:
+                self._battery_time = "CALCULATING"
+            else:
+                remaining = int(battery.secsleft)
+                self._battery_time = f"{remaining//3600:02}:{(remaining%3600)//60:02}"
         if int(now) % 5 == 0:
             self._wifi = self._get_wifi_name()
             self._top_apps = self._process_summary()
