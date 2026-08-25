@@ -53,6 +53,9 @@ jobs:
             Get-ChildItem $testInstall -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
             throw "Installed EXE missing at $installed"
           }
+          $visualData = Join-Path $env:LOCALAPPDATA "ARLEN NEXUS\UserData"
+          New-Item -ItemType Directory -Force -Path $visualData | Out-Null
+          '{"first_run":false,"pin_hash":"visual-test","opening_duration":3,"opening_sound":false}' | Set-Content -Path (Join-Path $visualData "settings.json") -Encoding UTF8
           $env:QT_SCALE_FACTOR = "1"
           $process = Start-Process -FilePath $installed -WorkingDirectory $testInstall -PassThru
           Start-Sleep -Seconds 22
