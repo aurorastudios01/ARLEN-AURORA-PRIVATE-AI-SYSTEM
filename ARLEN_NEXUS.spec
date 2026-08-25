@@ -30,5 +30,6 @@ exe = EXE(
     strip=False,
     upx=True,
     console=False,
+    icon="assets/arlen-nexus.ico",
 )
 coll = COLLECT(exe, a.binaries, a.datas, strip=False, upx=True, name="ARLEN NEXUS Portable")
