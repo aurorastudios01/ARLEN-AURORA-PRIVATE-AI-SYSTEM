@@ -194,6 +194,7 @@ ApplicationWindow {
                         Layout.row: 0
                         Layout.column: 0
                         Layout.fillWidth: true
+                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(500, homePage.width - 310)
                         Layout.preferredHeight: homePage.compact ? 430 : 455
                         clip: true
 
@@ -270,6 +271,7 @@ ApplicationWindow {
                         Layout.row: 1
                         Layout.column: 0
                         Layout.fillWidth: true
+                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(500, homePage.width - 310)
                         Layout.preferredHeight: 290
                         ColumnLayout {
                             anchors.fill: parent
