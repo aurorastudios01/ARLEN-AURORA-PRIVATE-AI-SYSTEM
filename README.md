@@ -1,59 +1,156 @@
-# ARLEN NEXUS V0.5 — Evolution Core Development Build
+# ARLEN NEXUS v0.5 — Project Handover & Continuation Memory
 
-ARLEN NEXUS is an offline-first Personal Intelligence & System Control Environment.
+**Owner / Concept / Direction:** Jubaer Hossain  
+**ARLEN:** Adaptive Responsive Local Executive Neural-Assistant  
+**NEXUS:** Neural Execution and Experience Unified System  
+**Product line:** Built for Jubaer Hossain — Controlled by its owner.  
+**Private repository:** `arlenray0113-cyber/ARLEN-NEXUS-PRIVATE`
 
-**Concept, Direction & Ownership: Jubaer Hossain**
+## 1. Product purpose
 
-## Included in this build
+ARLEN NEXUS is a private, offline-first Windows desktop intelligence and system-control environment. It combines a premium cinematic interface, local commands, system monitoring, automation, image tools, Vision/OCR and PDF tools. The owner always retains final authority.
 
-- Premium frameless multi-page QML interface
-- 12/7/3-second animated opening modes
-- Opening circuit visual and animated neural sphere
-- Obsidian, Crimson, Emerald, Violet, and Arctic themes
-- Live CPU, RAM, disk, Wi-Fi, download, upload, session usage, and process data
-- Brave-first application and web search controls
-- Ctrl+Alt+A global access shortcut on Windows
-- Hidden-terminal launcher
-- Home, Chat, Voice, System, Network, Files, Automation, Cleanup, Security, Admin, Image Studio, Vision/OCR, PDF Studio, Theme Studio, and About pages
-- First-run owner PIN instead of a default password
-- PIN-protected editable owner name, call name, title and welcome message
-- Owner data stored separately from application files on Windows so updates preserve identity
-- Owner-data backup foundation
-- Bangla/Banglish/English voice-command interpretation layer and editable wake word
-- PIN-protected Command Builder with allow-listed macro execution
-- Capability Pack status for Local Brain, Voice, Vision/OCR, Image and PDF
-- Incremental update manifest foundation with preserved user-data boundary
-- Owner-PIN update apply and one-step rollback with verified staged files
-- Local command engine with confirmation for power and cleanup actions
-- Local conversational model integration through an optional GGUF model
-- Prompt-based image editing for crop ratios, dehaze, texture/detail, brightness, saturation, rotation, mirroring, and grayscale
-- Manual image adjustments and non-destructive preview/export foundation
-- Unrestricted local-image policy: no content blocking, automatic blur, deletion, or upload
-- Local image inspection and optional Bangla/English OCR-pack integration
-- PDF Studio core with Image-to-PDF, merge, split and default/PDFgear access
-- Smart Auto public-search policy with no personal uploads
+## 2. Non-negotiable requirements
 
-## Portable release policy
+1. The end user must not install Python, an editor, Visual Studio, Node, Rust, Ollama or other development dependencies.
+2. The Windows delivery must be portable and directly runnable.
+3. Core functionality works offline.
+4. Public online search uses Brave and remains controlled by owner policy.
+5. Personal uploads, login/account actions, messages, purchases, protected changes and destructive operations require explicit approval.
+6. Local images must never be automatically blocked, blurred, deleted or uploaded. Originals remain unchanged by default.
+7. Personal data must remain under `%LOCALAPPDATA%/ARLEN NEXUS/UserData` and survive application updates.
+8. UI must remain premium, serious and cinematic, with features separated into dedicated pages.
+9. Never claim an untested or unbundled capability is complete.
+10. Do not label a build final production until the clean-Windows manual checklist passes.
 
-The owner will not be asked to install an editor, IDE, compiler, Node, Rust, Visual Studio, or Ollama. The production Windows release is designed as a self-contained portable folder. Optional Local Brain, Voice and OCR models are copied into their pack folders; they are not installed system-wide.
+## 3. Direct v0.5 single-EXE release
 
-## Developer/source launch
+Download:
 
-1. Developers may run `setup_windows.bat` to prepare a source environment. End users should use the final portable release instead.
-2. Double-click `RUN_ARLEN_SILENT.vbs`.
-3. Choose a 12, 7, or 3-second opening mode.
-4. Create your own 4–12 digit owner PIN.
+[ARLEN-NEXUS-v0.5.exe](https://github.com/arlenray0113-cyber/ARLEN-NEXUS-PRIVATE/releases/download/v0.5/ARLEN-NEXUS-v0.5.exe)
 
-Use `run_debug.bat` only when an error must be captured. It intentionally shows a terminal.
+- File type: Direct Windows EXE; no ZIP extraction.
+- Approximate size: 266 MB.
+- SHA-256: `56060957473bade2997246260d6663c4dd39e72c23ade7d0882bb188ac08ecd2`
+- Release page: https://github.com/arlenray0113-cyber/ARLEN-NEXUS-PRIVATE/releases/tag/v0.5
+- No developer installation is required.
+- First launch may take longer because the single EXE extracts its private bundled runtime into Windows Temp.
 
-## Offline behavior
+## 4. Verified v0.5 gates
 
-The core interface, commands, monitoring, files, cleanup, image tools, settings, logs, and installed model run locally. Smart Auto web search opens Brave only when an online information request is made. Uploads remain disabled by default.
+Read-only Windows verification workflow run: `32795779576`
 
-## Conversational Brain
+- Python source compilation: **PASS**
+- Automated core tests: **20/20 PASS**
+- QML lint: **PASS**
+- PyInstaller single-file EXE build: **PASS**
+- Windows single-EXE launch smoke test: **PASS (30 seconds)**
 
-Put a compatible small `.gguf` model in `models`, then install `requirements-ai.txt`. The model stays on the PC. Use **Unload Brain** to release its RAM.
+## 5. Built-in core features
 
-## Development status
+### Interface and identity
 
-This is an active development tree, not yet a released ZIP and not yet the final signed Windows portable EXE. Do not treat source files as an end-user build. A release is permitted only after a real `ARLEN NEXUS.exe` launches in a clean Windows environment without editor or development-tool installation.
+- Frameless premium multi-page QML interface.
+- Cinematic opening sequence with configurable 12, 7 or 3-second duration.
+- Opening sound and mute control.
+- Obsidian, Crimson, Emerald, Violet and Arctic themes.
+- Animated Neural Sphere states.
+- Editable owner photo, background, sphere, name, call-name, title and welcome message.
+- Windows global shortcut target: `Ctrl+Alt+A`.
+
+### Security and owner control
+
+- First-run 4–12 digit owner PIN.
+- Permission Level 1 safe actions, Level 2 confirmation and Level 3 owner PIN.
+- PIN-protected owner profile, custom commands, updates and rollback.
+- Activity logging and owner-data backup.
+- Protected/destructive actions cannot be hidden in safe macros.
+
+### Commands and system control
+
+- English, Bangla and Banglish command normalization.
+- Open Brave, Notepad, Calculator, Paint, Explorer, Task Manager and common folders.
+- Custom Command Builder with allow-listed actions.
+- Restart and shutdown confirmation with cancel support.
+- CPU, RAM, disk, uptime, Wi-Fi, network speed, session usage and top-memory processes.
+- Safe ARLEN memory cleanup without fake or destructive RAM-cleaner behavior.
+
+### Chat and internet
+
+- Command Engine and Conversational Brain are separate.
+- Optional local GGUF provider hook.
+- Brain can be unloaded to release RAM.
+- Brave-first Smart Auto public search.
+- Admin policy can disable public search.
+- Personal uploads remain disabled by default.
+
+### Image Studio
+
+- Non-destructive preview and copy export.
+- Brightness, contrast, saturation, sharpness/detail and dehaze.
+- Prompt controls for 1:1, 9:16 and 16:9 crop, rotation, mirror and grayscale.
+- Original-image preservation.
+- No automatic adult/nude-content blocking, deletion, blur or upload.
+
+### Vision/OCR foundation
+
+- Local image format, dimensions and color information.
+- Optional local OCR provider hook for Bangla/English.
+- No cloud upload requirement.
+
+### PDF Studio
+
+- Image-to-PDF.
+- Ordered PDF merge.
+- PDF page split.
+- Open PDF through the Windows default viewer.
+
+### Safe updater
+
+- Staged-file SHA-256 verification.
+- Absolute path, traversal, updater-path and UserData-path protection.
+- Owner-PIN update apply.
+- Versioned backup and one-step rollback.
+- Personal UserData preservation.
+
+## 6. Capability-pack architecture
+
+The stable core must remain usable when an optional pack is absent. Packs are portable folders, not system-wide installations, and should load/unload independently for RAM control.
+
+- Local Brain Pack
+- Voice Pack
+- Vision/OCR Pack
+- Image Pack
+- PDF Pack
+- Theme/Sphere Pack
+
+## 7. Truthful remaining work
+
+The following are not bundled or not fully complete in v0.5:
+
+- Multilingual GGUF Local Brain model/runtime.
+- Real microphone capture and local multilingual transcription.
+- Local multilingual TTS voices/runtime.
+- Bangla/English printed and handwriting OCR models/runtime.
+- Advanced PDF operations beyond Image-to-PDF, merge and split.
+- Advanced Image Studio layers, timeline/history and selective editing.
+- Trusted Windows code signing.
+- Full manual validation on a clean Windows 11 personal account.
+
+Windows SmartScreen may warn because the EXE is not code-signed. This does not replace the requirement for future trusted signing.
+
+## 8. Continuation instructions
+
+Any future coding assistant or developer must:
+
+1. Read this entire handover before changing the project.
+2. Preserve every non-negotiable privacy, safety and owner-control requirement.
+3. Continue unfinished capability packs without breaking the verified offline core.
+4. Run Python compilation, all automated tests, QML lint, Windows EXE build and launch verification after meaningful changes.
+5. Update this README with new evidence, hashes, workflow run IDs and remaining limitations.
+6. Never call unbundled or untested functions complete.
+7. Keep source private and publish end-user binaries through GitHub Releases, not as source ZIPs presented as the app.
+
+## 9. Repository release policy
+
+The private source repository remains the authoritative continuation point. Old ZIP artifacts may expire or be removed, but source history must remain so future fixes and upgrades are possible. The GitHub Release should present the direct EXE and checksum evidence for the owner.
