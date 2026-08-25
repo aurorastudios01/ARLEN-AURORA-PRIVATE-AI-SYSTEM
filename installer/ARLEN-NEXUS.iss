@@ -1,5 +1,5 @@
 #define MyAppName "ARLEN NEXUS"
-#define MyAppVersion "0.6.0"
+#define MyAppVersion "0.7.0"
 #define MyAppPublisher "Jubaer Hossain"
 #define MyAppExeName "ARLEN NEXUS.exe"
 
@@ -13,21 +13,22 @@ DefaultGroupName=ARLEN NEXUS
 DisableProgramGroupPage=yes
 PrivilegesRequired=lowest
 OutputDir=..\installer-output
-OutputBaseFilename=ARLEN-NEXUS-Setup-v0.6
+OutputBaseFilename=ARLEN-NEXUS-Setup-v0.7
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile=..\\assets\\arlen-nexus.ico
 SetupLogging=yes
 UninstallDisplayName=ARLEN NEXUS
 CloseApplications=yes
 RestartApplications=no
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
-VersionInfoVersion=0.6.0.0
+VersionInfoVersion=0.7.0.0
 VersionInfoCompany=Jubaer Hossain
 VersionInfoDescription=ARLEN NEXUS Offline-First Personal Intelligence Environment
 VersionInfoProductName=ARLEN NEXUS
-VersionInfoProductVersion=0.6.0
+VersionInfoProductVersion=0.7.0
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

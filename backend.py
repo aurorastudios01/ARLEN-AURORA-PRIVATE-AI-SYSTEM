@@ -92,6 +92,7 @@ class Backend(QObject):
     profileSaved = Signal(str)
     automationChanged = Signal()
     updateStatusChanged = Signal(str)
+    capabilityWarning = Signal(str, str)
 
     def __init__(self):
         super().__init__()
@@ -105,6 +106,10 @@ class Backend(QObject):
         self._session_in = self._last_net.bytes_recv
         self._session_out = self._last_net.bytes_sent
         self._uptime = "00:00:00"
+        self._battery_percent = -1.0
+        self._battery_state = "NOT AVAILABLE"
+        self._power_source = "UNKNOWN"
+        self._battery_time = "N/A"
         self._top_apps = "Scanning processes…"
         self._brain = None
         self._brain_loading = False
@@ -164,6 +169,18 @@ class Backend(QObject):
 
     @Property(str, notify=statsChanged)
     def uptime(self): return self._uptime
+
+    @Property(float, notify=statsChanged)
+    def batteryPercent(self): return self._battery_percent
+
+    @Property(str, notify=statsChanged)
+    def batteryState(self): return self._battery_state
+
+    @Property(str, notify=statsChanged)
+    def powerSource(self): return self._power_source
+
+    @Property(str, notify=statsChanged)
+    def batteryTime(self): return self._battery_time
 
     @Property(str, notify=statsChanged)
     def topApps(self): return self._top_apps
@@ -238,6 +255,24 @@ class Backend(QObject):
         seconds = int(time.time() - psutil.boot_time())
         self._uptime = f"{seconds//3600:02}:{(seconds%3600)//60:02}:{seconds%60:02}"
         self._network = "Online" if self._has_network() else "Offline"
+        try:
+            battery = psutil.sensors_battery()
+        except (AttributeError, OSError):
+            battery = None
+        if battery is None:
+            self._battery_percent = -1.0
+            self._battery_state = "NOT AVAILABLE"
+            self._power_source = "NO BATTERY"
+            self._battery_time = "N/A"
+        else:
+            self._battery_percent = float(battery.percent)
+            self._power_source = "CHARGER CONNECTED" if battery.power_plugged else "BATTERY POWER"
+            self._battery_state = "CHARGING" if battery.power_plugged and battery.percent < 100 else ("FULL" if battery.power_plugged else "DISCHARGING")
+            if battery.secsleft in (psutil.POWER_TIME_UNKNOWN, psutil.POWER_TIME_UNLIMITED) or battery.secsleft < 0:
+                self._battery_time = "CALCULATING"
+            else:
+                remaining = int(battery.secsleft)
+                self._battery_time = f"{remaining//3600:02}:{(remaining%3600)//60:02}"
         if int(now) % 5 == 0:
             self._wifi = self._get_wifi_name()
             self._top_apps = self._process_summary()
@@ -477,6 +512,9 @@ class Backend(QObject):
             result, level = "REQUIRES_CONFIRMATION:Restart the PC in 10 seconds?", "confirm"
         elif "shutdown" in text or "shut down" in text or "off koro" in text or "শাটডাউন" in text:
             result, level = "REQUIRES_CONFIRMATION:Shut down the PC in 10 seconds?", "confirm"
+        elif any(term in text for term in ("system refresh", "refresh system", "free arlen ram", "ram refresh", "র‍্যাম রিফ্রেশ", "সিস্টেম রিফ্রেশ")):
+            self.systemRefresh()
+            return
         elif "cleanup" in text or "ক্লিন" in text:
             result, level = "REQUIRES_CONFIRMATION:Scan safe temporary files and ARLEN memory?", "confirm_cleanup"
         self._log(command, result)
@@ -694,8 +732,7 @@ class Backend(QObject):
             subprocess.Popen(["shutdown", "/s", "/t", "10"], creationflags=0x08000000)
             self.commandResult.emit("Shutdown scheduled. Use Cancel Power Action within 10 seconds to abort.", "success")
         elif action == "cleanup":
-            gc.collect()
-            self.commandResult.emit("ARLEN memory optimized. Temporary files were not deleted without a selected scope.", "success")
+            self.systemRefresh()
 
     @Slot()
     def cancelPower(self):
@@ -713,6 +750,7 @@ class Backend(QObject):
     def _chat_worker(self, message):
         model = next((p for p in (ROOT/"models").glob("*.gguf")), None)
         if model is None:
+            self.capabilityWarning.emit("LOCAL BRAIN NOT INSTALLED", "Private conversational chat needs a compatible GGUF Local Brain Pack. PC commands and built-in tools remain available.")
             reply = "My local Conversational Brain is not installed yet. I can still execute PC commands. Add a compatible GGUF model in the models folder to enable private offline conversation."
             self.chatReply.emit(reply, "brain_missing")
             return
@@ -727,6 +765,43 @@ class Backend(QObject):
         except Exception as exc:
             self.chatReply.emit(f"Local brain could not start: {exc}", "error")
 
+    @Slot(result=str)
+    def systemRefresh(self):
+        """Release ARLEN-owned memory without terminating unrelated applications."""
+        before = psutil.Process(os.getpid()).memory_info().rss
+        brain_was_loaded = self._brain is not None
+        self._brain = None
+        gc.collect()
+
+        preview_dir = DATA / "image_previews"
+        removed = 0
+        if preview_dir.exists():
+            for candidate in preview_dir.iterdir():
+                if candidate.is_file():
+                    try:
+                        candidate.unlink()
+                        removed += 1
+                    except OSError:
+                        pass
+
+        if os.name == "nt":
+            try:
+                handle = ctypes.windll.kernel32.GetCurrentProcess()
+                ctypes.windll.psapi.EmptyWorkingSet(handle)
+            except Exception:
+                pass
+
+        after = psutil.Process(os.getpid()).memory_info().rss
+        released_mb = max(0.0, (before - after) / 1024**2)
+        details = (
+            f"SYSTEM REFRESH COMPLETE — ARLEN released {released_mb:.1f} MB; "
+            f"cleared {removed} preview file(s); "
+            + ("Local Brain unloaded." if brain_was_loaded else "Local Brain was already idle.")
+        )
+        self._log("system refresh", details)
+        self.commandResult.emit(details, "success")
+        return details
+
     @Slot()
     def unloadBrain(self):
         self._brain = None
@@ -737,6 +812,7 @@ class Backend(QObject):
     def startVoice(self):
         model_dir = ROOT / "models" / "voice"
         if not model_dir.exists():
+            self.capabilityWarning.emit("VOICE NOT SUPPORTED YET", "The offline microphone, speech recognition and TTS pack is not bundled in this release. No microphone recording was started.")
             self.voiceStateChanged.emit("Voice Pack not installed")
             return
         self.voiceStateChanged.emit("Voice module ready; microphone integration will use the selected local model")
@@ -776,6 +852,7 @@ class Backend(QObject):
                     text = pytesseract.image_to_string(image, lang="eng+ben").strip()
                     details.append("\nOCR TEXT:\n" + (text or "No readable text detected."))
                 except Exception:
+                    self.capabilityWarning.emit("OCR PACK NOT INSTALLED", "Image metadata and editing work locally, but Bangla/English text recognition needs the optional OCR Pack.")
                     details.append("\nOCR: Portable OCR pack is not present. Image reading remains available.")
             self._log("vision inspect", str(path))
             self.visionResult.emit("\n".join(details))

@@ -1,4 +1,4 @@
-name: Build ARLEN NEXUS v0.6 Installer
+name: Build ARLEN NEXUS v0.7 Installer
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ on:
       - "main.py"
       - "ARLEN_NEXUS.spec"
       - "installer/**"
-      - ".github/workflows/windows-installer-v06.yml"
+      - ".github/workflows/windows-installer-v07.yml"
 
 permissions:
   contents: write
@@ -66,7 +66,7 @@ jobs:
       - name: Install silently for validation
         shell: pwsh
         run: |
-          $setup = Resolve-Path "installer-output/ARLEN-NEXUS-Setup-v0.6.exe"
+          $setup = Resolve-Path "installer-output/ARLEN-NEXUS-Setup-v0.7.exe"
           & $setup /VERYSILENT /SUPPRESSMSGBOXES /NORESTART /LOG="installer-output/install.log"
           if ($LASTEXITCODE -ne 0) { throw "Silent install failed with code $LASTEXITCODE" }
           $installed = "$env:LOCALAPPDATA\Programs\ARLEN NEXUS\ARLEN NEXUS.exe"
@@ -86,7 +86,7 @@ jobs:
           $bitmap = New-Object System.Drawing.Bitmap $bounds.Width, $bounds.Height
           $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
           $graphics.CopyFromScreen($bounds.Location, [System.Drawing.Point]::Empty, $bounds.Size)
-          $bitmap.Save("$PWD\installer-output\ARLEN-NEXUS-v0.6-installed.png", [System.Drawing.Imaging.ImageFormat]::Png)
+          $bitmap.Save("$PWD\installer-output\ARLEN-NEXUS-v0.7-installed.png", [System.Drawing.Imaging.ImageFormat]::Png)
           $graphics.Dispose()
           $bitmap.Dispose()
           Stop-Process -Id $process.Id -Force
@@ -94,34 +94,34 @@ jobs:
       - name: Record hashes
         shell: pwsh
         run: |
-          $setup = "installer-output/ARLEN-NEXUS-Setup-v0.6.exe"
+          $setup = "installer-output/ARLEN-NEXUS-Setup-v0.7.exe"
           $hash = (Get-FileHash $setup -Algorithm SHA256).Hash
-          "ARLEN-NEXUS-Setup-v0.6.exe SHA-256: $hash" | Set-Content "installer-output/ARLEN-NEXUS-v0.6-SHA256.txt"
-          "Windows installed-app launch and screenshot test: PASS" | Add-Content "installer-output/ARLEN-NEXUS-v0.6-SHA256.txt"
+          "ARLEN-NEXUS-Setup-v0.7.exe SHA-256: $hash" | Set-Content "installer-output/ARLEN-NEXUS-v0.7-SHA256.txt"
+          "Windows installed-app launch and screenshot test: PASS" | Add-Content "installer-output/ARLEN-NEXUS-v0.7-SHA256.txt"
 
       - name: Publish installer release
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $setup = "installer-output/ARLEN-NEXUS-Setup-v0.6.exe"
-          $shot = "installer-output/ARLEN-NEXUS-v0.6-installed.png"
-          $hash = "installer-output/ARLEN-NEXUS-v0.6-SHA256.txt"
-          gh release view v0.6 *> $null
+          $setup = "installer-output/ARLEN-NEXUS-Setup-v0.7.exe"
+          $shot = "installer-output/ARLEN-NEXUS-v0.7-installed.png"
+          $hash = "installer-output/ARLEN-NEXUS-v0.7-SHA256.txt"
+          gh release view v0.7 *> $null
           if ($LASTEXITCODE -eq 0) {
-            gh release upload v0.6 $setup $shot $hash --clobber
+            gh release upload v0.7 $setup $shot $hash --clobber
           } else {
-            gh release create v0.6 $setup $shot $hash --target "$env:GITHUB_SHA" --title "ARLEN NEXUS v0.6 — Interface Evolution" --notes "Proper per-user Windows installer with redesigned cinematic boot screen, responsive command center, shortcuts, uninstall support, preserved owner data, automated tests and installed-app screenshot verification."
+            gh release create v0.7 $setup $shot $hash --target "$env:GITHUB_SHA" --title "ARLEN NEXUS v0.7 — Interface Evolution" --notes "Proper per-user Windows installer with redesigned cinematic boot screen, responsive command center, shortcuts, uninstall support, preserved owner data, automated tests and installed-app screenshot verification."
           }
 
       - name: Upload verification artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ARLEN-NEXUS-v0.6-Installer-Verification
+          name: ARLEN-NEXUS-v0.7-Installer-Verification
           path: |
-            installer-output/ARLEN-NEXUS-Setup-v0.6.exe
-            installer-output/ARLEN-NEXUS-v0.6-installed.png
-            installer-output/ARLEN-NEXUS-v0.6-SHA256.txt
+            installer-output/ARLEN-NEXUS-Setup-v0.7.exe
+            installer-output/ARLEN-NEXUS-v0.7-installed.png
+            installer-output/ARLEN-NEXUS-v0.7-SHA256.txt
             installer-output/install.log
           if-no-files-found: error
           retention-days: 30

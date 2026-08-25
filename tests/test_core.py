@@ -191,6 +191,29 @@ class ArlenCoreTests(unittest.TestCase):
         APP.processEvents()
         self.assertIn("locked", messages[-1][0].lower())
 
+    def test_battery_charger_telemetry(self):
+        battery = type("Battery", (), {"percent": 72.0, "power_plugged": True, "secsleft": 3600})()
+        with patch.object(backend_module.psutil, "sensors_battery", return_value=battery):
+            self.backend.refresh_stats()
+        self.assertEqual(self.backend.batteryPercent, 72.0)
+        self.assertEqual(self.backend.batteryState, "CHARGING")
+        self.assertEqual(self.backend.powerSource, "CHARGER CONNECTED")
+        self.assertEqual(self.backend.batteryTime, "01:00")
+
+    def test_system_refresh_is_safe_and_clears_arlen_previews(self):
+        preview_dir = self.base / "image_previews"
+        preview_dir.mkdir()
+        (preview_dir / "preview.jpg").write_bytes(b"temporary")
+        self.backend._brain = object()
+        messages = []
+        self.backend.commandResult.connect(lambda message, level: messages.append((message, level)))
+        with patch.object(backend_module, "DATA", self.base):
+            result = self.backend.systemRefresh()
+        self.assertIsNone(self.backend._brain)
+        self.assertFalse((preview_dir / "preview.jpg").exists())
+        self.assertIn("SYSTEM REFRESH COMPLETE", result)
+        self.assertEqual(messages[-1][1], "success")
+
     def test_system_details_are_valid_json(self):
         details = json.loads(self.backend.systemDetails())
         self.assertIn("total_ram_gb", details)

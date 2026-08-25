@@ -19,6 +19,7 @@ def main():
     app = QGuiApplication(sys.argv)
     app.setApplicationName("ARLEN NEXUS")
     app.setOrganizationName("Jubaer Hossain")
+    app.setWindowIcon(QIcon(str(ROOT / "assets" / "arlen-nexus-icon.png")))
     engine = QQmlApplicationEngine()
     backend = Backend()
     engine.rootContext().setContextProperty("backend", backend)
