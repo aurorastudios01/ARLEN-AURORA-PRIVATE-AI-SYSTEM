@@ -1,15 +1,12 @@
-OPTIONAL OFFLINE MODELS
+ARLEN NEXUS V1 MODEL POLICY
 
-Conversational Brain:
-- Put one compatible quantized GGUF model in this folder.
-- ARLEN detects the first .gguf file.
-- Install requirements-ai.txt before enabling local chat.
-- For an 8 GB PC, use a small 1.5B–3B Q4 model.
+- Model binaries are never committed to this Git repository.
+- Stable V1 conversational target: Ollama qwen2.5:3b.
+- ARLEN discovers the Ollama runtime/model during first-run setup.
+- 4 GB PCs use Low Resource context and concurrency settings.
+- Lightweight vision remains disabled until its separate Windows/RAM gate passes.
+- Voice, Whisper and TTS models are outside V1 scope.
 
-Voice Pack:
-- Put the selected offline voice model inside models\voice.
-- The base application never keeps the microphone active.
-
-No model is bundled in the source package because model licensing, hardware fit,
-and file size must be selected separately.
+The final Windows setup must detect or prepare the required runtime/model without
+asking the owner to edit code or manually copy model files into this directory.
 
