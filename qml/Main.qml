@@ -170,230 +170,318 @@ ApplicationWindow {
         anchors.top: topbar.bottom; anchors.bottom: parent.bottom; anchors.left: sidebar.right; anchors.right: parent.right
         currentIndex: root.activePage
 
-        Item { // HOME — RESPONSIVE COMMAND CENTER
+        Item { // HOME — v0.7 NEXUS COMMAND CENTER
+            id: homePage
+            property bool compact: width < 1080
+
             Flickable {
                 anchors.fill: parent
                 anchors.margins: 12
                 clip: true
                 contentWidth: width
-                contentHeight: homeColumn.implicitHeight
+                contentHeight: homeGrid.implicitHeight
                 boundsBehavior: Flickable.StopAtBounds
                 ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
-                ColumnLayout {
-                    id: homeColumn
-                    width: parent.width
-                    spacing: 12
 
                 GridLayout {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: root.width < 1320 ? 650 : 390
-                    columns: root.width < 1320 ? 1 : 2
+                    id: homeGrid
+                    width: parent.width
+                    columns: homePage.compact ? 1 : 2
                     columnSpacing: 12
                     rowSpacing: 12
 
                     Panel {
+                        Layout.row: 0
+                        Layout.column: 0
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.preferredHeight: root.width < 1320 ? 390 : -1
-                        Layout.minimumWidth: 0
+                        Layout.preferredHeight: homePage.compact ? 430 : 455
                         clip: true
 
                         Rectangle {
                             anchors.fill: parent
                             radius: 18
                             gradient: Gradient {
-                                GradientStop { position: 0; color: Qt.rgba(.03,.18,.25,.98) }
-                                GradientStop { position: 1; color: theme.panel }
+                                GradientStop { position: 0; color: "#02070d" }
+                                GradientStop { position: .55; color: "#04101a" }
+                                GradientStop { position: 1; color: "#02070b" }
                             }
                         }
 
-                        RowLayout {
-                            anchors.fill: parent
-                            anchors.margins: 26
-                            spacing: 28
+                        Repeater {
+                            model: 24
+                            Rectangle {
+                                required property int index
+                                width: 2; height: 2; radius: 1
+                                x: 22 + ((index * 83) % Math.max(100, parent.width - 44))
+                                y: 30 + ((index * 47) % Math.max(100, parent.height - 70))
+                                color: index % 7 === 0 ? theme.good : theme.accent
+                                opacity: .12 + (index % 4) * .06
+                            }
+                        }
 
-                            Item {
-                                Layout.preferredWidth: root.width < 1100 ? 170 : Math.min(360, parent.width * .42)
-                                Layout.fillHeight: true
+                        Image {
+                            id: homeSphere
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 18
+                            width: Math.min(parent.width * .52, 330)
+                            height: width
+                            source: backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"
+                            fillMode: Image.PreserveAspectFit
+                            mipmap: true
+                            opacity: .94
+                            RotationAnimator on rotation { from: 0; to: 360; duration: 90000; loops: Animation.Infinite }
+                            SequentialAnimation on scale {
+                                loops: Animation.Infinite
+                                NumberAnimation { to: 1.025; duration: 1700; easing.type: Easing.InOutSine }
+                                NumberAnimation { to: 1; duration: 1700; easing.type: Easing.InOutSine }
+                            }
+                        }
 
-                                Image {
-                                    id: sphere
-                                    anchors.centerIn: parent
-                                    width: Math.min(parent.width * .88, parent.height * .86)
-                                    height: width
-                                    source: backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"
-                                    fillMode: Image.PreserveAspectFit
-                                    opacity: .92
-                                    RotationAnimator on rotation { from: 0; to: 360; duration: 70000; loops: Animation.Infinite }
-                                    SequentialAnimation on scale {
-                                        loops: Animation.Infinite
-                                        NumberAnimation { to: 1.035; duration: 1600; easing.type: Easing.InOutSine }
-                                        NumberAnimation { to: 1; duration: 1600; easing.type: Easing.InOutSine }
-                                    }
-                                }
-                                Rectangle {
-                                    anchors.centerIn: sphere
-                                    width: sphere.width * .68; height: width; radius: width / 2
-                                    color: "transparent"; border.width: 1; border.color: Qt.rgba(.15,.8,.92,.35)
-                                    RotationAnimator on rotation { from: 0; to: -360; duration: 22000; loops: Animation.Infinite }
-                                }
-                                Rectangle {
-                                    anchors.centerIn: sphere
-                                    width: sphere.width * .46; height: width; radius: width / 2
-                                    color: "transparent"; border.width: 2; border.color: theme.accent; opacity: .44
-                                    SequentialAnimation on scale { loops: Animation.Infinite; NumberAnimation { to:1.12; duration:1200 } NumberAnimation { to:1; duration:1200 } }
+                        Rectangle {
+                            anchors.centerIn: homeSphere
+                            width: homeSphere.width * .82; height: width; radius: width/2
+                            color: "transparent"; border.width: 1; border.color: Qt.rgba(.15,.65,.82,.22)
+                            RotationAnimator on rotation { from: 0; to: -360; duration: 30000; loops: Animation.Infinite }
+                        }
+
+                        Column {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 18
+                            spacing: 5
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "A  R  L  E  N"; color: theme.text; font.pixelSize: 21; font.letterSpacing: 5 }
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; text: "●  " + (backend.networkStatus === "Online" ? "READY • LOCAL CORE ONLINE" : "READY • OFFLINE CORE"); color: backend.networkStatus === "Online" ? theme.good : theme.accent; font.pixelSize: 10; font.letterSpacing: 1.4 }
+                            Rectangle {
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                width: Math.min(410, homePage.width * .45); height: 34; radius: 10
+                                color: Qt.rgba(.02,.09,.14,.88); border.color: theme.line
+                                Row {
+                                    anchors.fill: parent; anchors.margins: 9; spacing: 10
+                                    Text { text: "◈"; color: theme.accent; font.pixelSize: 12 }
+                                    Text { text: "IDLE  •  ALL VERIFIED SYSTEMS NOMINAL"; color: theme.muted; font.pixelSize: 9 }
+                                    Rectangle { width: 80; height: 1; anchors.verticalCenter: parent.verticalCenter; color: theme.accent; opacity: .55 }
                                 }
                             }
+                        }
+                    }
 
-                            ColumnLayout {
+                    Panel {
+                        Layout.row: 1
+                        Layout.column: 0
+                        Layout.fillWidth: true
+                        Layout.preferredHeight: 290
+                        ColumnLayout {
+                            anchors.fill: parent
+                            anchors.margins: 14
+                            spacing: 9
+                            RowLayout {
+                                Layout.fillWidth: true
+                                Text { text: "CONVERSATION"; color: theme.text; font.pixelSize: 11; font.weight: Font.DemiBold; font.letterSpacing: 1.2 }
+                                Item { Layout.fillWidth: true }
+                                Text { text: "PRIVATE LOCAL SESSION"; color: theme.muted; font.pixelSize: 9 }
+                            }
+                            Rectangle { Layout.fillWidth: true; height: 1; color: theme.line }
+                            ListView {
+                                id: homeChatList
                                 Layout.fillWidth: true
                                 Layout.fillHeight: true
-                                spacing: 10
-                                Item { Layout.fillHeight: true }
-                                Text { text: "ARLEN CORE"; color: theme.accent; font.pixelSize: 12; font.letterSpacing: 3 }
-                                Text {
-                                    text: "Good " + (new Date(root.clockTick).getHours() < 12 ? "morning" : (new Date(root.clockTick).getHours() < 18 ? "afternoon" : "evening")) + ", " + backend.ownerCallName
-                                    color: theme.text; font.pixelSize: root.width < 1100 ? 23 : 31; font.weight: Font.DemiBold; wrapMode: Text.Wrap
+                                clip: true
+                                spacing: 7
+                                model: ListModel {
+                                    id: homeChatModel
+                                    ListElement { role: "ARLEN"; body: "Command Center ready. Local tools are available; missing capability packs will be reported honestly." }
                                 }
-                                Text {
-                                    Layout.fillWidth: true
-                                    text: backend.welcomeMessage
-                                    color: theme.muted; font.pixelSize: 13; wrapMode: Text.Wrap; lineHeight: 1.35
-                                }
-                                Row {
-                                    spacing: 10
-                                    Rectangle { width: 132; height: 34; radius: 17; color: Qt.rgba(.16,.82,.56,.12); border.color: theme.good
-                                        Text { anchors.centerIn: parent; text: "●  CORE READY"; color: theme.good; font.pixelSize: 10; font.weight: Font.DemiBold }
+                                delegate: Rectangle {
+                                    required property string role
+                                    required property string body
+                                    width: homeChatList.width
+                                    height: homeBody.implicitHeight + 22
+                                    radius: 10
+                                    color: role === "YOU" ? Qt.rgba(.05,.32,.52,.22) : theme.card
+                                    border.color: role === "YOU" ? theme.accent : theme.line
+                                    Text {
+                                        id: homeBody
+                                        anchors.fill: parent; anchors.margins: 11
+                                        text: "<b>" + role + "</b>   " + body
+                                        textFormat: Text.RichText
+                                        color: theme.text
+                                        font.pixelSize: 11
+                                        wrapMode: Text.Wrap
                                     }
-                                    Rectangle { width: 152; height: 34; radius: 17; color: Qt.rgba(.12,.62,.84,.12); border.color: theme.accent
-                                        Text { anchors.centerIn: parent; text: "◆  PRIVATE LOCAL"; color: theme.accent; font.pixelSize: 10; font.weight: Font.DemiBold }
-                                    }
                                 }
-                                Text {
+                            }
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 8
+                                Rectangle {
+                                    width: 36; height: 36; radius: 18
+                                    color: Qt.rgba(.05,.35,.56,.2); border.color: theme.accent
+                                    Text { anchors.centerIn: parent; text: "◉"; color: theme.accent; font.pixelSize: 17 }
+                                }
+                                TextField {
+                                    id: homeChatInput
                                     Layout.fillWidth: true
-                                    text: "ARLEN — Adaptive Responsive Local Executive Neural-Assistant\nNEXUS — Neural Execution and Experience Unified System"
-                                    color: theme.muted; font.pixelSize: 10; lineHeight: 1.45
+                                    Layout.preferredHeight: 40
+                                    placeholderText: "Type a message or ARLEN command…"
+                                    color: theme.text; placeholderTextColor: theme.muted
+                                    background: Rectangle { color: theme.card; radius: 10; border.color: homeChatInput.activeFocus ? theme.accent : theme.line }
+                                    onAccepted: homePage.sendHomeMessage()
                                 }
-                                Item { Layout.fillHeight: true }
+                                Button {
+                                    Layout.preferredWidth: 72; Layout.preferredHeight: 40
+                                    text: "SEND"
+                                    background: Rectangle { color: theme.accent; radius: 10 }
+                                    contentItem: Text { text: parent.text; color: "#021014"; font.weight: Font.Bold; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                                    onClicked: homePage.sendHomeMessage()
+                                }
                             }
                         }
                     }
 
                     ColumnLayout {
+                        Layout.row: homePage.compact ? 2 : 0
+                        Layout.column: homePage.compact ? 0 : 1
+                        Layout.rowSpan: homePage.compact ? 1 : 2
                         Layout.fillWidth: true
-                        Layout.preferredWidth: 370
-                        Layout.preferredHeight: root.width < 1320 ? 245 : -1
-                        Layout.fillHeight: true
-                        spacing: 10
-                        Metric { Layout.fillWidth: true; Layout.fillHeight: true; label: "PROCESSOR"; value: backend.cpu.toFixed(0)+"%"; progress: backend.cpu/100 }
-                        Metric { Layout.fillWidth: true; Layout.fillHeight: true; label: "MEMORY"; value: backend.ram.toFixed(0)+"%"; progress: backend.ram/100 }
-                        Metric { Layout.fillWidth: true; Layout.fillHeight: true; label: "SYSTEM DISK"; value: backend.disk.toFixed(0)+"%"; progress: backend.disk/100 }
+                        Layout.preferredWidth: homePage.compact ? -1 : 330
+                        Layout.preferredHeight: homePage.compact ? 620 : 757
+                        spacing: 12
+
                         Panel {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 80
-                            RowLayout { anchors.fill: parent; anchors.margins: 14
-                                ColumnLayout { Layout.fillWidth: true
-                                    Text { text: backend.networkStatus.toUpperCase(); color: backend.networkStatus === "Online" ? theme.good : theme.warn; font.pixelSize: 12; font.weight: Font.DemiBold }
-                                    Text { text: backend.wifiName; color: theme.muted; font.pixelSize: 10 }
+                            Layout.preferredHeight: 250
+                            ColumnLayout {
+                                anchors.fill: parent; anchors.margins: 14; spacing: 7
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Text { text: "SYSTEM OVERVIEW"; color: theme.text; font.pixelSize: 11; font.weight: Font.DemiBold }
+                                    Item { Layout.fillWidth: true }
+                                    Text { text: "•••"; color: theme.muted }
                                 }
-                                Text { text: "↓ "+backend.downloadSpeed.toFixed(2)+"\n↑ "+backend.uploadSpeed.toFixed(2)+" Mbps"; color: theme.accent; font.pixelSize: 10; lineHeight: 1.4 }
+                                Repeater {
+                                    model: [
+                                        {icon:"▣", label:"CPU Usage", detail:"Processor", value:backend.cpu.toFixed(0)+"%", p:backend.cpu/100, color:theme.accent},
+                                        {icon:"▤", label:"RAM Usage", detail:"System memory", value:backend.ram.toFixed(0)+"%", p:backend.ram/100, color:"#8d88e8"},
+                                        {icon:"◇", label:"Disk Usage", detail:"System drive", value:backend.disk.toFixed(0)+"%", p:backend.disk/100, color:theme.warn}
+                                    ]
+                                    delegate: RowLayout {
+                                        required property var modelData
+                                        Layout.fillWidth: true
+                                        Layout.fillHeight: true
+                                        spacing: 9
+                                        Rectangle { width: 31; height: 31; radius: 15; color: Qt.rgba(.05,.22,.33,.55); border.color: modelData.color; Text { anchors.centerIn: parent; text:modelData.icon; color:modelData.color; font.pixelSize:11 } }
+                                        ColumnLayout { Layout.fillWidth: true; spacing: 2
+                                            Text { text:modelData.label; color:theme.text; font.pixelSize:10 }
+                                            Text { text:modelData.detail; color:theme.muted; font.pixelSize:8 }
+                                            Rectangle { Layout.fillWidth:true; height:2; color:theme.line; Rectangle { width:parent.width*Math.max(0,Math.min(1,modelData.p)); height:2; color:modelData.color } }
+                                        }
+                                        Text { text:modelData.value; color:modelData.color; font.pixelSize:13 }
+                                    }
+                                }
+                                RowLayout {
+                                    Layout.fillWidth: true
+                                    Text { text:"◷"; color:theme.accent; font.pixelSize:15 }
+                                    Text { text:"System Uptime"; color:theme.text; font.pixelSize:10 }
+                                    Item { Layout.fillWidth:true }
+                                    Text { text:backend.uptime; color:theme.text; font.pixelSize:12 }
+                                }
+                            }
+                        }
+
+                        Panel {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 178
+                            ColumnLayout {
+                                anchors.fill: parent; anchors.margins: 14; spacing: 7
+                                Text { text:"NETWORK STATUS"; color:theme.text; font.pixelSize:11; font.weight:Font.DemiBold }
+                                Rectangle { Layout.fillWidth:true; height:1; color:theme.line }
+                                RowLayout { Layout.fillWidth:true; Text{text:"⌁  Wi-Fi";color:theme.text;font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:backend.wifiName;color:theme.muted;font.pixelSize:9} Text{text:backend.networkStatus;color:backend.networkStatus==="Online"?theme.good:theme.warn;font.pixelSize:9} }
+                                RowLayout { Layout.fillWidth:true; Text{text:"↓  Download";color:theme.good;font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:backend.downloadSpeed.toFixed(2)+" Mbps";color:theme.text;font.pixelSize:10} }
+                                RowLayout { Layout.fillWidth:true; Text{text:"↑  Upload";color:"#de6b76";font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:backend.uploadSpeed.toFixed(2)+" Mbps";color:theme.text;font.pixelSize:10} }
+                                RowLayout { Layout.fillWidth:true; Text{text:"Session";color:theme.muted;font.pixelSize:9} Item{Layout.fillWidth:true} Text{text:backend.sessionUsage;color:theme.text;font.pixelSize:9} }
+                            }
+                        }
+
+                        Panel {
+                            Layout.fillWidth: true
+                            Layout.fillHeight: true
+                            ColumnLayout {
+                                anchors.fill: parent; anchors.margins: 14; spacing: 8
+                                Text { text:"QUICK ACTIONS"; color:theme.text; font.pixelSize:11; font.weight:Font.DemiBold }
+                                GridLayout {
+                                    Layout.fillWidth: true; Layout.fillHeight: true; columns: 2; rowSpacing:6; columnSpacing:6
+                                    Repeater {
+                                        model: [
+                                            {label:"SYSTEM REFRESH", cmd:"system refresh"},
+                                            {label:"OPEN BRAVE", cmd:"open brave"},
+                                            {label:"DOWNLOADS", cmd:"open downloads"},
+                                            {label:"SYSTEM STATUS", cmd:"system status"},
+                                            {label:"NOTEPAD", cmd:"open notepad"},
+                                            {label:"CALCULATOR", cmd:"open calculator"}
+                                        ]
+                                        delegate: AppButton {
+                                            required property var modelData
+                                            Layout.fillWidth: true
+                                            Layout.fillHeight: true
+                                            text: modelData.label
+                                            onClicked: backend.execute(modelData.cmd)
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                }
-
-                GridLayout {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: root.width < 1450 ? 690 : 310
-                    columns: root.width < 1450 ? 1 : 3
-                    columnSpacing: 12
-                    rowSpacing: 12
 
                     Panel {
+                        Layout.row: homePage.compact ? 3 : 2
+                        Layout.column: 0
+                        Layout.columnSpan: homePage.compact ? 1 : 2
                         Layout.fillWidth: true
-                        Layout.fillHeight: true
-                        Layout.preferredHeight: root.width < 1450 ? 210 : -1
-                        Layout.minimumWidth: 0
-                        ColumnLayout {
-                            anchors.fill: parent; anchors.margins: 20; spacing: 12
-                            RowLayout { Layout.fillWidth: true
-                                Text { text: "SYSTEM ACTIVITY"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
-                                Item { Layout.fillWidth: true }
-                                Text { text: "UPTIME  " + backend.uptime; color: theme.accent; font.pixelSize: 10 }
-                            }
-                            Rectangle { Layout.fillWidth: true; height: 1; color: theme.line }
-                            Text { Layout.fillWidth: true; Layout.fillHeight: true; text: backend.topApps; color: theme.muted; font.pixelSize: 11; lineHeight: 1.6 }
-                        }
-                    }
-
-                    Panel {
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 390
-                        Layout.fillHeight: true
-                        Layout.preferredHeight: root.width < 1450 ? 220 : -1
-                        ColumnLayout {
-                            anchors.fill: parent; anchors.margins: 20; spacing: 9
-                            Text { text: "CAPABILITY STATUS"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
-                            Rectangle { Layout.fillWidth: true; height: 1; color: theme.line }
-                            Text {
-                                Layout.fillWidth: true; Layout.fillHeight: true
-                                text: backend.packStatus()
-                                color: theme.muted; font.pixelSize: 11; lineHeight: 1.55
-                            }
-                            AppButton { Layout.fillWidth: true; text: "MANAGE CAPABILITY PACKS"; onClicked: root.activePage = 9 }
-                        }
-                    }
-
-                    Panel {
-                        Layout.fillWidth: true
-                        Layout.preferredWidth: 330
-                        Layout.fillHeight: true
-                        Layout.preferredHeight: root.width < 1450 ? 230 : -1
-                        ColumnLayout {
-                            anchors.fill: parent; anchors.margins: 20; spacing: 8
-                            Text { text: "QUICK ACTIONS"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
+                        Layout.preferredHeight: 70
+                        RowLayout {
+                            anchors.fill: parent; anchors.margins: 10; spacing: 8
                             Repeater {
                                 model: [
-                                    {label:"OPEN BRAVE", command:"open brave"},
-                                    {label:"OPEN DOWNLOADS", command:"open downloads"},
-                                    {label:"SYSTEM STATUS", command:"system status"},
-                                    {label:"SAFE CLEANUP", command:"cleanup"}
+                                    {label:"⌂  HOME", page:0},
+                                    {label:"▣  CONSOLE", page:3},
+                                    {label:"◉  VOICE", page:2},
+                                    {label:"↻  AUTOMATION", page:6},
+                                    {label:"▤  FILES", page:5},
+                                    {label:"⚙  ADMIN", page:9}
                                 ]
                                 delegate: AppButton {
                                     required property var modelData
                                     Layout.fillWidth: true
-                                    text: modelData.label
-                                    onClicked: backend.execute(modelData.command)
+                                    Layout.fillHeight: true
+                                    text:modelData.label
+                                    selected:root.activePage===modelData.page
+                                    onClicked:root.activePage=modelData.page
                                 }
                             }
+                            Image { Layout.preferredWidth:46; Layout.preferredHeight:46; source:"../assets/neural-sphere.png"; fillMode:Image.PreserveAspectFit }
                         }
                     }
                 }
+            }
 
-                Panel {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 78
-                    RowLayout {
-                        anchors.fill: parent; anchors.margins: 12; spacing: 10
-                        Rectangle { width: 42; height: 42; radius: 21; color: Qt.rgba(.12,.65,.82,.15); border.color: theme.accent
-                            Text { anchors.centerIn: parent; text: "A"; color: theme.accent; font.pixelSize: 17; font.weight: Font.Bold }
-                        }
-                        TextField {
-                            id: quickInput
-                            Layout.fillWidth: true
-                            placeholderText: "Ask ARLEN or enter a local command…"
-                            color: theme.text; placeholderTextColor: theme.muted
-                            background: Rectangle { color: theme.card; radius: 12; border.color: quickInput.activeFocus ? theme.accent : theme.line }
-                            onAccepted: { backend.execute(text); text="" }
-                        }
-                        Button {
-                            text: "EXECUTE"; Layout.preferredWidth: 132; Layout.fillHeight: true
-                            onClicked: { backend.execute(quickInput.text); quickInput.text="" }
-                            background: Rectangle { color: parent.hovered ? Qt.lighter(theme.accent, 1.12) : theme.accent; radius: 12 }
-                            contentItem: Text { text: parent.text; color: "#021014"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.weight: Font.Bold }
-                        }
-                    }
-                }
+            function sendHomeMessage() {
+                var text = homeChatInput.text.trim()
+                if (!text.length) return
+                homeChatModel.append({role:"YOU", body:text})
+                if (text.toLowerCase().indexOf("system refresh") >= 0 || text.toLowerCase().indexOf("ram refresh") >= 0)
+                    backend.execute(text)
+                else
+                    backend.sendChat(text)
+                homeChatInput.text = ""
+                homeChatList.positionViewAtEnd()
+            }
+
+            Connections {
+                target: backend
+                function onChatReply(reply, state) {
+                    homeChatModel.append({role:"ARLEN", body:reply})
+                    homeChatList.positionViewAtEnd()
                 }
             }
         }
