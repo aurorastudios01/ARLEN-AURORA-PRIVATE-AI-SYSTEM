@@ -45,11 +45,16 @@ jobs:
         shell: pwsh
         run: |
           $setup = Resolve-Path "installer-output/ARLEN-NEXUS-Setup-v0.6.exe"
-          & $setup /VERYSILENT /SUPPRESSMSGBOXES /NORESTART
-          $installed = "$env:LOCALAPPDATA\Programs\ARLEN NEXUS\ARLEN NEXUS.exe"
-          if (-not (Test-Path $installed)) { throw "Installed EXE missing" }
+          $testInstall = Join-Path $env:RUNNER_TEMP "ARLEN-NEXUS-v06"
+          & $setup /VERYSILENT /SUPPRESSMSGBOXES /NORESTART "/DIR=$testInstall"
+          if ($LASTEXITCODE -ne 0) { throw "Silent installer failed with code $LASTEXITCODE" }
+          $installed = Join-Path $testInstall "ARLEN NEXUS.exe"
+          if (-not (Test-Path $installed)) {
+            Get-ChildItem $testInstall -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
+            throw "Installed EXE missing at $installed"
+          }
           $env:QT_SCALE_FACTOR = "1"
-          $process = Start-Process -FilePath $installed -PassThru
+          $process = Start-Process -FilePath $installed -WorkingDirectory $testInstall -PassThru
           Start-Sleep -Seconds 22
           if ($process.HasExited) { throw "Installed app exited with code $($process.ExitCode)" }
           Add-Type -AssemblyName System.Windows.Forms
