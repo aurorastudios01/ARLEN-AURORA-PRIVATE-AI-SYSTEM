@@ -191,6 +191,20 @@ class ArlenCoreTests(unittest.TestCase):
         APP.processEvents()
         self.assertIn("locked", messages[-1][0].lower())
 
+    def test_system_refresh_is_safe_and_clears_arlen_previews(self):
+        preview_dir = self.base / "image_previews"
+        preview_dir.mkdir()
+        (preview_dir / "preview.jpg").write_bytes(b"temporary")
+        self.backend._brain = object()
+        messages = []
+        self.backend.commandResult.connect(lambda message, level: messages.append((message, level)))
+        with patch.object(backend_module, "DATA", self.base):
+            result = self.backend.systemRefresh()
+        self.assertIsNone(self.backend._brain)
+        self.assertFalse((preview_dir / "preview.jpg").exists())
+        self.assertIn("SYSTEM REFRESH COMPLETE", result)
+        self.assertEqual(messages[-1][1], "success")
+
     def test_system_details_are_valid_json(self):
         details = json.loads(self.backend.systemDetails())
         self.assertIn("total_ram_gb", details)
