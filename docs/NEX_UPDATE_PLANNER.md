@@ -1,7 +1,9 @@
-# ARLEN NEXUS - Next Update Planner
+# ARLEN NEXUS - Development History & Next Update Planner
 
 ## Project Vision
-ARLEN NEXUS is a private offline-first AI workstation for Windows. It is designed as an AI agent, not only a chatbot.
+ARLEN NEXUS is a private offline-first AI workstation for Windows.
+
+It is designed as an AI agent, not only a chatbot.
 
 Core concept:
 - Ollama = AI Brain
@@ -11,255 +13,255 @@ Core concept:
 
 ---
 
-# Current Completed Setup
+# Version History Roadmap
 
-## Environment
-- Python 3.11.9 installed
-- Ollama 0.32.15 installed and working
-- Qwen2.5:3B model installed and tested
-- FFmpeg installed
+## v0.1 - Project Foundation
+Added:
+- Initial ARLEN NEXUS concept
+- Offline-first AI assistant planning
+- Local AI architecture decision
+- Windows desktop application vision
 
-## Image Processing Base Installed
+---
+
+## v0.2 - Local AI Engine Setup
+Added:
+- Python backend foundation
+- Ollama integration planning
+- Qwen local model support
+
+---
+
+## v0.3 - AI Brain Setup
+Completed:
+- Python 3.11.9
+- Ollama 0.32.15
+- Qwen2.5:3B model installation and testing
+
+---
+
+## v0.4 - Tool System Planning
+Added:
+- Backend tool architecture
+- AI Brain + Python Hands concept
+- Modular tools system
+
+---
+
+## v0.5 - Memory System Planning
+Added:
+- Local memory database concept
+- SQLite based memory system
+- User preference storage
+- Project memory
+- Chat history storage
+
+---
+
+## v0.6 - Document Intelligence Planning
+Added:
+- PDF reading
+- PDF summary
+- Text extraction
+- Document assistant
+- TXT, DOCX, CSV, Excel, Markdown support
+
+---
+
+## v0.7 - Image Intelligence Planning
+Added:
 - Pillow
 - OpenCV
 - NumPy
 - piexif
-- rembg (optional module, not default)
+- rembg optional module
 
-## Hardware Target
-- Optimized for 4GB RAM class PC
-- Low resource architecture
-- No heavy background services
+Features planned:
+- Image analysis
+- Sharpness improvement
+- Texture enhancement
+- Light correction
+- Contrast adjustment
+- Color balance
+- Cinematic background blur
+
+Removed from default:
+- Automatic background removal
 
 ---
 
-# Current Design Decisions
-
-## Voice System
-- No AI voice assistant
-- No Whisper/TTS in main application
-- Only UI sound effects:
-  - Startup
-  - Close
-  - Warning
-  - Processing
-  - File/PDF/Image completion
-  - Notification sounds
-
-## Dynamic Interface
-- Fully animated interface
+## v0.8 - UI Vision
+Added:
+- Premium futuristic desktop UI
+- Animated AI sphere
 - Dynamic backgrounds
-- Multiple animated AI spheres
-- Theme switching system
 - Command Center
-- System monitoring panels
-
-Themes, spheres, backgrounds and sounds will only be managed from inside ARLEN NEXUS.
-
----
-
-# Default Theme Decision
-
-## Default Theme: Aurora AI (Theme 9)
-
-Design direction:
-- Dark glass UI
-- Aurora energy background
-- Futuristic AI sphere
-- Purple/blue/cyan lighting
-- Premium workstation feeling
-- Lightweight animation suitable for low RAM systems
+- System panels
+- Dark and Light themes
 
 ---
 
-# Default Dashboard Layout
+## v0.9 - Theme & Experience System
+Added:
+- Multiple animated themes
+- Selectable AI spheres
+- UI sound system
+- Startup sound
+- Warning sound
+- Processing sound
+- Completion sounds
 
-Windows-style desktop application interface:
+No AI voice assistant.
 
-## Top Area
-- ARLEN NEXUS branding
-- System shortcuts
-- Command access
+Removed:
+- Whisper/TTS voice system
 
-## Center
-- Animated AI Sphere
-- Dynamic AI status visualization
+Reason:
+- Better stability
+- Better performance on 4GB RAM PC
 
-## System Panels
+---
 
+## v1.0 - ARLEN Workstation Interface
+Added:
+Default Theme:
+- Aurora AI
+
+Interface:
+- Animated AI Core
+- System monitoring
 - CPU
 - RAM
 - Storage
-- AI Model
-- Temperature
 - Battery
 - Sound
 - Brightness
+- Left side Quick Tools
 
-Battery, sound and brightness controls remain compact to keep the interface clean.
-
----
-
-# Quick Tools System
-
-Quick Tools moved to the left side panel.
-
-Available tools:
-
+Tools:
 - Calculator
 - Scientific Calculator
-- Unit Converter
 - PDF Tools
 - Image Tools
 - File Manager
-- Note Pad
-- Screenshot Tool
-- Clipboard Manager
-- System Info
-- Settings
+- Notes
+- Screenshot
 
 ---
 
-# Scientific Calculator Module
+## v1.1 - Smart Environment Setup Layer
+Added:
 
-Inspired by Casio fx-991CW style functionality.
+## Auto System Discovery
 
-Features:
-- Basic calculation
-- Scientific functions
-- Trigonometry
-- Logarithm
-- Power
-- Root
-- Equation solving
-- Matrix calculation
-- Statistics
-- Unit conversion
+ARLEN will detect existing PC environment on first launch.
+
+Detect:
+- Python installation
+- Ollama installation
+- AI models
+- FFmpeg
+- Installed applications
+- Browsers
+- Available tools
 
 ---
 
-# PC Assistant Scope (V1)
+## Auto Configuration
 
-ARLEN will provide practical PC assistance.
+ARLEN will configure itself according to the user's PC.
 
-## Application Launcher
+Examples:
+- Detect available browsers
+- Detect installed editors
+- Detect document tools
+- Detect media applications
 
-User commands:
+---
+
+## Practical PC Assistant Scope
+
+ARLEN V1 will focus on useful assistance.
+
+Can:
 - Open Chrome
 - Open Brave
 - Open VS Code
 - Open Calculator
-- Open required applications
-
-## File and Document Helper
-
-Functions:
-- Find documents
-- Search local files
+- Launch installed applications
+- Find local documents
+- Search files
 - Open required files
-- Organize files
-
-## Web Search Helper
-
-Functions:
-- Open browser
-- Search required topics
 - Find useful documents
+- Open browser searches
 - Find news and information
 
 ---
 
 # Removed From Current Roadmap
 
-Not required for current version:
+Not required now:
 
 - Messenger automation
 - Automatic message sending
-- Full mouse/keyboard takeover
 - Social media automation
+- Full mouse and keyboard takeover
 - Deep browser automation
 
-These may become optional future plugins.
+Future plugin possibility only.
 
 ---
 
-# Theme Collection
+# Current Completed Setup
 
-Available themes:
+Environment:
+- Python 3.11.9
+- Ollama 0.32.15
+- Qwen2.5:3B
+- FFmpeg
 
-1. Cyber Dark
-2. Premium Light
-3. Space AI
-4. Neural Matrix
-5. Glass Horizon
-6. Minimal Pro
-7. Quantum Core
-8. Cyber Command
-9. Hologram Studio
-10. Aurora AI (Default)
+Image Base:
+- Pillow
+- OpenCV
+- NumPy
+- piexif
+- rembg optional
 
-All themes must be realistic for actual implementation, optimized for performance, and compatible with the ARLEN UI engine.
+Hardware Target:
+- 4GB RAM optimization
+- Low resource design
 
 ---
 
-# AI Sphere System
+# Final ARLEN NEXUS Goal
 
-Selectable animated AI cores:
+A personal AI operating companion with:
 
-- Quantum Sphere
-- Plasma Sphere
-- Crystal Sphere
-- Hologram Sphere
-- Galaxy Sphere
-- Neural Sphere
-- Cyber Ring Sphere
-
-Sphere reacts to ARLEN state:
-
-Idle:
-Slow floating animation
-
-Thinking:
-Energy pulse increase
-
-Processing:
-Data movement animation
-
-Complete:
-Success pulse
-
-Error:
-Warning animation
+- Offline intelligence
+- Local memory
+- Smart environment setup
+- Image/PDF/document intelligence
+- Practical PC assistance
+- Application launcher
+- File assistant
+- Browser helper
+- Dynamic futuristic interface
+- Modular expansion system
+- Professional AI workstation experience
 
 ---
 
 # Next Development Order
 
-1. Backend core structure
+1. Backend core
 2. Ollama API connection
-3. AI Agent planner
+3. Agent planner
 4. Memory database
 5. Tool manager
-6. Image intelligence module
-7. PDF intelligence module
-8. File management tools
-9. App launcher and search assistant
-10. Premium UI implementation
-11. EXE installer
-
----
-
-# Final Goal
-
-ARLEN NEXUS will become a personal AI operating companion with:
-
-- Offline intelligence
-- Local memory
-- Smart automation
-- Image/PDF/document intelligence
-- Practical PC assistance
-- Application launcher
-- Document and web search helper
-- Dynamic futuristic interface
-- Modular expansion system
-- Professional desktop workstation experience
+6. System scanner
+7. Image module
+8. PDF module
+9. File assistant
+10. Application launcher
+11. Premium UI
+12. EXE installer
