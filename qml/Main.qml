@@ -6,10 +6,11 @@ import QtQuick.Dialogs
 ApplicationWindow {
     id: root
     visible: true
-    width: 1500
-    height: 920
-    minimumWidth: 1120
-    minimumHeight: 720
+    width: 1440
+    height: 900
+    minimumWidth: 1050
+    minimumHeight: 680
+    visibility: Window.Maximized
     title: "ARLEN NEXUS — Personal Intelligence & System Control Environment"
     color: theme.bg
     flags: Qt.Window | Qt.FramelessWindowHint
@@ -35,14 +36,14 @@ ApplicationWindow {
     component AppButton: Button {
         id: control
         property bool selected: false
-        implicitHeight: 46
-        background: Rectangle { radius: 8; color: control.selected ? Qt.rgba(0.1,0.55,0.68,0.18) : (control.hovered ? theme.card : "transparent"); border.color: control.selected ? theme.accent : "transparent" }
+        implicitHeight: 48
+        background: Rectangle { radius: 11; color: control.selected ? Qt.rgba(0.1,0.55,0.68,0.18) : (control.hovered ? theme.card : "transparent"); border.color: control.selected ? theme.accent : "transparent" }
         contentItem: Text { text: control.text; color: control.selected ? theme.accent : theme.text; font.pixelSize: 13; font.weight: Font.Medium; verticalAlignment: Text.AlignVCenter; leftPadding: 14 }
     }
 
     component Panel: Rectangle {
         color: theme.panel
-        radius: 12
+        radius: 18
         border.color: theme.line
         border.width: 1
     }
@@ -107,7 +108,7 @@ ApplicationWindow {
     Rectangle {
         id: sidebar
         anchors.top: topbar.bottom; anchors.bottom: parent.bottom; anchors.left: parent.left
-        width: 210; color: theme.panel; border.color: theme.line
+        width: 232; color: theme.panel; border.color: theme.line
         Column { anchors.fill: parent; anchors.margins: 12; spacing: 3
             Repeater { model: ["⌂   HOME","◈   CHAT","◉   VOICE","▣   SYSTEM","⌁   NETWORK","▤   FILES","↻   AUTOMATION","◇   CLEANUP","⬡   SECURITY","⚙   ADMIN","▧   IMAGE STUDIO","◉   VISION / OCR","▤   PDF STUDIO","✦   THEME STUDIO","ⓘ   ABOUT"]
                 AppButton { required property string modelData; required property int index; width: parent.width; text: modelData; selected: root.activePage === index; onClicked: root.activePage = index }
@@ -124,76 +125,207 @@ ApplicationWindow {
         anchors.top: topbar.bottom; anchors.bottom: parent.bottom; anchors.left: sidebar.right; anchors.right: parent.right
         currentIndex: root.activePage
 
-        Item { // HOME
-            anchors.margins: 18
-            RowLayout { anchors.fill: parent; spacing: 14
-                ColumnLayout { Layout.preferredWidth: 260; Layout.fillHeight: true; spacing: 12
-                    Panel { Layout.fillWidth: true; Layout.fillHeight: true
-                        Column { anchors.fill: parent; anchors.margins: 14; spacing: 9
-                            Text { text: "SYSTEM OVERVIEW"; color: theme.text; font.pixelSize: 12; font.weight: Font.DemiBold }
-                            Metric { width: parent.width; label: "CPU USAGE"; value: backend.cpu.toFixed(0)+"%"; progress: backend.cpu/100 }
-                            Metric { width: parent.width; label: "RAM USAGE"; value: backend.ram.toFixed(0)+"%"; progress: backend.ram/100 }
-                            Metric { width: parent.width; label: "DISK USAGE"; value: backend.disk.toFixed(0)+"%"; progress: backend.disk/100 }
-                            Text { text: "UPTIME\n"+backend.uptime; color: theme.muted; font.pixelSize: 11; lineHeight: 1.35 }
+        Item { // HOME — RESPONSIVE COMMAND CENTER
+            ColumnLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                spacing: 14
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: Math.max(310, parent.height * .47)
+                    spacing: 14
+
+                    Panel {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.minimumWidth: 560
+                        clip: true
+
+                        Rectangle {
+                            anchors.fill: parent
+                            radius: 18
+                            gradient: Gradient {
+                                GradientStop { position: 0; color: Qt.rgba(.03,.18,.25,.98) }
+                                GradientStop { position: 1; color: theme.panel }
+                            }
+                        }
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 26
+                            spacing: 28
+
+                            Item {
+                                Layout.preferredWidth: Math.min(360, parent.width * .42)
+                                Layout.fillHeight: true
+
+                                Image {
+                                    id: sphere
+                                    anchors.centerIn: parent
+                                    width: Math.min(parent.width * .88, parent.height * .86)
+                                    height: width
+                                    source: backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"
+                                    fillMode: Image.PreserveAspectFit
+                                    opacity: .92
+                                    RotationAnimator on rotation { from: 0; to: 360; duration: 70000; loops: Animation.Infinite }
+                                    SequentialAnimation on scale {
+                                        loops: Animation.Infinite
+                                        NumberAnimation { to: 1.035; duration: 1600; easing.type: Easing.InOutSine }
+                                        NumberAnimation { to: 1; duration: 1600; easing.type: Easing.InOutSine }
+                                    }
+                                }
+                                Rectangle {
+                                    anchors.centerIn: sphere
+                                    width: sphere.width * .68; height: width; radius: width / 2
+                                    color: "transparent"; border.width: 1; border.color: Qt.rgba(.15,.8,.92,.35)
+                                    RotationAnimator on rotation { from: 0; to: -360; duration: 22000; loops: Animation.Infinite }
+                                }
+                                Rectangle {
+                                    anchors.centerIn: sphere
+                                    width: sphere.width * .46; height: width; radius: width / 2
+                                    color: "transparent"; border.width: 2; border.color: theme.accent; opacity: .44
+                                    SequentialAnimation on scale { loops: Animation.Infinite; NumberAnimation { to:1.12; duration:1200 } NumberAnimation { to:1; duration:1200 } }
+                                }
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.fillHeight: true
+                                spacing: 10
+                                Item { Layout.fillHeight: true }
+                                Text { text: "ARLEN CORE"; color: theme.accent; font.pixelSize: 12; font.letterSpacing: 3 }
+                                Text {
+                                    text: "Good " + (new Date(root.clockTick).getHours() < 12 ? "morning" : (new Date(root.clockTick).getHours() < 18 ? "afternoon" : "evening")) + ", " + backend.ownerCallName
+                                    color: theme.text; font.pixelSize: 31; font.weight: Font.DemiBold
+                                }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: backend.welcomeMessage
+                                    color: theme.muted; font.pixelSize: 13; wrapMode: Text.Wrap; lineHeight: 1.35
+                                }
+                                Row {
+                                    spacing: 10
+                                    Rectangle { width: 132; height: 34; radius: 17; color: Qt.rgba(.16,.82,.56,.12); border.color: theme.good
+                                        Text { anchors.centerIn: parent; text: "●  CORE READY"; color: theme.good; font.pixelSize: 10; font.weight: Font.DemiBold }
+                                    }
+                                    Rectangle { width: 152; height: 34; radius: 17; color: Qt.rgba(.12,.62,.84,.12); border.color: theme.accent
+                                        Text { anchors.centerIn: parent; text: "◆  PRIVATE LOCAL"; color: theme.accent; font.pixelSize: 10; font.weight: Font.DemiBold }
+                                    }
+                                }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: "ARLEN — Adaptive Responsive Local Executive Neural-Assistant\nNEXUS — Neural Execution and Experience Unified System"
+                                    color: theme.muted; font.pixelSize: 10; lineHeight: 1.45
+                                }
+                                Item { Layout.fillHeight: true }
+                            }
                         }
                     }
-                    Panel { Layout.fillWidth: true; Layout.preferredHeight: 200
-                        Column { anchors.fill: parent; anchors.margins: 14; spacing: 10
-                            Text { text: "TOP MEMORY PROCESSES"; color: theme.text; font.pixelSize: 12; font.weight: Font.DemiBold }
-                            Text { text: backend.topApps; color: theme.muted; font.pixelSize: 11; lineHeight: 1.55 }
+
+                    ColumnLayout {
+                        Layout.preferredWidth: 370
+                        Layout.fillHeight: true
+                        spacing: 10
+                        Metric { Layout.fillWidth: true; Layout.fillHeight: true; label: "PROCESSOR"; value: backend.cpu.toFixed(0)+"%"; progress: backend.cpu/100 }
+                        Metric { Layout.fillWidth: true; Layout.fillHeight: true; label: "MEMORY"; value: backend.ram.toFixed(0)+"%"; progress: backend.ram/100 }
+                        Metric { Layout.fillWidth: true; Layout.fillHeight: true; label: "SYSTEM DISK"; value: backend.disk.toFixed(0)+"%"; progress: backend.disk/100 }
+                        Panel {
+                            Layout.fillWidth: true
+                            Layout.preferredHeight: 80
+                            RowLayout { anchors.fill: parent; anchors.margins: 14
+                                ColumnLayout { Layout.fillWidth: true
+                                    Text { text: backend.networkStatus.toUpperCase(); color: backend.networkStatus === "Online" ? theme.good : theme.warn; font.pixelSize: 12; font.weight: Font.DemiBold }
+                                    Text { text: backend.wifiName; color: theme.muted; font.pixelSize: 10 }
+                                }
+                                Text { text: "↓ "+backend.downloadSpeed.toFixed(2)+"\n↑ "+backend.uploadSpeed.toFixed(2)+" Mbps"; color: theme.accent; font.pixelSize: 10; lineHeight: 1.4 }
+                            }
                         }
                     }
                 }
 
-                ColumnLayout { Layout.fillWidth: true; Layout.fillHeight: true; spacing: 12
-                    Panel { Layout.fillWidth: true; Layout.fillHeight: true
-                        Item { anchors.fill: parent
-                            Image { id: sphere; anchors.centerIn: parent; width: Math.min(parent.width*.63, parent.height*.82); height: width; source: backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"; fillMode: Image.PreserveAspectFit; opacity: .87
-                                RotationAnimator on rotation { from: 0; to: 360; duration: 65000; loops: Animation.Infinite }
+                RowLayout {
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+                    spacing: 14
+
+                    Panel {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        Layout.minimumWidth: 500
+                        ColumnLayout {
+                            anchors.fill: parent; anchors.margins: 20; spacing: 12
+                            RowLayout { Layout.fillWidth: true
+                                Text { text: "SYSTEM ACTIVITY"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
+                                Item { Layout.fillWidth: true }
+                                Text { text: "UPTIME  " + backend.uptime; color: theme.accent; font.pixelSize: 10 }
                             }
-                            Rectangle { anchors.centerIn: sphere; width: sphere.width*.34; height: width; radius: width/2; color: "transparent"; border.color: theme.accent; border.width: 1; opacity: .55
-                                SequentialAnimation on scale { loops: Animation.Infinite; NumberAnimation { to:1.08; duration:1200; easing.type:Easing.InOutSine } NumberAnimation { to:1; duration:1200; easing.type:Easing.InOutSine } }
-                            }
-                            Repeater { model: 54
-                                Text { required property int index; visible: root.dataFlow; text: index%3 ? "0" : "1"; color: index%4 ? theme.good : "#cf5864"; opacity: .5; font.family: "Consolas"; font.pixelSize: 9; x: (index*97 + root.flowTick) % Math.max(1,parent.width); y: (index*53 + root.flowTick*(index%2 ? .2 : -.2) + parent.height) % Math.max(1,parent.height) }
-                            }
-                            Column { anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 22; spacing: 4
-                                Text { anchors.horizontalCenter: parent.horizontalCenter; text: "ARLEN CORE"; color: theme.text; font.pixelSize: 16; font.weight: Font.Medium }
-                                Text { anchors.horizontalCenter: parent.horizontalCenter; text: root.dataFlow ? "DATA FLOW ACTIVE" : "LOCAL CORE READY"; color: root.dataFlow ? theme.good : theme.accent; font.pixelSize: 10 }
-                            }
+                            Rectangle { Layout.fillWidth: true; height: 1; color: theme.line }
+                            Text { Layout.fillWidth: true; Layout.fillHeight: true; text: backend.topApps; color: theme.muted; font.pixelSize: 11; lineHeight: 1.6 }
                         }
                     }
-                    Panel { Layout.fillWidth: true; Layout.preferredHeight: 82
-                        RowLayout { anchors.fill: parent; anchors.margins: 12; spacing: 10
-                            TextField { id: quickInput; Layout.fillWidth: true; placeholderText: "Message or command ARLEN…"; color: theme.text; placeholderTextColor: theme.muted; background: Rectangle { color: theme.card; radius: 8; border.color: theme.line } onAccepted: { backend.execute(text); text="" } }
-                            Button { text: "EXECUTE"; onClicked: { backend.execute(quickInput.text); quickInput.text="" } background: Rectangle { color: theme.accent; radius: 8 } contentItem: Text { text: parent.text; color: "#021014"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.weight: Font.DemiBold } }
+
+                    Panel {
+                        Layout.preferredWidth: 390
+                        Layout.fillHeight: true
+                        ColumnLayout {
+                            anchors.fill: parent; anchors.margins: 20; spacing: 9
+                            Text { text: "CAPABILITY STATUS"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
+                            Rectangle { Layout.fillWidth: true; height: 1; color: theme.line }
+                            Text {
+                                Layout.fillWidth: true; Layout.fillHeight: true
+                                text: backend.packStatus()
+                                color: theme.muted; font.pixelSize: 11; lineHeight: 1.55
+                            }
+                            AppButton { Layout.fillWidth: true; text: "MANAGE CAPABILITY PACKS"; onClicked: root.activePage = 9 }
+                        }
+                    }
+
+                    Panel {
+                        Layout.preferredWidth: 330
+                        Layout.fillHeight: true
+                        ColumnLayout {
+                            anchors.fill: parent; anchors.margins: 20; spacing: 8
+                            Text { text: "QUICK ACTIONS"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
+                            Repeater {
+                                model: [
+                                    {label:"OPEN BRAVE", command:"open brave"},
+                                    {label:"OPEN DOWNLOADS", command:"open downloads"},
+                                    {label:"SYSTEM STATUS", command:"system status"},
+                                    {label:"SAFE CLEANUP", command:"cleanup"}
+                                ]
+                                delegate: AppButton {
+                                    required property var modelData
+                                    Layout.fillWidth: true
+                                    text: modelData.label
+                                    onClicked: backend.execute(modelData.command)
+                                }
+                            }
                         }
                     }
                 }
 
-                ColumnLayout { Layout.preferredWidth: 270; Layout.fillHeight: true; spacing: 12
-                    Panel { Layout.fillWidth: true; Layout.preferredHeight: 225
-                        Column { anchors.fill: parent; anchors.margins: 14; spacing: 10
-                            Text { text: "NETWORK STATUS"; color: theme.text; font.pixelSize: 12; font.weight: Font.DemiBold }
-                            Text { text: "WI-FI\n"+backend.wifiName; color: theme.muted; font.pixelSize: 11; lineHeight: 1.3 }
-                            Text { text: "DOWNLOAD   "+backend.downloadSpeed.toFixed(2)+" Mbps"; color: theme.good; font.pixelSize: 12 }
-                            Text { text: "UPLOAD       "+backend.uploadSpeed.toFixed(2)+" Mbps"; color: "#cf6973"; font.pixelSize: 12 }
-                            Text { text: backend.sessionUsage(); color: theme.muted; font.pixelSize: 10 }
+                Panel {
+                    Layout.fillWidth: true
+                    Layout.preferredHeight: 78
+                    RowLayout {
+                        anchors.fill: parent; anchors.margins: 12; spacing: 10
+                        Rectangle { width: 42; height: 42; radius: 21; color: Qt.rgba(.12,.65,.82,.15); border.color: theme.accent
+                            Text { anchors.centerIn: parent; text: "A"; color: theme.accent; font.pixelSize: 17; font.weight: Font.Bold }
                         }
-                    }
-                    Panel { Layout.fillWidth: true; Layout.preferredHeight: 205
-                        Column { anchors.fill: parent; anchors.margins: 14; spacing: 12
-                            Text { text: "SECURITY CENTER"; color: theme.text; font.pixelSize: 12; font.weight: Font.DemiBold }
-                            Text { text: "●  FIREWALL MONITORED\n●  LOCAL BRAIN PRIVATE\n●  BRAVE SHIELD AVAILABLE\n●  ADMIN CONTROL ACTIVE"; color: theme.good; font.pixelSize: 10; lineHeight: 1.65 }
-                            AppButton { width: parent.width; text: "OPEN SECURITY HUB"; onClicked: root.activePage=8 }
+                        TextField {
+                            id: quickInput
+                            Layout.fillWidth: true
+                            placeholderText: "Ask ARLEN or enter a local command…"
+                            color: theme.text; placeholderTextColor: theme.muted
+                            background: Rectangle { color: theme.card; radius: 12; border.color: quickInput.activeFocus ? theme.accent : theme.line }
+                            onAccepted: { backend.execute(text); text="" }
                         }
-                    }
-                    Panel { Layout.fillWidth: true; Layout.fillHeight: true
-                        Column { anchors.fill: parent; anchors.margins: 14; spacing: 8
-                            Text { text: "QUICK COMMANDS"; color: theme.text; font.pixelSize: 12; font.weight: Font.DemiBold }
-                            Repeater { model: ["Open Brave","Open Downloads","Show system status","Cleanup system","Take screenshot"]
-                                AppButton { required property string modelData; width: parent.width; text: modelData; onClicked: backend.execute(modelData) }
-                            }
+                        Button {
+                            text: "EXECUTE"; Layout.preferredWidth: 132; Layout.fillHeight: true
+                            onClicked: { backend.execute(quickInput.text); quickInput.text="" }
+                            background: Rectangle { color: parent.hovered ? Qt.lighter(theme.accent, 1.12) : theme.accent; radius: 12 }
+                            contentItem: Text { text: parent.text; color: "#021014"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.weight: Font.Bold }
                         }
                     }
                 }
@@ -527,7 +659,7 @@ ApplicationWindow {
                             Text { text:backend.ownerName.toUpperCase(); color:theme.text; font.pixelSize:22; font.weight:Font.Medium }
                             Text { width:560; wrapMode:Text.Wrap; text:"A private, offline-first intelligent environment created for secure personal computing, system control, automation and human–computer interaction. ARLEN is governed by owner authority, local privacy and transparent action controls."; color:theme.muted; font.pixelSize:12; lineHeight:1.45 }
                             Text { text:"CORE PRINCIPLES\nPRIVACY  •  LOCAL CONTROL  •  USER AUTHORITY  •  MODULAR INTELLIGENCE"; color:theme.good; font.pixelSize:11; lineHeight:1.6 }
-                            Text { text:"Version 0.3.0  •  Evolution Core Development Build\nBuilt for "+backend.ownerName+" — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
+                            Text { text:"Version 0.6.0  •  Interface Evolution Build\nBuilt for "+backend.ownerName+" — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
                         }
                     }
                 }
@@ -569,25 +701,120 @@ ApplicationWindow {
         id: splash
         visible: root.openingVisible
         anchors.fill: parent
-        color: "#02060b"
-        z: 100
-        Image { anchors.fill:parent; source:backend.customBackground.length ? backend.customBackground : "../assets/opening-circuit.png"; fillMode:Image.PreserveAspectCrop; opacity:.5
-            NumberAnimation on scale { from:1; to:1.12; duration:backend.openingDuration*1000; running:splash.visible }
+        color: "#010409"
+        z: 1000
+        property real splashProgress: 0
+        property string stageText: splashProgress < .18 ? "SECURE BOOT" : (splashProgress < .42 ? "LOADING LOCAL CORE" : (splashProgress < .68 ? "VERIFYING OWNER ENVIRONMENT" : (splashProgress < .9 ? "STARTING NEURAL INTERFACE" : "SYSTEM READY")))
+
+        Rectangle {
+            anchors.fill: parent
+            gradient: Gradient {
+                GradientStop { position: 0; color: "#010409" }
+                GradientStop { position: .48; color: "#04131d" }
+                GradientStop { position: 1; color: "#010509" }
+            }
         }
-        Rectangle { anchors.fill:parent; color:"#02060b"; opacity:.42 }
-        Image { anchors.centerIn:parent; width:Math.min(parent.width*.42,parent.height*.64); height:width; source:backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"; fillMode:Image.PreserveAspectFit; opacity:.88
-            RotationAnimator on rotation { from:0;to:360;duration:16000;loops:Animation.Infinite;running:splash.visible }
-            SequentialAnimation on scale { running:splash.visible; loops:Animation.Infinite; NumberAnimation{to:1.04;duration:800} NumberAnimation{to:1;duration:800} }
+
+        Repeater {
+            model: 42
+            Text {
+                required property int index
+                text: index % 3 ? "0" : "1"
+                color: index % 5 ? "#2ee7b2" : "#ef5870"
+                opacity: .08 + (index % 4) * .025
+                font.family: "Consolas"; font.pixelSize: 9
+                x: index % 2 ? ((index * 83 + root.flowTick * 1.8) % Math.max(1, splash.width)) : splash.width - ((index * 71 + root.flowTick * 1.5) % Math.max(1, splash.width))
+                y: (index * 47 + root.flowTick * .32) % Math.max(1, splash.height)
+            }
         }
-        Column { anchors.horizontalCenter:parent.horizontalCenter; anchors.bottom:parent.bottom; anchors.bottomMargin:72; spacing:8
-            Text { anchors.horizontalCenter:parent.horizontalCenter; text:"ARLEN NEXUS"; color:"#e8f8fc"; font.pixelSize:36; font.weight:Font.DemiBold; opacity:splashProgress>.48?1:0; Behavior on opacity{NumberAnimation{duration:700}} }
-            Text { anchors.horizontalCenter:parent.horizontalCenter; text:"ADAPTIVE RESPONSIVE LOCAL EXECUTIVE NEURAL-ASSISTANT"; color:"#28cce8"; font.pixelSize:11; opacity:splashProgress>.67?1:0; Behavior on opacity{NumberAnimation{duration:700}} }
-            Text { anchors.horizontalCenter:parent.horizontalCenter; text:"NEURAL EXECUTION AND EXPERIENCE UNIFIED SYSTEM"; color:"#7799a7"; font.pixelSize:10; opacity:splashProgress>.76?1:0; Behavior on opacity{NumberAnimation{duration:700}} }
-            Text { anchors.horizontalCenter:parent.horizontalCenter; text:"WELCOME, "+backend.ownerCallName.toUpperCase()+"  •  "+backend.welcomeMessage.toUpperCase(); color:"#53d99a"; font.pixelSize:10; opacity:splashProgress>.88?1:0; Behavior on opacity{NumberAnimation{duration:500}} }
+
+        Row {
+            anchors.left: parent.left; anchors.leftMargin: 34
+            anchors.top: parent.top; anchors.topMargin: 28
+            spacing: 12
+            Rectangle { width: 42; height: 42; radius: 21; color: "transparent"; border.width: 1; border.color: "#28cce8"
+                Text { anchors.centerIn: parent; text: "A"; color: "#28cce8"; font.pixelSize: 19; font.weight: Font.Bold }
+            }
+            Column {
+                anchors.verticalCenter: parent.verticalCenter
+                Text { text: "ARLEN NEXUS"; color: "#eafaff"; font.pixelSize: 16; font.weight: Font.DemiBold; font.letterSpacing: 1.5 }
+                Text { text: "PRIVATE INTELLIGENCE ENVIRONMENT"; color: "#557b8d"; font.pixelSize: 8; font.letterSpacing: 1.2 }
+            }
         }
-        property real splashProgress:0
-        NumberAnimation on splashProgress { from:0;to:1;duration:backend.openingDuration*1000;running:splash.visible }
-        Timer { interval:backend.openingDuration*1000;running:splash.visible;onTriggered:root.openingVisible=false }
+
+        Column {
+            anchors.right: parent.right; anchors.rightMargin: 34
+            anchors.top: parent.top; anchors.topMargin: 31
+            spacing: 3
+            Text { anchors.right: parent.right; text: "OWNER  •  " + backend.ownerName.toUpperCase(); color: "#dff7fc"; font.pixelSize: 10 }
+            Text { anchors.right: parent.right; text: "OFFLINE-FIRST  /  OWNER CONTROLLED"; color: "#3f8ba0"; font.pixelSize: 8 }
+        }
+
+        Item {
+            anchors.centerIn: parent
+            width: Math.min(parent.width * .52, parent.height * .74)
+            height: width
+
+            Rectangle {
+                id: outerCore
+                anchors.centerIn: parent
+                width: parent.width; height: width; radius: width / 2
+                color: "transparent"; border.width: 1; border.color: Qt.rgba(.15,.8,.92,.22)
+                RotationAnimator on rotation { from: 0; to: 360; duration: 30000; loops: Animation.Infinite; running: splash.visible }
+            }
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width * .78; height: width; radius: width / 2
+                color: "transparent"; border.width: 1; border.color: Qt.rgba(.28,.95,.66,.25)
+                RotationAnimator on rotation { from: 0; to: -360; duration: 21000; loops: Animation.Infinite; running: splash.visible }
+            }
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width * .55; height: width; radius: width / 2
+                color: Qt.rgba(.02,.12,.17,.48); border.width: 2; border.color: "#28cce8"
+                SequentialAnimation on scale { running: splash.visible; loops: Animation.Infinite; NumberAnimation { to:1.055; duration:1000 } NumberAnimation { to:1; duration:1000 } }
+            }
+            Image {
+                anchors.centerIn: parent
+                width: parent.width * .62; height: width
+                source: backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"
+                fillMode: Image.PreserveAspectFit; opacity: .94
+                RotationAnimator on rotation { from:0; to:360; duration:18000; loops:Animation.Infinite; running:splash.visible }
+            }
+            Rectangle {
+                anchors.centerIn: parent
+                width: 102; height: 102; radius: 51
+                color: Qt.rgba(.08,.72,.9,.10); border.width: 1; border.color: "#6ceaff"
+                Text { anchors.centerIn: parent; text: Math.round(splash.splashProgress * 100) + "%"; color: "#eaffff"; font.pixelSize: 18; font.weight: Font.DemiBold }
+            }
+        }
+
+        Column {
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.bottom: parent.bottom; anchors.bottomMargin: 58
+            width: Math.min(680, parent.width * .65)
+            spacing: 9
+            Text { anchors.horizontalCenter: parent.horizontalCenter; text: splash.stageText; color: "#5ee7ff"; font.pixelSize: 11; font.letterSpacing: 2.6 }
+            Rectangle {
+                width: parent.width; height: 4; radius: 2; color: "#102b36"
+                Rectangle { width: parent.width * splash.splashProgress; height: parent.height; radius: 2; color: "#28cce8"; Behavior on width { NumberAnimation { duration: 90 } } }
+            }
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 22
+                Text { text: "✓  LOCAL DATA"; color: splash.splashProgress > .3 ? "#53d99a" : "#315866"; font.pixelSize: 9 }
+                Text { text: "✓  OWNER POLICY"; color: splash.splashProgress > .55 ? "#53d99a" : "#315866"; font.pixelSize: 9 }
+                Text { text: "✓  PRIVATE CORE"; color: splash.splashProgress > .78 ? "#53d99a" : "#315866"; font.pixelSize: 9 }
+            }
+            Text {
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "ADAPTIVE RESPONSIVE LOCAL EXECUTIVE NEURAL-ASSISTANT  •  NEURAL EXECUTION AND EXPERIENCE UNIFIED SYSTEM"
+                color: "#557b8d"; font.pixelSize: 8; font.letterSpacing: .8
+            }
+        }
+
+        NumberAnimation on splashProgress { from:0; to:1; duration:backend.openingDuration*1000; running:splash.visible }
+        Timer { interval:backend.openingDuration*1000; running:splash.visible; onTriggered:root.openingVisible=false }
         MouseArea { anchors.fill:parent; onDoubleClicked:root.openingVisible=false }
     }
 
