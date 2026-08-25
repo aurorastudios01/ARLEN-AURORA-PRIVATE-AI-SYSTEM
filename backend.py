@@ -478,6 +478,9 @@ class Backend(QObject):
             result, level = "REQUIRES_CONFIRMATION:Restart the PC in 10 seconds?", "confirm"
         elif "shutdown" in text or "shut down" in text or "off koro" in text or "শাটডাউন" in text:
             result, level = "REQUIRES_CONFIRMATION:Shut down the PC in 10 seconds?", "confirm"
+        elif any(term in text for term in ("system refresh", "refresh system", "free arlen ram", "ram refresh", "র‍্যাম রিফ্রেশ", "সিস্টেম রিফ্রেশ")):
+            self.systemRefresh()
+            return
         elif "cleanup" in text or "ক্লিন" in text:
             result, level = "REQUIRES_CONFIRMATION:Scan safe temporary files and ARLEN memory?", "confirm_cleanup"
         self._log(command, result)
@@ -695,8 +698,7 @@ class Backend(QObject):
             subprocess.Popen(["shutdown", "/s", "/t", "10"], creationflags=0x08000000)
             self.commandResult.emit("Shutdown scheduled. Use Cancel Power Action within 10 seconds to abort.", "success")
         elif action == "cleanup":
-            gc.collect()
-            self.commandResult.emit("ARLEN memory optimized. Temporary files were not deleted without a selected scope.", "success")
+            self.systemRefresh()
 
     @Slot()
     def cancelPower(self):
@@ -728,6 +730,43 @@ class Backend(QObject):
             self.chatReply.emit(reply, "success")
         except Exception as exc:
             self.chatReply.emit(f"Local brain could not start: {exc}", "error")
+
+    @Slot(result=str)
+    def systemRefresh(self):
+        """Release ARLEN-owned memory without terminating unrelated applications."""
+        before = psutil.Process(os.getpid()).memory_info().rss
+        brain_was_loaded = self._brain is not None
+        self._brain = None
+        gc.collect()
+
+        preview_dir = DATA / "image_previews"
+        removed = 0
+        if preview_dir.exists():
+            for candidate in preview_dir.iterdir():
+                if candidate.is_file():
+                    try:
+                        candidate.unlink()
+                        removed += 1
+                    except OSError:
+                        pass
+
+        if os.name == "nt":
+            try:
+                handle = ctypes.windll.kernel32.GetCurrentProcess()
+                ctypes.windll.psapi.EmptyWorkingSet(handle)
+            except Exception:
+                pass
+
+        after = psutil.Process(os.getpid()).memory_info().rss
+        released_mb = max(0.0, (before - after) / 1024**2)
+        details = (
+            f"SYSTEM REFRESH COMPLETE — ARLEN released {released_mb:.1f} MB; "
+            f"cleared {removed} preview file(s); "
+            + ("Local Brain unloaded." if brain_was_loaded else "Local Brain was already idle.")
+        )
+        self._log("system refresh", details)
+        self.commandResult.emit(details, "success")
+        return details
 
     @Slot()
     def unloadBrain(self):
