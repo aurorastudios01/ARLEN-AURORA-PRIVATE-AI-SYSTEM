@@ -219,9 +219,58 @@ ApplicationWindow {
                             }
                         }
 
+                        Column {
+                            anchors.left: parent.left
+                            anchors.leftMargin: 14
+                            anchors.top: parent.top
+                            anchors.topMargin: 14
+                            width: 142
+                            spacing: 9
+                            visible: !homePage.compact
+
+                            Rectangle {
+                                width: parent.width; height: 138; radius: 13
+                                color: Qt.rgba(.02,.08,.13,.9); border.color: theme.line
+                                Column {
+                                    anchors.fill: parent; anchors.margins: 11; spacing: 6
+                                    Text { text:"POWER CENTER"; color:theme.text; font.pixelSize:10; font.weight:Font.DemiBold }
+                                    Text { text:backend.batteryPercent < 0 ? "—" : backend.batteryPercent.toFixed(0)+"%"; color:backend.powerSource==="CHARGER CONNECTED"?theme.good:theme.accent; font.pixelSize:25; font.weight:Font.DemiBold }
+                                    Text { text:backend.batteryState; color:theme.muted; font.pixelSize:9 }
+                                    Rectangle {
+                                        width:parent.width; height:3; radius:2; color:theme.line
+                                        Rectangle { width:parent.width*Math.max(0,backend.batteryPercent)/100; height:3; radius:2; color:backend.powerSource==="CHARGER CONNECTED"?theme.good:theme.accent }
+                                    }
+                                    Text { text:backend.powerSource; color:backend.powerSource==="CHARGER CONNECTED"?theme.good:theme.warn; font.pixelSize:8; wrapMode:Text.Wrap; width:parent.width }
+                                    Text { text:"TIME  "+backend.batteryTime; color:theme.muted; font.pixelSize:8 }
+                                }
+                            }
+
+                            Rectangle {
+                                width: parent.width; height: 164; radius: 13
+                                color: Qt.rgba(.02,.08,.13,.9); border.color: theme.line
+                                ColumnLayout {
+                                    anchors.fill:parent; anchors.margins:9; spacing:4
+                                    Text { text:"CONTROL CENTER"; color:theme.text; font.pixelSize:9; font.weight:Font.DemiBold }
+                                    AppButton { Layout.fillWidth:true; Layout.fillHeight:true; text:"SYSTEM REFRESH"; onClicked:backend.systemRefresh() }
+                                    AppButton { Layout.fillWidth:true; Layout.fillHeight:true; text:"SECURITY"; onClicked:root.activePage=8 }
+                                    AppButton { Layout.fillWidth:true; Layout.fillHeight:true; text:"ADMIN PANEL"; onClicked:root.activePage=9 }
+                                }
+                            }
+
+                            Rectangle {
+                                width: parent.width; height: 62; radius: 13
+                                color:Qt.rgba(.02,.08,.13,.9); border.color:theme.line
+                                Column { anchors.centerIn:parent; spacing:4
+                                    Text { anchors.horizontalCenter:parent.horizontalCenter; text:"ARLEN CORE"; color:theme.accent; font.pixelSize:9 }
+                                    Text { anchors.horizontalCenter:parent.horizontalCenter; text:"●  VERIFIED READY"; color:theme.good; font.pixelSize:8 }
+                                }
+                            }
+                        }
+
                         Image {
                             id: homeSphere
                             anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.horizontalCenterOffset: homePage.compact ? 0 : 72
                             anchors.top: parent.top
                             anchors.topMargin: 18
                             width: Math.min(parent.width * .52, 330)
@@ -277,7 +326,7 @@ ApplicationWindow {
                             spacing: 9
                             RowLayout {
                                 Layout.fillWidth: true
-                                Text { text: "CONVERSATION"; color: theme.text; font.pixelSize: 11; font.weight: Font.DemiBold; font.letterSpacing: 1.2 }
+                                Text { text: "NEXUS COMMAND CENTER"; color: theme.text; font.pixelSize: 11; font.weight: Font.DemiBold; font.letterSpacing: 1.2 }
                                 Item { Layout.fillWidth: true }
                                 Text { text: "PRIVATE LOCAL SESSION"; color: theme.muted; font.pixelSize: 9 }
                             }
