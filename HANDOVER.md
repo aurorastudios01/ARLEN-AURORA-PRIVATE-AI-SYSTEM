@@ -45,6 +45,21 @@ Keep the existing v0.7 GitHub release unchanged during development. After a veri
 8. Test on 4 GB and 8 GB profiles.
 9. Build, install, upgrade, visually inspect and publish V1.x.
 
+## V1.1 development checkpoint — 25 August 2026
+
+- Added dependency-free Ollama service adapter for text and selected-image vision.
+- Added bounded SQLite/WAL conversation memory and recent local files.
+- Added truthful environment/model/FFmpeg/browser diagnostics.
+- Added 4 GB Lite and 8 GB+ runtime profiles.
+- Reworked QML toward the owner-approved Theme 9 / Aurora AI demo.
+- Quick Tools, System Overview, centre core, Command Center and right AI status follow the approved zoning.
+- Added centre-out particles; do not restore whole-image continuous rotation.
+- Added custom visual remove/reset, ten themes and four core animation modes.
+- Added calculator, converter, note, screenshot, clipboard and functional file-search foundations.
+- Added metadata-only user-folder indexing and a constrained Downloads organizer: preview, owner PIN, category folders and one-level undo; never move/delete silently.
+- Added `V1.1-IMPLEMENTATION.md` as the UI, responsive, bug/fix and limitation record.
+- Still required: Windows QML lint, rendered multi-resolution screenshots, full core regression tests, installer/upgrade checks and remaining PDF/UI completion.
+
 ## Truth rules
 
 - A UI button is not proof that a feature works.
@@ -61,4 +76,3 @@ The active tree keeps only the current source, tests, assets, V1 docs, package d
 ## Release policy
 
 Development CI is verification-only. It must not overwrite the v0.7 release. A V1 publishing workflow is added only when the version, installer names and release notes are final and all gates are green.
-

@@ -204,3 +204,30 @@ Build a private AI workstation that is:
 - Expandable
 
 **ARLEN NEXUS — Your personal AI workstation.**
+
+---
+
+# V1.1 Development Implementation
+
+The current development branch now includes the first V1.1 foundations:
+
+- Ollama chat adapter for `qwen2.5:3b`
+- Ollama vision adapter for `qwen2.5vl:3b`
+- bounded SQLite conversation memory
+- real environment/model diagnostics
+- 4 GB Low Resource mode
+- responsive Theme 9 / Aurora AI dashboard based on the owner-approved demo
+- centre-out animated core splash; the core image itself does not continuously rotate
+- removable custom core/background and Aurora reset
+- local calculator, unit converter, notes, screenshot and clipboard foundations
+- local file metadata index, real filename search, organization preview, PIN-approved Downloads grouping, undo, Open and Reveal
+
+This is development code, not a released V1.1 installer. The verified v0.7 Release remains available until a V1.x installer passes Windows build, QML lint, screen-size, upgrade and runtime checks.
+
+Detailed UI mapping, responsive breakpoints, historical bugs, fixes, benefits and remaining limitations are recorded in [`V1.1-IMPLEMENTATION.md`](V1.1-IMPLEMENTATION.md).
+
+## Ownership and AI assistance
+
+ARLEN NEXUS was conceived, named, planned, directed, configured and tested by **Jubaer Hossain**. The full product name, logo direction, system structure and setup decisions come from Jubaer's plan. AI-assisted engineering helped implement and document the plan.
+
+> Used correctly, AI makes human work easier, saves time and helps turn a clear plan into a working system while human judgment and ownership remain in control.

@@ -23,13 +23,18 @@ class ArlenCoreTests(unittest.TestCase):
         self.log_file = self.base / "activity.jsonl"
         self.backup_dir = self.base / "backups"
         self.update_state_file = self.base / "update_state.json"
+        self.db_file = self.base / "arlen_memory.sqlite3"
+        self.visual_dir = self.base / "visuals"
         self.backup_dir.mkdir()
+        self.visual_dir.mkdir()
         self.patchers = [
             patch.object(backend_module, "SETTINGS_FILE", self.settings_file),
             patch.object(backend_module, "COMMANDS_FILE", self.commands_file),
             patch.object(backend_module, "LOG_FILE", self.log_file),
             patch.object(backend_module, "BACKUP_DIR", self.backup_dir),
             patch.object(backend_module, "UPDATE_STATE_FILE", self.update_state_file),
+            patch.object(backend_module, "DB_FILE", self.db_file),
+            patch.object(backend_module, "VISUAL_DIR", self.visual_dir),
         ]
         for item in self.patchers:
             item.start()
@@ -101,15 +106,14 @@ class ArlenCoreTests(unittest.TestCase):
     def test_custom_profile_visual_import(self):
         source = self.base / "avatar.png"
         Image.new("RGB", (120, 120), "#224466").save(source)
-        with patch.object(backend_module, "DATA", self.base):
-            result = self.backend.importProfileVisual(str(source), "avatar")
+        result = self.backend.importProfileVisual(str(source), "avatar")
         self.assertIn("saved", result)
         self.assertTrue(self.backend.settings["owner_avatar"])
 
     def test_pack_status_core_packs(self):
         status = self.backend.packStatus()
-        self.assertIn("Image: READY", status)
-        self.assertIn("PDF: READY", status)
+        self.assertIn("Image Studio: READY", status)
+        self.assertIn("PDF Studio: READY", status)
 
     def test_update_manifest_absence_is_safe(self):
         messages = []
