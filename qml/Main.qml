@@ -697,12 +697,42 @@ ApplicationWindow {
     Connections {
         target: backend
         function onShowRequested() { root.showNormal(); root.raise(); root.requestActivate() }
+        function onCapabilityWarning(title, message) { capabilityDialog.showWarning(title, message) }
         function onCommandResult(message, level) {
             if (message.indexOf("REQUIRES_CONFIRMATION:Restart") === 0) confirmDialog.prepare("restart", message.split(":").slice(1).join(":"))
             else if (message.indexOf("REQUIRES_CONFIRMATION:Shut") === 0) confirmDialog.prepare("shutdown", message.split(":").slice(1).join(":"))
             else if (message.indexOf("REQUIRES_CONFIRMATION:Scan") === 0) confirmDialog.prepare("cleanup", message.split(":").slice(1).join(":"))
             else toast.show(message, level)
         }
+    }
+
+    Dialog {
+        id: capabilityDialog
+        property string warningTitle: ""
+        property string warningMessage: ""
+        modal: true
+        anchors.centerIn: parent
+        width: Math.min(470, root.width - 40)
+        padding: 0
+        title: ""
+        header: Item { height: 0 }
+        background: Rectangle { color: theme.panel; radius: 18; border.width: 1; border.color: theme.warn }
+        contentItem: ColumnLayout {
+            spacing: 14
+            Text { text: "CAPABILITY STATUS"; color: theme.warn; font.pixelSize: 10; font.letterSpacing: 2 }
+            Text { Layout.fillWidth: true; text: capabilityDialog.warningTitle; color: theme.text; font.pixelSize: 22; font.weight: Font.DemiBold; wrapMode: Text.Wrap }
+            Text { Layout.fillWidth: true; text: capabilityDialog.warningMessage; color: theme.muted; font.pixelSize: 12; wrapMode: Text.Wrap; lineHeight: 1.4 }
+            Rectangle { Layout.fillWidth: true; height: 1; color: theme.line }
+            Text { Layout.fillWidth: true; text: "ARLEN will not pretend this feature is active. Install the matching offline capability pack in a future supported release."; color: theme.muted; font.pixelSize: 10; wrapMode: Text.Wrap }
+            Button {
+                Layout.fillWidth: true; Layout.preferredHeight: 46; text: "UNDERSTOOD"
+                background: Rectangle { color: theme.card; radius: 10; border.color: theme.warn }
+                contentItem: Text { text: parent.text; color: theme.text; font.weight: Font.Bold; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                onClicked: capabilityDialog.close()
+            }
+        }
+        footer: Item { height: 20 }
+        function showWarning(title, message) { warningTitle = title; warningMessage = message; open() }
     }
 
     Dialog {
