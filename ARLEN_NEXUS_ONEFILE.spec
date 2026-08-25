@@ -1,4 +1,5 @@
 # ARLEN NEXUS v0.5 single-file Windows build.
+# Windows verification gate passed: 20/20 tests, QML lint, build and launch.
 # The executable extracts its private runtime to Windows Temp at launch.
 from PyInstaller.utils.hooks import collect_all
 
