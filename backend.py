@@ -92,6 +92,7 @@ class Backend(QObject):
     profileSaved = Signal(str)
     automationChanged = Signal()
     updateStatusChanged = Signal(str)
+    capabilityWarning = Signal(str, str)
 
     def __init__(self):
         super().__init__()
@@ -713,6 +714,7 @@ class Backend(QObject):
     def _chat_worker(self, message):
         model = next((p for p in (ROOT/"models").glob("*.gguf")), None)
         if model is None:
+            self.capabilityWarning.emit("LOCAL BRAIN NOT INSTALLED", "Private conversational chat needs a compatible GGUF Local Brain Pack. PC commands and built-in tools remain available.")
             reply = "My local Conversational Brain is not installed yet. I can still execute PC commands. Add a compatible GGUF model in the models folder to enable private offline conversation."
             self.chatReply.emit(reply, "brain_missing")
             return
@@ -737,6 +739,7 @@ class Backend(QObject):
     def startVoice(self):
         model_dir = ROOT / "models" / "voice"
         if not model_dir.exists():
+            self.capabilityWarning.emit("VOICE NOT SUPPORTED YET", "The offline microphone, speech recognition and TTS pack is not bundled in this release. No microphone recording was started.")
             self.voiceStateChanged.emit("Voice Pack not installed")
             return
         self.voiceStateChanged.emit("Voice module ready; microphone integration will use the selected local model")
@@ -776,6 +779,7 @@ class Backend(QObject):
                     text = pytesseract.image_to_string(image, lang="eng+ben").strip()
                     details.append("\nOCR TEXT:\n" + (text or "No readable text detected."))
                 except Exception:
+                    self.capabilityWarning.emit("OCR PACK NOT INSTALLED", "Image metadata and editing work locally, but Bangla/English text recognition needs the optional OCR Pack.")
                     details.append("\nOCR: Portable OCR pack is not present. Image reading remains available.")
             self._log("vision inspect", str(path))
             self.visionResult.emit("\n".join(details))
