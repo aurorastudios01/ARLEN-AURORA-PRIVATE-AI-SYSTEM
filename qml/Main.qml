@@ -194,7 +194,7 @@ ApplicationWindow {
                         Layout.row: 0
                         Layout.column: 0
                         Layout.fillWidth: true
-                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(500, homePage.width - 310)
+                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(540, homePage.width - 275)
                         Layout.preferredHeight: homePage.compact ? 430 : 455
                         clip: true
 
@@ -271,7 +271,7 @@ ApplicationWindow {
                         Layout.row: 1
                         Layout.column: 0
                         Layout.fillWidth: true
-                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(500, homePage.width - 310)
+                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(540, homePage.width - 275)
                         Layout.preferredHeight: 290
                         ColumnLayout {
                             anchors.fill: parent
@@ -346,15 +346,15 @@ ApplicationWindow {
                         Layout.column: homePage.compact ? 0 : 1
                         Layout.rowSpan: homePage.compact ? 1 : 2
                         Layout.fillWidth: true
-                        Layout.preferredWidth: homePage.compact ? -1 : 285
+                        Layout.preferredWidth: homePage.compact ? -1 : 250
                         Layout.preferredHeight: homePage.compact ? 620 : 757
                         spacing: 12
 
                         Panel {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 286
+                            Layout.preferredHeight: 248
                             ColumnLayout {
-                                anchors.fill: parent; anchors.margins: 14; spacing: 7
+                                anchors.fill: parent; anchors.margins: 11; spacing: 5
                                 RowLayout {
                                     Layout.fillWidth: true
                                     Text { text: "SYSTEM OVERVIEW"; color: theme.text; font.pixelSize: 11; font.weight: Font.DemiBold }
@@ -374,7 +374,7 @@ ApplicationWindow {
                                         Layout.fillWidth: true
                                         Layout.fillHeight: true
                                         spacing: 9
-                                        Rectangle { width: 31; height: 31; radius: 15; color: Qt.rgba(.05,.22,.33,.55); border.color: modelData.color; Text { anchors.centerIn: parent; text:modelData.icon; color:modelData.color; font.pixelSize:11 } }
+                                        Rectangle { width: 27; height: 27; radius: 13; color: Qt.rgba(.05,.22,.33,.55); border.color: modelData.color; Text { anchors.centerIn: parent; text:modelData.icon; color:modelData.color; font.pixelSize:11 } }
                                         ColumnLayout { Layout.fillWidth: true; spacing: 2
                                             Text { text:modelData.label; color:theme.text; font.pixelSize:10 }
                                             Text { text:modelData.detail; color:theme.muted; font.pixelSize:8 }
@@ -396,9 +396,9 @@ ApplicationWindow {
 
                         Panel {
                             Layout.fillWidth: true
-                            Layout.preferredHeight: 178
+                            Layout.preferredHeight: 150
                             ColumnLayout {
-                                anchors.fill: parent; anchors.margins: 14; spacing: 7
+                                anchors.fill: parent; anchors.margins: 11; spacing: 5
                                 Text { text:"NETWORK STATUS"; color:theme.text; font.pixelSize:11; font.weight:Font.DemiBold }
                                 Rectangle { Layout.fillWidth:true; height:1; color:theme.line }
                                 RowLayout { Layout.fillWidth:true; Text{text:"⌁  Wi-Fi";color:theme.text;font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:backend.wifiName;color:theme.muted;font.pixelSize:9} Text{text:backend.networkStatus;color:backend.networkStatus==="Online"?theme.good:theme.warn;font.pixelSize:9} }
