@@ -1,4 +1,4 @@
-# ARLEN NEXUS V0.4 — Evolution Core Development Build
+# ARLEN NEXUS V0.5 — Evolution Core Development Build
 
 ARLEN NEXUS is an offline-first Personal Intelligence & System Control Environment.
 
