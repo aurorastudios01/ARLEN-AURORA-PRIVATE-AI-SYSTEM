@@ -363,7 +363,8 @@ ApplicationWindow {
                                     model: [
                                         {icon:"▣", label:"CPU Usage", detail:"Processor", value:backend.cpu.toFixed(0)+"%", p:backend.cpu/100, color:theme.accent},
                                         {icon:"▤", label:"RAM Usage", detail:"System memory", value:backend.ram.toFixed(0)+"%", p:backend.ram/100, color:"#8d88e8"},
-                                        {icon:"◇", label:"Disk Usage", detail:"System drive", value:backend.disk.toFixed(0)+"%", p:backend.disk/100, color:theme.warn}
+                                        {icon:"◇", label:"Disk Usage", detail:"System drive", value:backend.disk.toFixed(0)+"%", p:backend.disk/100, color:theme.warn},
+                                        {icon:"▧", label:"GPU Telemetry", detail:"Not bundled", value:"N/A", p:0, color:theme.muted}
                                     ]
                                     delegate: RowLayout {
                                         required property var modelData
