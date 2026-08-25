@@ -1,4 +1,4 @@
-name: Verify ARLEN NEXUS v0.6 Installer
+name: Verify ARLEN NEXUS v0.7 Installer
 
 on:
   pull_request:
@@ -44,8 +44,8 @@ jobs:
       - name: Install and visual test
         shell: pwsh
         run: |
-          $setup = Resolve-Path "installer-output/ARLEN-NEXUS-Setup-v0.6.exe"
-          $testInstall = Join-Path $env:RUNNER_TEMP "ARLEN-NEXUS-v06"
+          $setup = Resolve-Path "installer-output/ARLEN-NEXUS-Setup-v0.7.exe"
+          $testInstall = Join-Path $env:RUNNER_TEMP "ARLEN-NEXUS-v07"
           $installProcess = Start-Process -FilePath $setup -ArgumentList @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=$testInstall") -Wait -PassThru
           if ($installProcess.ExitCode -ne 0) { throw "Silent installer failed with code $($installProcess.ExitCode)" }
           $installed = Join-Path $testInstall "ARLEN NEXUS.exe"
@@ -68,6 +68,6 @@ jobs:
           Stop-Process -Id $process.Id -Force
       - uses: actions/upload-artifact@v4
         with:
-          name: ARLEN-v0.6-Visual-Verification
+          name: ARLEN-v0.7-Visual-Verification
           path: installer-output/visual-verification.png
           retention-days: 7
