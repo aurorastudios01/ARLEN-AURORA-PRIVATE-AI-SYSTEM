@@ -686,7 +686,7 @@ ApplicationWindow {
                             Text { text:backend.ownerName.toUpperCase(); color:theme.text; font.pixelSize:22; font.weight:Font.Medium }
                             Text { width:560; wrapMode:Text.Wrap; text:"A private, offline-first intelligent environment created for secure personal computing, system control, automation and human–computer interaction. ARLEN is governed by owner authority, local privacy and transparent action controls."; color:theme.muted; font.pixelSize:12; lineHeight:1.45 }
                             Text { text:"CORE PRINCIPLES\nPRIVACY  •  LOCAL CONTROL  •  USER AUTHORITY  •  MODULAR INTELLIGENCE"; color:theme.good; font.pixelSize:11; lineHeight:1.6 }
-                            Text { text:"Version 0.6.0  •  Interface Evolution Build\nBuilt for "+backend.ownerName+" — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
+                            Text { text:"Version 0.7.0  •  Nexus Command Center Build\nBuilt for "+backend.ownerName+" — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
                         }
                     }
                 }
