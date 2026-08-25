@@ -108,7 +108,7 @@ ApplicationWindow {
     Rectangle {
         id: sidebar
         anchors.top: topbar.bottom; anchors.bottom: parent.bottom; anchors.left: parent.left
-        width: root.width < 1200 ? 204 : 232; color: theme.panel; border.color: theme.line
+        width: root.width < 1200 ? 176 : 232; color: theme.panel; border.color: theme.line
         ScrollView {
             anchors.fill: parent
             clip: true
@@ -172,7 +172,7 @@ ApplicationWindow {
 
         Item { // HOME — v0.7 NEXUS COMMAND CENTER
             id: homePage
-            property bool compact: width < 1080
+            property bool compact: width < 820
 
             Flickable {
                 anchors.fill: parent
@@ -344,7 +344,7 @@ ApplicationWindow {
                         Layout.column: homePage.compact ? 0 : 1
                         Layout.rowSpan: homePage.compact ? 1 : 2
                         Layout.fillWidth: true
-                        Layout.preferredWidth: homePage.compact ? -1 : 330
+                        Layout.preferredWidth: homePage.compact ? -1 : 285
                         Layout.preferredHeight: homePage.compact ? 620 : 757
                         spacing: 12
 
