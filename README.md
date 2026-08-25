@@ -1,320 +1,206 @@
 # ARLEN NEXUS v1.1
 
-**ARLEN:** Adaptive Responsive Local Executive Neural-Assistant  
-**NEXUS:** Neural Execution and Experience Unified System  
+<div align="center">
 
-ARLEN NEXUS is a private offline-first Windows AI workstation designed to become a personal AI operating companion.
+## Adaptive Responsive Local Executive Neural-Assistant
 
-Core philosophy:
+### Neural Execution and Experience Unified System
 
-- Ollama = AI Brain
-- Python Tools = AI Hands
-- Local Memory = Personal Knowledge
-- Premium UI = AI Workstation Experience
+**A private offline-first AI workstation for Windows**
 
-The goal is not only chatbot conversation. ARLEN understands tasks, selects tools and helps manage the user's digital workflow locally.
+</div>
 
 ---
 
-# Development Progress
+# Vision
 
-## v0.1 - Foundation
+ARLEN NEXUS is designed to become a personal AI operating companion, not just a chatbot.
 
-- ARLEN NEXUS concept created
-- Offline-first AI assistant vision
-- Modular architecture planning
+It combines:
 
-## v0.2 - Desktop Foundation
+- Local AI intelligence
+- Personal memory
+- Document understanding
+- Image intelligence
+- File assistance
+- System utilities
+- Futuristic desktop experience
 
-- Windows desktop application planning
-- UI/backend separation
-- Command system foundation
+Core philosophy:
 
-## v0.3 - AI Core Planning
+```
+Ollama          = AI Brain
+Python Tools   = AI Hands
+SQLite Memory  = Local Memory
+Premium UI     = AI Workstation
+```
 
-- Local AI architecture
-- Ollama integration direction
-- Qwen model support
+---
 
-## v0.4 - Tool Architecture
+# Current Status
 
-- AI Brain + Python Hands concept
-- Modular tools system
+## Ready Environment
 
-## v0.5 - Memory System
+✅ Python 3.11.9  
+✅ Ollama 0.32.15  
+✅ Qwen2.5:3B Text Model  
+✅ Qwen2.5VL:3B Vision Model  
+✅ FFmpeg
 
-- Local SQLite memory planning
-- User preference storage
-- Project memory
-- Chat history system
+Target:
 
-## v0.6 - Document Intelligence
+- Offline-first operation
+- Low resource usage
+- 4GB RAM class PC optimization
 
-Planned modules:
+---
 
-- PDF reading
-- PDF summary
-- Text extraction
-- DOCX/TXT/CSV/Excel/Markdown support
+# V1 Feature Scope
 
-## v0.7 - Image Intelligence Foundation
+## AI Assistant
 
-Added base:
+- Offline chat
+- Local AI reasoning
+- Context understanding
+- Basic memory
+- User preferences
 
-- Pillow
-- OpenCV
-- NumPy
-- piexif
-- Optional rembg module
+## Smart Setup
 
-Image capabilities planned:
+ARLEN automatically detects:
 
-- Image analysis
-- Sharpness
-- Texture enhancement
-- Light correction
-- Contrast
-- Color balance
-- Cinematic background blur
-
-Default decision:
-
-- Background removal is not a main feature
-- Background blur and enhancement are preferred
-
-## v0.8 - Futuristic UI System
-
-Added:
-
-- Animated AI Sphere
-- Dynamic backgrounds
-- Command Center
-- System panels
-- Dark/Light theme support
-
-## v0.9 - Experience Layer
-
-Added:
-
-- Multiple themes
-- Multiple animated spheres
-- UI sound system
-
-No AI voice assistant.
-
-Removed:
-
-- Whisper/TTS
-- Voice dependency
-
-Reason:
-
-- Better stability
-- Better performance on 4GB RAM systems
-
-## v1.0 - ARLEN Workstation Interface
-
-Default theme:
-
-- Aurora AI
-
-Interface:
-
-- Animated AI Core
-- CPU/RAM/Storage monitoring
-- Battery status
-- Sound control
-- Brightness control
-- Left side Quick Tools panel
-
-Tools:
-
-- Calculator
-- Scientific Calculator
-- PDF Tools
-- Image Tools
-- File Manager
-- Notes
-- Screenshot
-
-## v1.1 - Smart Environment Setup
-
-Added concept:
-
-ARLEN automatically understands the user's PC environment during first setup.
-
-Detects:
-
-- Python installation
-- Ollama installation
+- Python
+- Ollama
 - AI models
 - FFmpeg
 - Installed applications
 - Browsers
 - Available tools
 
-ARLEN configures itself according to the available environment.
-
-Example:
-
-If Chrome exists → Chrome command available  
-If Brave exists → Brave command available  
-If Photoshop exists → Image workflow can use it
-
 ---
 
-# Current ARLEN Features Plan
-
-## AI Assistant
-
-- Offline chat
-- Ollama integration
-- Qwen local model
-- Memory system
-- Task understanding
-
-## Image Intelligence
-
-- Analyze images
-- Improve quality
-- Sharpness
-- Texture
-- Light
-- Contrast
-- Color correction
-- Background blur
+# Intelligence Modules
 
 ## PDF Intelligence
 
 - Read PDF
 - Summarize
-- Explain
-- Search
-- Extract text
-- Merge
-- Split
-- Rotate
-- Watermark
+- Explain documents
+- Search text
+- Extract information
+- Merge/Split pages
+- Rotate pages
+- Add watermark
 
-## File Assistant
+## Image Intelligence
 
-- Find files
-- Search documents
-- Open files
-- Organize files
+- Image analysis
+- Smart suggestions
+- Sharpness improvement
+- Texture enhancement
+- Light correction
+- Contrast adjustment
+- Color correction
+- Resize/Crop
+- Format conversion
+- Background blur suggestion
 
-## PC Assistant
+## Vision System
 
-ARLEN can:
+V1 includes lightweight smart vision capabilities for practical image understanding.
+
+Advanced Vision Pro will be considered after V1 stability.
+
+---
+
+# PC Assistant
+
+ARLEN can help with:
 
 - Open Chrome
 - Open Brave
 - Open VS Code
-- Open Calculator
 - Launch installed applications
-- Open required documents
-- Help find news and information through browser search
+- Find files
+- Open documents
+- Search information through browser
 
 ---
 
-# UI System
+# Interface System
 
 Default Theme:
 
 ## Aurora AI
 
-Design:
+Features:
 
+- Animated AI Sphere
+- Dynamic background
 - Dark glass interface
-- Aurora energy background
-- Futuristic AI sphere
-- Dynamic animations
-- Lightweight performance
-
-Available themes:
-
-1. Cyber Dark
-2. Premium Light
-3. Space AI
-4. Neural Matrix
-5. Glass Horizon
-6. Minimal Pro
-7. Quantum Core
-8. Cyber Command
-9. Hologram Studio
-10. Aurora AI (Default)
+- Theme switching
+- Command Center
+- Left Quick Tools panel
+- UI sound effects
 
 ---
 
-# Sound System
+# Version History
 
-No AI voice.
-
-Only interface sounds:
-
-- Startup
-- Shutdown
-- Warning
-- Processing
-- File open
-- PDF complete
-- Image complete
-- Notifications
+| Version | Focus |
+|---|---|
+| v0.1 | Foundation |
+| v0.2 | Desktop architecture |
+| v0.3 | Local AI setup |
+| v0.4 | Tool architecture |
+| v0.5 | Memory system |
+| v0.6 | Document intelligence |
+| v0.7 | Image intelligence |
+| v0.8 | Futuristic UI |
+| v0.9 | Theme and sound system |
+| v1.0 | Workstation interface |
+| v1.1 | Smart environment setup |
 
 ---
 
-# Current Removed Scope
+# Not Included in V1
 
-Not included in current versions:
-
+- Voice assistant
+- Whisper/TTS
+- Plugin system
+- Personal knowledge base
 - Messenger automation
-- Automatic message sending
-- Social media automation
-- Full mouse/keyboard takeover
+- Social automation
+- Full PC takeover
 - Deep browser automation
 
-Future plugin possibility only.
+Future expansion only after stable V1 release.
 
 ---
 
-# Hardware Target
+# Development Roadmap
 
-Optimized for:
-
-- 4GB RAM class PC
-- Low resource usage
-- Offline operation
-- Stable performance
-
----
-
-# Future Roadmap
-
-Next priorities:
-
-1. Backend core
-2. Ollama API connection
-3. AI Agent planner
-4. Memory database
-5. Tool manager
-6. System scanner
-7. Image module
-8. PDF module
-9. File assistant
-10. Premium UI
-11. Windows installer
+1. Backend Core
+2. Ollama Integration
+3. Memory System
+4. Tool Manager
+5. System Scanner
+6. PDF Module
+7. Image Module
+8. File Assistant
+9. Premium UI
+10. Windows Installer
 
 ---
 
-# ARLEN NEXUS Goal
+# Goal
 
-A private personal AI workstation that can:
+Build a private AI workstation that is:
 
-- Think locally
-- Remember locally
-- Understand commands
-- Use tools intelligently
-- Assist with files, documents and applications
-- Provide a futuristic AI desktop experience
+- Local
+- Fast
+- Reliable
+- Intelligent
+- Expandable
 
-ARLEN NEXUS is designed to become a personal AI operating companion, not just a chatbot.
+**ARLEN NEXUS — Your personal AI workstation.**
