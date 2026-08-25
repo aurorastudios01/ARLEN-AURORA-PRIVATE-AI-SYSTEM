@@ -1,102 +1,320 @@
-# ARLEN NEXUS v0.7
+# ARLEN NEXUS v1.1
 
 **ARLEN:** Adaptive Responsive Local Executive Neural-Assistant  
 **NEXUS:** Neural Execution and Experience Unified System  
-**Owner / concept / direction:** Jubaer Hossain  
-**Product line:** Built for Jubaer Hossain — Controlled by its owner.
 
-ARLEN NEXUS is a private, offline-first Windows desktop intelligence, system-control and creator environment. The source remains private; end users receive a normal Windows installer and do not need Python, an editor, Node, Visual Studio, Rust, Ollama or a separate llama.cpp installation.
+ARLEN NEXUS is a private offline-first Windows AI workstation designed to become a personal AI operating companion.
 
-## Download
+Core philosophy:
 
-After the v0.7 release workflow publishes:
+- Ollama = AI Brain
+- Python Tools = AI Hands
+- Local Memory = Personal Knowledge
+- Premium UI = AI Workstation Experience
 
-- [Direct v0.7 installer](https://github.com/arlenray0113-cyber/ARLEN-NEXUS-PRIVATE/releases/download/v0.7/ARLEN-NEXUS-Setup-v0.7.exe)
-- [v0.7 release page](https://github.com/arlenray0113-cyber/ARLEN-NEXUS-PRIVATE/releases/tag/v0.7)
+The goal is not only chatbot conversation. ARLEN understands tasks, selects tools and helps manage the user's digital workflow locally.
 
-The installer uses a fixed AppId and installs per-user under `%LOCALAPPDATA%\Programs\ARLEN NEXUS`. Later installers upgrade the same installation. Owner settings and PIN data live separately under `%LOCALAPPDATA%\ARLEN NEXUS\UserData` and are not removed by normal app upgrades.
+---
 
-## v0.1–v0.7 history
+# Development Progress
 
-| Version | Milestone | Evidence/status |
-|---|---|---|
-| v0.1 | Initial offline-first ARLEN concept, identity, security and modular capability plan. | Planning/prototype; no final Windows evidence. |
-| v0.2 | Early PySide/QML desktop shell and backend command foundation. | Prototype; not released as production. |
-| v0.3 | Owner PIN/profile, macro safety, image foundation, Image-to-PDF, policy locks and staged checksum verification. | 17/17 automated tests and QML lint passed; multiple Windows/live capabilities remained incomplete. |
-| v0.4 | GitHub Windows CI, staged update apply/rollback, PDF merge/split and portable packaging. | Run `32768885259`: 20/20 tests, lint, build and launch PASS. |
-| v0.5 | Direct single-file EXE experiment. | Run `32795779576`: 20/20 tests, lint, one-file build and 30-second launch PASS. Slow first launch and Temp extraction made it non-ideal. |
-| v0.6 | Installer and responsive-interface transition. | Installer/install/launch verification passed; retained as an internal transition, not the desired final interface. |
-| v0.7 | Branded installer, supplied ARLEN icon, reference-based Nexus Command Center, centered animated Sphere, compact real telemetry, battery/charger state, capability warnings and safe System Refresh. | Run `32809263990`: 22/22 tests, QML lint, Windows bundle, installer, silent install, installed launch and visual artifact PASS. |
+## v0.1 - Foundation
 
-## v0.7 interface and identity
+- ARLEN NEXUS concept created
+- Offline-first AI assistant vision
+- Modular architecture planning
 
-- Official supplied ARLEN NEXUS icon on EXE, installer, shortcut, taskbar and application window.
-- Low-saturation black/cyan visual system.
-- Centered transparent animated Neural Sphere with slow rotation and breathing pulse.
-- Two-line sidebar navigation.
-- Nexus Command Center conversation panel.
-- Compact System Overview, Network Status and Quick Actions.
-- Responsive layout: full side-by-side command center at 1024px and larger; vertical scrolling/reflow for smaller windows.
-- Cinematic opening sequence with ARLEN/NEXUS expanded names and configurable 12/7/3-second duration.
-- Opening boot sound with on/off control.
+## v0.2 - Desktop Foundation
 
-## Real built-in capabilities
+- Windows desktop application planning
+- UI/backend separation
+- Command system foundation
 
-### PASS / included
+## v0.3 - AI Core Planning
 
-- Owner PIN, owner profile and protected actions.
-- CPU, RAM, disk, uptime, Wi-Fi, live download/upload and session network usage.
-- Battery percentage, charging/discharging, charger connected/removed and remaining-time telemetry when Windows exposes a battery.
-- Open Brave, Notepad, Calculator, Paint, Explorer, Task Manager and common folders.
-- Confirmation-gated restart, shutdown and cleanup.
-- Safe System Refresh: unloads Local Brain if loaded, clears ARLEN preview cache, performs garbage collection and trims ARLEN's own Windows working set. It does not terminate unrelated applications or claim fake RAM gains.
-- Custom command builder with allow-listed actions.
-- Non-destructive Image Studio preview/export: brightness, contrast, saturation, sharpness, dehaze, crop ratios, rotate, mirror and grayscale.
-- Local image metadata reading.
-- Image-to-PDF, ordered PDF merge, PDF split and open in Windows default viewer.
-- Staged update checksum/path protection, owner-PIN apply, backup and rollback foundation.
-- Themes, owner visuals, custom Sphere/background import and UserData backup.
+- Local AI architecture
+- Ollama integration direction
+- Qwen model support
 
-### PARTIAL / optional pack required
+## v0.4 - Tool Architecture
 
-- Conversational Chat UI is functional, but private AI conversation requires a compatible GGUF Local Brain Pack and llama.cpp runtime.
-- Vision reads image metadata; OCR text recognition requires an offline OCR pack.
-- Voice UI and wake-word normalization exist; real microphone transcription and TTS require an offline Voice Pack.
-- GPU card reports `N/A / Not bundled` because live GPU-usage telemetry is not bundled.
+- AI Brain + Python Hands concept
+- Modular tools system
 
-### NOT INCLUDED
+## v0.5 - Memory System
 
-- Bundled GGUF language model.
-- Bundled llama.cpp runtime.
-- Real multilingual microphone transcription/TTS.
-- Bangla/English printed or handwriting OCR models.
-- Advanced layer-based image editor, generative fill or background removal model.
-- Trusted Windows code-signing certificate.
-- Automatic cloud AI or silent personal-data upload.
+- Local SQLite memory planning
+- User preference storage
+- Project memory
+- Chat history system
 
-Missing capability clicks display an explicit warning instead of pretending the feature is active.
+## v0.6 - Document Intelligence
 
-## Security and privacy contract
+Planned modules:
 
-1. Core functions remain offline-first.
-2. Public search is Brave-first and owner-policy controlled.
-3. Personal uploads remain disabled by default.
-4. Local images are not automatically blocked, blurred, deleted or uploaded.
-5. Protected/destructive actions require confirmation or owner PIN.
-6. UserData must survive app upgrades.
-7. Unverified or unbundled functions must never be documented as complete.
+- PDF reading
+- PDF summary
+- Text extraction
+- DOCX/TXT/CSV/Excel/Markdown support
 
-## Verified v0.7 gates
+## v0.7 - Image Intelligence Foundation
 
-Read-only verification workflow run: `32809263990`
+Added base:
 
-- Python compilation: **PASS**
-- Automated core tests: **22/22 PASS**
-- QML lint: **PASS**
-- PyInstaller Windows bundle: **PASS**
-- Inno Setup installer: **PASS**
-- Silent installation: **PASS**
-- Installed application launch: **PASS**
-- Windows visual screenshot artifact: **PASS**
+- Pillow
+- OpenCV
+- NumPy
+- piexif
+- Optional rembg module
 
-See [HANDOVER.md](HANDOVER.md) for architecture, continuation instructions, test classifications, known limitations and next-version plan.
+Image capabilities planned:
+
+- Image analysis
+- Sharpness
+- Texture enhancement
+- Light correction
+- Contrast
+- Color balance
+- Cinematic background blur
+
+Default decision:
+
+- Background removal is not a main feature
+- Background blur and enhancement are preferred
+
+## v0.8 - Futuristic UI System
+
+Added:
+
+- Animated AI Sphere
+- Dynamic backgrounds
+- Command Center
+- System panels
+- Dark/Light theme support
+
+## v0.9 - Experience Layer
+
+Added:
+
+- Multiple themes
+- Multiple animated spheres
+- UI sound system
+
+No AI voice assistant.
+
+Removed:
+
+- Whisper/TTS
+- Voice dependency
+
+Reason:
+
+- Better stability
+- Better performance on 4GB RAM systems
+
+## v1.0 - ARLEN Workstation Interface
+
+Default theme:
+
+- Aurora AI
+
+Interface:
+
+- Animated AI Core
+- CPU/RAM/Storage monitoring
+- Battery status
+- Sound control
+- Brightness control
+- Left side Quick Tools panel
+
+Tools:
+
+- Calculator
+- Scientific Calculator
+- PDF Tools
+- Image Tools
+- File Manager
+- Notes
+- Screenshot
+
+## v1.1 - Smart Environment Setup
+
+Added concept:
+
+ARLEN automatically understands the user's PC environment during first setup.
+
+Detects:
+
+- Python installation
+- Ollama installation
+- AI models
+- FFmpeg
+- Installed applications
+- Browsers
+- Available tools
+
+ARLEN configures itself according to the available environment.
+
+Example:
+
+If Chrome exists → Chrome command available  
+If Brave exists → Brave command available  
+If Photoshop exists → Image workflow can use it
+
+---
+
+# Current ARLEN Features Plan
+
+## AI Assistant
+
+- Offline chat
+- Ollama integration
+- Qwen local model
+- Memory system
+- Task understanding
+
+## Image Intelligence
+
+- Analyze images
+- Improve quality
+- Sharpness
+- Texture
+- Light
+- Contrast
+- Color correction
+- Background blur
+
+## PDF Intelligence
+
+- Read PDF
+- Summarize
+- Explain
+- Search
+- Extract text
+- Merge
+- Split
+- Rotate
+- Watermark
+
+## File Assistant
+
+- Find files
+- Search documents
+- Open files
+- Organize files
+
+## PC Assistant
+
+ARLEN can:
+
+- Open Chrome
+- Open Brave
+- Open VS Code
+- Open Calculator
+- Launch installed applications
+- Open required documents
+- Help find news and information through browser search
+
+---
+
+# UI System
+
+Default Theme:
+
+## Aurora AI
+
+Design:
+
+- Dark glass interface
+- Aurora energy background
+- Futuristic AI sphere
+- Dynamic animations
+- Lightweight performance
+
+Available themes:
+
+1. Cyber Dark
+2. Premium Light
+3. Space AI
+4. Neural Matrix
+5. Glass Horizon
+6. Minimal Pro
+7. Quantum Core
+8. Cyber Command
+9. Hologram Studio
+10. Aurora AI (Default)
+
+---
+
+# Sound System
+
+No AI voice.
+
+Only interface sounds:
+
+- Startup
+- Shutdown
+- Warning
+- Processing
+- File open
+- PDF complete
+- Image complete
+- Notifications
+
+---
+
+# Current Removed Scope
+
+Not included in current versions:
+
+- Messenger automation
+- Automatic message sending
+- Social media automation
+- Full mouse/keyboard takeover
+- Deep browser automation
+
+Future plugin possibility only.
+
+---
+
+# Hardware Target
+
+Optimized for:
+
+- 4GB RAM class PC
+- Low resource usage
+- Offline operation
+- Stable performance
+
+---
+
+# Future Roadmap
+
+Next priorities:
+
+1. Backend core
+2. Ollama API connection
+3. AI Agent planner
+4. Memory database
+5. Tool manager
+6. System scanner
+7. Image module
+8. PDF module
+9. File assistant
+10. Premium UI
+11. Windows installer
+
+---
+
+# ARLEN NEXUS Goal
+
+A private personal AI workstation that can:
+
+- Think locally
+- Remember locally
+- Understand commands
+- Use tools intelligently
+- Assist with files, documents and applications
+- Provide a futuristic AI desktop experience
+
+ARLEN NEXUS is designed to become a personal AI operating companion, not just a chatbot.
