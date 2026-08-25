@@ -97,6 +97,9 @@ Included:
 Included:
 
 - Image analysis
+- Smart image understanding
+- Quality evaluation
+- Editing suggestions
 - Sharpness improvement
 - Texture enhancement
 - Light adjustment
@@ -107,7 +110,22 @@ Included:
 - Format conversion
 - Background blur suggestion
 
-Advanced Vision is postponed for future versions.
+ARLEN will intelligently analyze images and recommend suitable improvements before editing.
+
+---
+
+# Smart Vision Module
+
+V1 will include a lightweight vision capability focused on practical tasks.
+
+Supported goals:
+
+- Understand image content
+- Suggest professional improvements
+- Help analyze screenshots/documents
+- Assist image editing workflow
+
+Advanced heavy vision models will remain optional for future versions and stronger hardware.
 
 ---
 
@@ -147,7 +165,7 @@ Not included:
 
 Possible future versions:
 
-- Advanced Vision
+- Advanced Vision Pro
 - Automation features
 - Plugin architecture
 - Personal knowledge system
