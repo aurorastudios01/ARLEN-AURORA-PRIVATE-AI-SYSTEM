@@ -113,7 +113,7 @@ ApplicationWindow {
             }
         }
         RowLayout { anchors.centerIn: parent; width:Math.min(520,root.width*.38); spacing:8; visible: root.width >= 1100
-            TextField { id:topCommand; Layout.fillWidth:true; placeholderText:"Ask ARLEN or type a command…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.panel;radius:12;border.color:topCommand.activeFocus?theme.accent:theme.line}; onAccepted:{backend.routeInput(text);text=""} }
+            TextField { id:topCommand; Layout.fillWidth:true; placeholderText:"Ask ARLEN or type a command…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.panel;radius:12;border.color:topCommand.activeFocus?theme.accent:theme.line} onAccepted:{backend.routeInput(text);text=""} }
             AppButton { Layout.preferredWidth:48; text:"➤"; onClicked:{backend.routeInput(topCommand.text);topCommand.text=""} }
         }
         Row { anchors.right: windowButtons.left; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 8
@@ -534,7 +534,7 @@ ApplicationWindow {
                         ColumnLayout { anchors.fill:parent; anchors.margins:20; spacing:12
                             Text { text:"REQUIRED MODELS"; color:theme.accent; font.pixelSize:12; font.weight:Font.DemiBold }
                             Text { text:"1. Install and open Ollama\n2. Download the two models once\n3. Press Refresh Diagnostics\n\n4 GB PCs use Lite mode automatically. Models stay on this PC."; color:theme.text; font.pixelSize:13; wrapMode:Text.Wrap; Layout.fillWidth:true; lineHeight:1.45 }
-                            TextArea { Layout.fillWidth:true; Layout.preferredHeight:110; readOnly:true; selectByMouse:true; text:"ollama pull qwen2.5:3b\nollama pull qwen2.5vl:3b"; color:theme.good; background:Rectangle{color:theme.card;radius:9;border.color:theme.line}; font.family:"Consolas" }
+                            TextArea { Layout.fillWidth:true; Layout.preferredHeight:110; readOnly:true; selectByMouse:true; text:"ollama pull qwen2.5:3b\nollama pull qwen2.5vl:3b"; color:theme.good; background:Rectangle{color:theme.card;radius:9;border.color:theme.line} font.family:"Consolas" }
                             CheckBox { text:"4 GB / Low Resource Mode"; checked:backend.lowResourceMode; onToggled:backend.setLowResourceMode(checked); contentItem:Text{text:parent.text;color:theme.text;leftPadding:parent.indicator.width+10;verticalAlignment:Text.AlignVCenter} }
                             AppButton { Layout.fillWidth:true; text:"REFRESH DIAGNOSTICS"; onClicked:{backend.refreshEnvironment(); parent.parent.parent.report=backend.installationReport()} }
                             AppButton { Layout.fillWidth:true; text:"UNLOAD MODELS FROM RAM"; onClicked:backend.unloadBrain() }
@@ -545,7 +545,7 @@ ApplicationWindow {
                     Panel { Layout.fillWidth:true; Layout.fillHeight:true
                         ColumnLayout { anchors.fill:parent; anchors.margins:20; spacing:10
                             Text { text:"ENVIRONMENT DIAGNOSTICS"; color:theme.accent; font.pixelSize:12; font.weight:Font.DemiBold }
-                            TextArea { Layout.fillWidth:true; Layout.fillHeight:true; readOnly:true; selectByMouse:true; wrapMode:TextEdit.Wrap; text:backend.installationReport(); color:theme.text; background:Rectangle{color:theme.card;radius:10;border.color:theme.line}; font.family:"Consolas" }
+                            TextArea { Layout.fillWidth:true; Layout.fillHeight:true; readOnly:true; selectByMouse:true; wrapMode:TextEdit.Wrap; text:backend.installationReport(); color:theme.text; background:Rectangle{color:theme.card;radius:10;border.color:theme.line} font.family:"Consolas" }
                             Text { text:"Status is detected from the real PC. ARLEN will never show READY only because a folder exists."; color:theme.muted; font.pixelSize:11; wrapMode:Text.Wrap; Layout.fillWidth:true }
                         }
                     }
@@ -598,7 +598,7 @@ ApplicationWindow {
                 Panel { Layout.fillWidth:true; Layout.fillHeight:true
                     ColumnLayout { anchors.fill:parent; anchors.margins:20; spacing:10
                         RowLayout { Layout.fillWidth:true
-                            TextField { id:fileQuery; Layout.fillWidth:true; placeholderText:"Search files by name…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line}; onAccepted:fileSearchButton.clicked() }
+                            TextField { id:fileQuery; Layout.fillWidth:true; placeholderText:"Search files by name…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} onAccepted:fileSearchButton.clicked() }
                             TextField { id:fileLocation; Layout.preferredWidth:root.width<1200?180:260; placeholderText:"Folder (blank = Home)"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
                             AppButton { id:fileSearchButton; Layout.preferredWidth:110; text:"SEARCH"; onClicked:{try{filesPage.searchResults=JSON.parse(backend.searchFiles(fileQuery.text,fileLocation.text))}catch(e){filesPage.searchResults=[]}} }
                         }
@@ -888,7 +888,7 @@ ApplicationWindow {
                 PageTitle { title:"ARLEN CALCULATOR"; subtitle:"SAFE LOCAL BASIC + SCIENTIFIC MATH" }
                 Panel { Layout.fillWidth:true; Layout.fillHeight:true
                     ColumnLayout { anchors.centerIn:parent; width:Math.min(520,parent.width-40); spacing:10
-                        TextField { Layout.fillWidth:true; Layout.preferredHeight:64; text:calculatorPage.expression; placeholderText:"Example: sin(pi/3) * 25"; color:theme.text; font.pixelSize:22; horizontalAlignment:Text.AlignRight; background:Rectangle{color:theme.card;radius:10;border.color:theme.line}; onTextChanged:calculatorPage.expression=text; onAccepted:calculatorPage.answer=backend.calculate(text) }
+                        TextField { Layout.fillWidth:true; Layout.preferredHeight:64; text:calculatorPage.expression; placeholderText:"Example: sin(pi/3) * 25"; color:theme.text; font.pixelSize:22; horizontalAlignment:Text.AlignRight; background:Rectangle{color:theme.card;radius:10;border.color:theme.line} onTextChanged:calculatorPage.expression=text; onAccepted:calculatorPage.answer=backend.calculate(text) }
                         Text { Layout.fillWidth:true; text:calculatorPage.answer; color:theme.accent; font.pixelSize:30; horizontalAlignment:Text.AlignRight }
                         GridLayout { Layout.fillWidth:true; columns:5; rowSpacing:7; columnSpacing:7
                             Repeater { model:["sin(","cos(","tan(","sqrt(","AC","7","8","9","/","(","4","5","6","*",")","1","2","3","-","^","0",".","pi","+","="]
