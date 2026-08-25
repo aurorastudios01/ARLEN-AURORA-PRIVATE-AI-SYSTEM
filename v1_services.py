@@ -20,6 +20,16 @@ DEFAULT_CHAT_MODEL = "qwen2.5:3b"
 DEFAULT_VISION_MODEL = "qwen2.5vl:3b"
 
 
+class ClosingConnection(sqlite3.Connection):
+    """SQLite context manager that also releases the Windows file handle."""
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        try:
+            return super().__exit__(exc_type, exc_value, traceback)
+        finally:
+            self.close()
+
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
@@ -37,7 +47,7 @@ class ArlenDatabase:
         self.initialize()
 
     def connect(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.path, timeout=8)
+        connection = sqlite3.connect(self.path, timeout=8, factory=ClosingConnection)
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA journal_mode=WAL")
         connection.execute("PRAGMA synchronous=NORMAL")
