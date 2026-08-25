@@ -24,9 +24,9 @@ Core concept:
 - OpenCV
 - NumPy
 - piexif
-- rembg (optional background module)
+- rembg (optional module, not default)
 
-## Current Hardware Target
+## Hardware Target
 - Optimized for 4GB RAM class PC
 - Low resource architecture
 - No heavy background services
@@ -38,27 +38,119 @@ Core concept:
 ## Voice System
 - No AI voice assistant
 - No Whisper/TTS in main application
-- Only UI sounds:
-  - Startup sound
-  - Close sound
-  - Warning sound
-  - Processing sound
-  - File/PDF/Image completion sounds
+- Only UI sound effects:
+  - Startup
+  - Close
+  - Warning
+  - Processing
+  - File/PDF/Image completion
+  - Notification sounds
 
 ## Dynamic Interface
-- Animated backgrounds
+- Fully animated interface
+- Dynamic backgrounds
 - Multiple animated AI spheres
-- Theme system
+- Theme switching system
 - Command Center
-- System status panels
+- System monitoring panels
 
-Users cannot directly add random files from File Manager. Themes, spheres, backgrounds and sounds will be managed from inside ARLEN NEXUS only.
+Themes, spheres, backgrounds and sounds will only be managed from inside ARLEN NEXUS.
 
 ---
 
-# Theme System
+# Default Theme Decision
 
-Initial themes:
+## Default Theme: Aurora AI (Theme 9)
+
+ARLEN NEXUS default interface will use Aurora AI instead of Cyber Dark.
+
+Design direction:
+- Dark glass UI
+- Aurora energy background
+- Futuristic AI sphere
+- Purple/blue/cyan lighting
+- Premium workstation feeling
+- Lightweight animation suitable for low RAM systems
+
+---
+
+# Default Dashboard Layout
+
+Main Windows desktop style interface:
+
+## Top Area
+- ARLEN NEXUS branding
+- System shortcuts
+- Command access
+
+## Center
+- Animated AI Sphere
+- Dynamic AI status visualization
+
+## Panels
+
+System Overview:
+- CPU
+- RAM
+- Storage
+- AI Model
+- Status
+
+AI Panel:
+- AI state
+- Running tasks
+- Temperature
+
+Compact Controls:
+- Battery
+- Sound
+- Brightness
+
+These panels will remain compact to avoid visual overload.
+
+---
+
+# Quick Tools System
+
+Quick Tools will move to the left side panel.
+
+Available tools:
+
+- Calculator
+- Scientific Calculator
+- Unit Converter
+- PDF Tools
+- Image Tools
+- File Manager
+- Note Pad
+- Screenshot Tool
+- Clipboard Manager
+- System Info
+- Settings
+
+---
+
+# Scientific Calculator Module
+
+Inspired by Casio fx-991CW style functionality.
+
+Features:
+- Basic calculation
+- Scientific functions
+- Trigonometry
+- Logarithm
+- Power
+- Root
+- Equation solving
+- Matrix calculation
+- Statistics
+- Unit conversion
+
+---
+
+# Theme Collection
+
+Available themes:
 
 1. Cyber Dark
 2. Premium Light
@@ -69,9 +161,9 @@ Initial themes:
 7. Quantum Core
 8. Cyber Command
 9. Hologram Studio
-10. Aurora AI
+10. Aurora AI (Default)
 
-All themes should be lightweight and realistic for implementation.
+All themes must be realistic for actual implementation, optimized for performance, and compatible with the ARLEN UI engine.
 
 ---
 
@@ -87,19 +179,19 @@ Selectable animated AI cores:
 - Neural Sphere
 - Cyber Ring Sphere
 
-Sphere animation changes based on ARLEN status:
+Sphere reacts to ARLEN state:
 
 Idle:
-Slow movement
+Slow floating animation
 
 Thinking:
-Energy increase
+Energy pulse increase
 
 Processing:
-Faster particles
+Data movement animation
 
 Complete:
-Success animation
+Success pulse
 
 Error:
 Warning animation
@@ -116,7 +208,7 @@ Warning animation
 6. Image intelligence module
 7. PDF intelligence module
 8. File management tools
-9. Premium UI
+9. Premium UI implementation
 10. EXE installer
 
 ---
@@ -132,3 +224,4 @@ ARLEN NEXUS will become a personal AI operating companion with:
 - PC management
 - Dynamic futuristic interface
 - Modular expansion system
+- Professional desktop workstation experience
