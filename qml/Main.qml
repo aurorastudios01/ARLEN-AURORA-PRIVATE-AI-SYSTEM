@@ -155,6 +155,7 @@ ApplicationWindow {
                     Panel {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        Layout.preferredHeight: root.width < 1320 ? 390 : -1
                         Layout.minimumWidth: 0
                         clip: true
 
@@ -272,6 +273,7 @@ ApplicationWindow {
                     Panel {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
+                        Layout.preferredHeight: root.width < 1450 ? 210 : -1
                         Layout.minimumWidth: 0
                         ColumnLayout {
                             anchors.fill: parent; anchors.margins: 20; spacing: 12
@@ -289,6 +291,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 390
                         Layout.fillHeight: true
+                        Layout.preferredHeight: root.width < 1450 ? 220 : -1
                         ColumnLayout {
                             anchors.fill: parent; anchors.margins: 20; spacing: 9
                             Text { text: "CAPABILITY STATUS"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
@@ -306,6 +309,7 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         Layout.preferredWidth: 330
                         Layout.fillHeight: true
+                        Layout.preferredHeight: root.width < 1450 ? 230 : -1
                         ColumnLayout {
                             anchors.fill: parent; anchors.margins: 20; spacing: 8
                             Text { text: "QUICK ACTIONS"; color: theme.text; font.pixelSize: 13; font.weight: Font.DemiBold }
