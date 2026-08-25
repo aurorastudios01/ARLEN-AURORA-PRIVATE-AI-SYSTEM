@@ -8,7 +8,7 @@ ApplicationWindow {
     visible: true
     width: 1440
     height: 900
-    minimumWidth: 1050
+    minimumWidth: 900
     minimumHeight: 680
     visibility: Window.Maximized
     title: "ARLEN NEXUS — Personal Intelligence & System Control Environment"
@@ -83,7 +83,7 @@ ApplicationWindow {
                 Text { text: "PERSONAL INTELLIGENCE & SYSTEM CONTROL ENVIRONMENT"; color: theme.muted; font.pixelSize: 9 }
             }
         }
-        Row { anchors.centerIn: parent; spacing: 30
+        Row { anchors.centerIn: parent; spacing: 30; visible: root.width >= 1180
             Column { Text { text: Qt.formatDateTime(new Date(root.clockTick), "hh:mm:ss AP"); color: theme.text; font.pixelSize: 17 } Text { text: Qt.formatDateTime(new Date(root.clockTick), "dddd, dd MMMM yyyy"); color: theme.muted; font.pixelSize: 10 } }
             Column { Text { text: "●  " + backend.networkStatus.toUpperCase(); color: backend.networkStatus === "Online" ? theme.good : theme.warn; font.pixelSize: 12; font.weight: Font.DemiBold } Text { text: "PRIVATE LOCAL SESSION"; color: theme.muted; font.pixelSize: 9 } }
         }
@@ -108,8 +108,13 @@ ApplicationWindow {
     Rectangle {
         id: sidebar
         anchors.top: topbar.bottom; anchors.bottom: parent.bottom; anchors.left: parent.left
-        width: 232; color: theme.panel; border.color: theme.line
-        Column { anchors.fill: parent; anchors.margins: 12; spacing: 3
+        width: root.width < 1200 ? 204 : 232; color: theme.panel; border.color: theme.line
+        ScrollView {
+            anchors.fill: parent
+            clip: true
+            contentWidth: availableWidth
+            ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+            Column { width: parent.width; padding: 12; spacing: 3
             Repeater { model: ["⌂   HOME","◈   CHAT","◉   VOICE","▣   SYSTEM","⌁   NETWORK","▤   FILES","↻   AUTOMATION","◇   CLEANUP","⬡   SECURITY","⚙   ADMIN","▧   IMAGE STUDIO","◉   VISION / OCR","▤   PDF STUDIO","✦   THEME STUDIO","ⓘ   ABOUT"]
                 AppButton { required property string modelData; required property int index; width: parent.width; text: modelData; selected: root.activePage === index; onClicked: root.activePage = index }
             }
@@ -117,7 +122,8 @@ ApplicationWindow {
             Rectangle { width: parent.width; height: 1; color: theme.line }
             Text { text: "GLOBAL ACCESS"; color: theme.muted; font.pixelSize: 9; leftPadding: 14; topPadding: 12 }
             Text { text: "CTRL + ALT + A"; color: theme.accent; font.pixelSize: 12; leftPadding: 14; topPadding: 6 }
-            Text { text: "CORE STATUS  ● READY"; color: theme.good; font.pixelSize: 10; leftPadding: 14; topPadding: 12 }
+            Text { text: "CORE STATUS  ● READY"; color: theme.good; font.pixelSize: 10; leftPadding: 14; topPadding: 12; bottomPadding: 16 }
+            }
         }
     }
 
@@ -126,20 +132,30 @@ ApplicationWindow {
         currentIndex: root.activePage
 
         Item { // HOME — RESPONSIVE COMMAND CENTER
-            ColumnLayout {
+            Flickable {
                 anchors.fill: parent
-                anchors.margins: 20
-                spacing: 14
+                anchors.margins: 12
+                clip: true
+                contentWidth: width
+                contentHeight: homeColumn.implicitHeight
+                boundsBehavior: Flickable.StopAtBounds
+                ScrollBar.vertical: ScrollBar { policy: ScrollBar.AsNeeded }
+                ColumnLayout {
+                    id: homeColumn
+                    width: parent.width
+                    spacing: 12
 
-                RowLayout {
+                GridLayout {
                     Layout.fillWidth: true
-                    Layout.preferredHeight: Math.max(310, parent.height * .47)
-                    spacing: 14
+                    Layout.preferredHeight: root.width < 1320 ? 650 : 390
+                    columns: root.width < 1320 ? 1 : 2
+                    columnSpacing: 12
+                    rowSpacing: 12
 
                     Panel {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.minimumWidth: 560
+                        Layout.minimumWidth: 0
                         clip: true
 
                         Rectangle {
@@ -157,7 +173,7 @@ ApplicationWindow {
                             spacing: 28
 
                             Item {
-                                Layout.preferredWidth: Math.min(360, parent.width * .42)
+                                Layout.preferredWidth: root.width < 1100 ? 170 : Math.min(360, parent.width * .42)
                                 Layout.fillHeight: true
 
                                 Image {
@@ -197,7 +213,7 @@ ApplicationWindow {
                                 Text { text: "ARLEN CORE"; color: theme.accent; font.pixelSize: 12; font.letterSpacing: 3 }
                                 Text {
                                     text: "Good " + (new Date(root.clockTick).getHours() < 12 ? "morning" : (new Date(root.clockTick).getHours() < 18 ? "afternoon" : "evening")) + ", " + backend.ownerCallName
-                                    color: theme.text; font.pixelSize: 31; font.weight: Font.DemiBold
+                                    color: theme.text; font.pixelSize: root.width < 1100 ? 23 : 31; font.weight: Font.DemiBold; wrapMode: Text.Wrap
                                 }
                                 Text {
                                     Layout.fillWidth: true
@@ -224,7 +240,9 @@ ApplicationWindow {
                     }
 
                     ColumnLayout {
+                        Layout.fillWidth: true
                         Layout.preferredWidth: 370
+                        Layout.preferredHeight: root.width < 1320 ? 245 : -1
                         Layout.fillHeight: true
                         spacing: 10
                         Metric { Layout.fillWidth: true; Layout.fillHeight: true; label: "PROCESSOR"; value: backend.cpu.toFixed(0)+"%"; progress: backend.cpu/100 }
@@ -244,15 +262,17 @@ ApplicationWindow {
                     }
                 }
 
-                RowLayout {
+                GridLayout {
                     Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    spacing: 14
+                    Layout.preferredHeight: root.width < 1450 ? 690 : 310
+                    columns: root.width < 1450 ? 1 : 3
+                    columnSpacing: 12
+                    rowSpacing: 12
 
                     Panel {
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        Layout.minimumWidth: 500
+                        Layout.minimumWidth: 0
                         ColumnLayout {
                             anchors.fill: parent; anchors.margins: 20; spacing: 12
                             RowLayout { Layout.fillWidth: true
@@ -266,6 +286,7 @@ ApplicationWindow {
                     }
 
                     Panel {
+                        Layout.fillWidth: true
                         Layout.preferredWidth: 390
                         Layout.fillHeight: true
                         ColumnLayout {
@@ -282,6 +303,7 @@ ApplicationWindow {
                     }
 
                     Panel {
+                        Layout.fillWidth: true
                         Layout.preferredWidth: 330
                         Layout.fillHeight: true
                         ColumnLayout {
@@ -328,6 +350,7 @@ ApplicationWindow {
                             contentItem: Text { text: parent.text; color: "#021014"; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter; font.weight: Font.Bold }
                         }
                     }
+                }
                 }
             }
         }
@@ -819,12 +842,43 @@ ApplicationWindow {
     }
 
     Dialog {
-        id:firstRunDialog
-        visible:backend.firstRun && !root.openingVisible
-        modal:true; closePolicy:Popup.NoAutoClose; anchors.centerIn:parent; title:"CREATE OWNER PIN"
-        contentItem:Column{spacing:12;padding:20;Text{text:"Set a 4–12 digit Admin PIN for Jubaer Hossain.";color:theme.text}TextField{id:newPin;echoMode:TextInput.Password;placeholderText:"New PIN";color:theme.text;background:Rectangle{color:theme.card;radius:7;border.color:theme.line}}Text{id:pinError;color:"#d95b5b"}}
-        standardButtons:Dialog.Save
-        background:Rectangle{color:theme.panel;radius:12;border.color:theme.accent}
-        onAccepted:{if(!backend.setInitialPin(newPin.text)){pinError.text="Use 4–12 digits.";open()}}
+        id: firstRunDialog
+        visible: backend.firstRun && !root.openingVisible
+        modal: true
+        closePolicy: Popup.NoAutoClose
+        anchors.centerIn: parent
+        width: Math.min(440, root.width - 40)
+        padding: 0
+        title: ""
+        header: Item { height: 0 }
+        background: Rectangle { color: theme.panel; radius: 18; border.width: 1; border.color: theme.accent }
+        contentItem: ColumnLayout {
+            spacing: 14
+            Text { text: "SECURE YOUR NEXUS"; color: theme.accent; font.pixelSize: 11; font.letterSpacing: 2 }
+            Text { text: "Create Owner PIN"; color: theme.text; font.pixelSize: 24; font.weight: Font.DemiBold }
+            Text { Layout.fillWidth: true; text: "Set a 4–12 digit PIN. Protected system actions and future updates require owner approval."; color: theme.muted; font.pixelSize: 12; wrapMode: Text.Wrap; lineHeight: 1.35 }
+            TextField {
+                id: newPin; Layout.fillWidth: true; Layout.preferredHeight: 48
+                echoMode: TextInput.Password; inputMethodHints: Qt.ImhDigitsOnly; maximumLength: 12
+                placeholderText: "Enter 4–12 digits"; color: theme.text; placeholderTextColor: theme.muted
+                background: Rectangle { color: theme.card; radius: 10; border.color: newPin.activeFocus ? theme.accent : theme.line }
+                onAccepted: firstRunDialog.accept()
+            }
+            Text { id: pinError; Layout.fillWidth: true; color: "#e66b78"; font.pixelSize: 11; wrapMode: Text.Wrap }
+            Button {
+                Layout.fillWidth: true; Layout.preferredHeight: 48; text: "CREATE SECURE PIN"
+                background: Rectangle { color: parent.hovered ? Qt.lighter(theme.accent, 1.12) : theme.accent; radius: 10 }
+                contentItem: Text { text: parent.text; color: "#021014"; font.weight: Font.Bold; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter }
+                onClicked: firstRunDialog.accept()
+            }
+        }
+        footer: Item { height: 20 }
+        onAccepted: {
+            if (!backend.setInitialPin(newPin.text)) {
+                pinError.text = "PIN must contain only 4–12 digits."
+                open()
+                newPin.forceActiveFocus()
+            }
+        }
     }
 }
