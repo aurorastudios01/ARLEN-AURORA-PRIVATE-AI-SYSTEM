@@ -7,6 +7,8 @@ from pathlib import Path
 from PySide6.QtCore import QSize, QTimer, QUrl
 from PySide6.QtGui import QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtQuick import QQuickWindow
+from shiboken6 import getCppPointer, wrapInstance
 
 from backend import Backend
 
@@ -39,6 +41,7 @@ def main():
         width = max(900, int(sys.argv[marker + 2]))
         height = max(680, int(sys.argv[marker + 3]))
         window = engine.rootObjects()[0]
+        quick_window = wrapInstance(getCppPointer(window)[0], QQuickWindow)
         window.setProperty("openingVisible", False)
         window.showNormal()
         window.setWidth(width)
@@ -59,7 +62,7 @@ def main():
                 app.quit()
 
         def start_capture():
-            window.contentItem().grabToImage(save_result, QSize(width, height))
+            quick_window.contentItem().grabToImage(save_result, QSize(width, height))
 
         def capture_timeout():
             if not finished["value"]:
