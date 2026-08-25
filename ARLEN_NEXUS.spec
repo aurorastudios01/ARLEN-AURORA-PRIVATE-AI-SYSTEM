@@ -4,18 +4,19 @@
 from PyInstaller.utils.hooks import collect_all
 
 pyside_data, pyside_bins, pyside_hidden = collect_all("PySide6")
+fitz_data, fitz_bins, fitz_hidden = collect_all("fitz")
 
 a = Analysis(
     ["main.py"],
     pathex=[],
-    binaries=pyside_bins,
-    datas=pyside_data + [
+    binaries=pyside_bins + fitz_bins,
+    datas=pyside_data + fitz_data + [
         ("qml", "qml"),
         ("assets", "assets"),
         ("models/README.txt", "models"),
         ("updates/manifest.example.json", "updates"),
     ],
-    hiddenimports=pyside_hidden + ["psutil", "PIL", "PIL.ImageQt", "pypdf"],
+    hiddenimports=pyside_hidden + fitz_hidden + ["psutil", "PIL", "PIL.ImageQt", "pypdf", "fitz"],
     excludes=["tkinter", "unittest"],
     noarchive=False,
 )
