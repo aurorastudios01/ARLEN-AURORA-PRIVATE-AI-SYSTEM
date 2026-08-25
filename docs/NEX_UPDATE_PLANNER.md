@@ -1,267 +1,180 @@
 # ARLEN NEXUS - Development History & Next Update Planner
 
-## Project Vision
-ARLEN NEXUS is a private offline-first AI workstation for Windows.
+## Current Direction
 
-It is designed as an AI agent, not only a chatbot.
+ARLEN NEXUS V1 is now locked for stability-first development.
 
-Core concept:
-- Ollama = AI Brain
-- Python Tools = AI Hands
-- Local Storage = Personal Memory
-- Premium UI = AI Workstation Experience
+Priority:
 
----
-
-# Version History Roadmap
-
-## v0.1 - Project Foundation
-Added:
-- Initial ARLEN NEXUS concept
-- Offline-first AI assistant planning
-- Local AI architecture decision
-- Windows desktop application vision
+- Reliable core features
+- Low resource usage
+- 4GB RAM optimization
+- Real working functionality over excessive features
 
 ---
 
-## v0.2 - Local AI Engine Setup
-Added:
-- Python backend foundation
-- Ollama integration planning
-- Qwen local model support
+# Final V1 Scope
 
----
+## Core AI
 
-## v0.3 - AI Brain Setup
-Completed:
-- Python 3.11.9
-- Ollama 0.32.15
-- Qwen2.5:3B model installation and testing
+- Ollama integration
+- Qwen2.5:3B local model
+- Offline chat
+- Context understanding
+- Basic local memory
+- User preferences
 
----
+## System Assistant
 
-## v0.4 - Tool System Planning
-Added:
-- Backend tool architecture
-- AI Brain + Python Hands concept
-- Modular tools system
+Included:
 
----
+- CPU/RAM/Storage monitoring
+- Battery status
+- Sound control
+- Brightness control
+- System information
+- ARLEN cache cleanup
+- Safe refresh utilities
 
-## v0.5 - Memory System Planning
-Added:
-- Local memory database concept
-- SQLite based memory system
-- User preference storage
-- Project memory
-- Chat history storage
+Not included:
 
----
+- Full PC takeover
+- Mouse automation
+- Keyboard automation
 
-## v0.6 - Document Intelligence Planning
-Added:
-- PDF reading
-- PDF summary
-- Text extraction
-- Document assistant
-- TXT, DOCX, CSV, Excel, Markdown support
+## Smart Environment Setup
 
----
-
-## v0.7 - Image Intelligence Planning
-Added:
-- Pillow
-- OpenCV
-- NumPy
-- piexif
-- rembg optional module
-
-Features planned:
-- Image analysis
-- Sharpness improvement
-- Texture enhancement
-- Light correction
-- Contrast adjustment
-- Color balance
-- Cinematic background blur
-
-Removed from default:
-- Automatic background removal
-
----
-
-## v0.8 - UI Vision
-Added:
-- Premium futuristic desktop UI
-- Animated AI sphere
-- Dynamic backgrounds
-- Command Center
-- System panels
-- Dark and Light themes
-
----
-
-## v0.9 - Theme & Experience System
-Added:
-- Multiple animated themes
-- Selectable AI spheres
-- UI sound system
-- Startup sound
-- Warning sound
-- Processing sound
-- Completion sounds
-
-No AI voice assistant.
-
-Removed:
-- Whisper/TTS voice system
-
-Reason:
-- Better stability
-- Better performance on 4GB RAM PC
-
----
-
-## v1.0 - ARLEN Workstation Interface
-Added:
-Default Theme:
-- Aurora AI
-
-Interface:
-- Animated AI Core
-- System monitoring
-- CPU
-- RAM
-- Storage
-- Battery
-- Sound
-- Brightness
-- Left side Quick Tools
-
-Tools:
-- Calculator
-- Scientific Calculator
-- PDF Tools
-- Image Tools
-- File Manager
-- Notes
-- Screenshot
-
----
-
-## v1.1 - Smart Environment Setup Layer
-Added:
-
-## Auto System Discovery
-
-ARLEN will detect existing PC environment on first launch.
+First launch system discovery:
 
 Detect:
-- Python installation
-- Ollama installation
+
+- Python
+- Ollama
 - AI models
 - FFmpeg
 - Installed applications
 - Browsers
 - Available tools
 
+ARLEN configures itself according to the user's PC environment.
+
+## File Assistant
+
+- Find files
+- Search documents
+- Open files
+- Basic organization
+
+## PDF Intelligence
+
+- Read PDF
+- Summary
+- Explain
+- Search
+- Extract text
+- Merge
+- Split
+- Rotate
+- Watermark
+
+## Image Intelligence
+
+- Image analysis
+- Sharpness
+- Texture
+- Light adjustment
+- Contrast
+- Color correction
+- Resize
+- Crop
+- Format conversion
+- Background blur suggestion
+
+Advanced Vision postponed.
+
 ---
 
-## Auto Configuration
+# UI System
 
-ARLEN will configure itself according to the user's PC.
+Default:
 
-Examples:
-- Detect available browsers
-- Detect installed editors
-- Detect document tools
-- Detect media applications
+Aurora AI Theme
+
+Features:
+
+- Animated AI Sphere
+- Dynamic background
+- Theme system
+- UI sounds
+- Command Center
+- Left Quick Tools
 
 ---
 
-## Practical PC Assistant Scope
+# Version History
 
-ARLEN V1 will focus on useful assistance.
+## v0.1
+Foundation and offline-first AI concept.
 
-Can:
-- Open Chrome
-- Open Brave
-- Open VS Code
-- Open Calculator
-- Launch installed applications
-- Find local documents
-- Search files
-- Open required files
-- Find useful documents
-- Open browser searches
-- Find news and information
+## v0.2
+Desktop architecture planning.
+
+## v0.3
+Python, Ollama and Qwen local AI setup.
+
+## v0.4
+Tool architecture.
+
+## v0.5
+Memory system planning.
+
+## v0.6
+Document intelligence planning.
+
+## v0.7
+Image intelligence foundation.
+
+## v0.8
+Futuristic UI system.
+
+## v0.9
+Theme and experience system.
+
+Removed voice dependency.
+
+## v1.0
+ARLEN workstation interface.
+
+## v1.1
+Smart environment setup layer.
 
 ---
 
 # Removed From Current Roadmap
 
-Not required now:
-
+- Voice assistant
+- Whisper/TTS
+- Plugin system
+- Personal knowledge base
 - Messenger automation
-- Automatic message sending
-- Social media automation
-- Full mouse and keyboard takeover
+- Social automation
 - Deep browser automation
 
-Future plugin possibility only.
-
----
-
-# Current Completed Setup
-
-Environment:
-- Python 3.11.9
-- Ollama 0.32.15
-- Qwen2.5:3B
-- FFmpeg
-
-Image Base:
-- Pillow
-- OpenCV
-- NumPy
-- piexif
-- rembg optional
-
-Hardware Target:
-- 4GB RAM optimization
-- Low resource design
-
----
-
-# Final ARLEN NEXUS Goal
-
-A personal AI operating companion with:
-
-- Offline intelligence
-- Local memory
-- Smart environment setup
-- Image/PDF/document intelligence
-- Practical PC assistance
-- Application launcher
-- File assistant
-- Browser helper
-- Dynamic futuristic interface
-- Modular expansion system
-- Professional AI workstation experience
+Future only after V1 stability.
 
 ---
 
 # Next Development Order
 
 1. Backend core
-2. Ollama API connection
-3. Agent planner
-4. Memory database
+2. Ollama connection
+3. AI agent planner
+4. Memory system
 5. Tool manager
 6. System scanner
 7. Image module
 8. PDF module
 9. File assistant
-10. Application launcher
+10. App launcher
 11. Premium UI
 12. EXE installer
