@@ -49,6 +49,7 @@ def main():
         window.setPosition(0, 0)
 
         finished = {"value": False}
+        capture_state = {"result": None}
 
         def save_result(result):
             if finished["value"]:
@@ -62,7 +63,9 @@ def main():
                 app.quit()
 
         def start_capture():
-            quick_window.contentItem().grabToImage(save_result, QSize(width, height))
+            result = quick_window.contentItem().grabToImage(QSize(width, height))
+            capture_state["result"] = result
+            result.ready.connect(lambda: save_result(result))
 
         def capture_timeout():
             if not finished["value"]:
