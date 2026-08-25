@@ -17,6 +17,7 @@ OutputBaseFilename=ARLEN-NEXUS-Setup-v0.6
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile=..\\assets\\arlen-nexus.ico
 SetupLogging=yes
 UninstallDisplayName=ARLEN NEXUS
 CloseApplications=yes
