@@ -1,46 +1,51 @@
-# ARLEN NEXUS - Development History & Next Update Planner
+# ARLEN NEXUS - Development History & Update Planner
 
-## Current Direction
+## Project Vision
 
-ARLEN NEXUS V1 is now locked for stability-first development.
+ARLEN NEXUS is a private offline-first AI workstation for Windows.
+
+Goal:
+
+Create a reliable personal AI companion that understands tasks, uses tools and works locally.
+
+Core architecture:
+
+```
+Ollama       = AI Brain
+Python       = Tool Execution Layer
+SQLite       = Local Memory
+PySide6      = Desktop Interface
+```
+
+---
+
+# Current V1 Direction
+
+ARLEN NEXUS V1 is locked for stability-first development.
 
 Priority:
 
-- Reliable core features
+- Reliability
+- Performance
 - Low resource usage
+- Real working features
 - 4GB RAM optimization
-- Real working functionality over excessive features
 
 ---
 
 # Final V1 Scope
 
-## Core AI
+## AI Core
 
 - Ollama integration
-- Qwen2.5:3B local model
+- Qwen2.5:3B text intelligence
+- Qwen2.5VL:3B vision intelligence
 - Offline chat
 - Context understanding
-- Basic local memory
+- Basic memory
 - User preferences
 
-## System Assistant
-
-Included:
-
-- CPU/RAM/Storage monitoring
-- Battery status
-- Sound control
-- Brightness control
-- System information
-- ARLEN cache cleanup
-- Safe refresh utilities
-
-Not included:
-
-- Full PC takeover
-- Mouse automation
-- Keyboard automation
+---
 
 ## Smart Environment Setup
 
@@ -56,7 +61,31 @@ Detect:
 - Browsers
 - Available tools
 
-ARLEN configures itself according to the user's PC environment.
+ARLEN configures itself according to the user's PC.
+
+---
+
+## System Assistant
+
+Included:
+
+- CPU monitoring
+- RAM monitoring
+- Storage monitoring
+- Battery status
+- Brightness control
+- Sound control
+- System information
+- Cache cleanup
+- Safe refresh utilities
+
+Not included:
+
+- Full PC takeover
+- Mouse automation
+- Keyboard automation
+
+---
 
 ## File Assistant
 
@@ -64,6 +93,8 @@ ARLEN configures itself according to the user's PC environment.
 - Search documents
 - Open files
 - Basic organization
+
+---
 
 ## PDF Intelligence
 
@@ -77,9 +108,12 @@ ARLEN configures itself according to the user's PC environment.
 - Rotate
 - Watermark
 
+---
+
 ## Image Intelligence
 
 - Image analysis
+- Smart suggestions
 - Sharpness
 - Texture
 - Light adjustment
@@ -90,7 +124,7 @@ ARLEN configures itself according to the user's PC environment.
 - Format conversion
 - Background blur suggestion
 
-Advanced Vision postponed.
+Smart Vision Lite included in V1.
 
 ---
 
@@ -98,7 +132,7 @@ Advanced Vision postponed.
 
 Default:
 
-Aurora AI Theme
+## Aurora AI Theme
 
 Features:
 
@@ -114,13 +148,13 @@ Features:
 # Version History
 
 ## v0.1
-Foundation and offline-first AI concept.
+Foundation and offline-first concept.
 
 ## v0.2
 Desktop architecture planning.
 
 ## v0.3
-Python, Ollama and Qwen local AI setup.
+Python, Ollama and local AI setup.
 
 ## v0.4
 Tool architecture.
@@ -129,7 +163,7 @@ Tool architecture.
 Memory system planning.
 
 ## v0.6
-Document intelligence planning.
+Document intelligence.
 
 ## v0.7
 Image intelligence foundation.
@@ -138,43 +172,55 @@ Image intelligence foundation.
 Futuristic UI system.
 
 ## v0.9
-Theme and experience system.
+Theme and sound experience.
 
-Removed voice dependency.
+Voice removed for stability.
 
 ## v1.0
-ARLEN workstation interface.
+Workstation interface.
 
 ## v1.1
-Smart environment setup layer.
+Smart environment setup and self-configuration.
 
 ---
 
-# Removed From Current Roadmap
+# Removed From V1
 
 - Voice assistant
-- Whisper/TTS
+- TTS
+- Whisper
 - Plugin system
 - Personal knowledge base
 - Messenger automation
 - Social automation
 - Deep browser automation
+- Full PC control
 
-Future only after V1 stability.
+Future expansion only after stable V1 release.
 
 ---
 
-# Next Development Order
+# Development Order
 
 1. Backend core
 2. Ollama connection
-3. AI agent planner
-4. Memory system
-5. Tool manager
-6. System scanner
-7. Image module
-8. PDF module
-9. File assistant
-10. App launcher
-11. Premium UI
-12. EXE installer
+3. Memory system
+4. Tool manager
+5. System scanner
+6. Image module
+7. PDF module
+8. File assistant
+9. Premium UI
+10. Windows installer
+
+---
+
+# Final Goal
+
+ARLEN NEXUS will become a personal AI workstation:
+
+- Offline
+- Intelligent
+- Lightweight
+- Reliable
+- Expandable
