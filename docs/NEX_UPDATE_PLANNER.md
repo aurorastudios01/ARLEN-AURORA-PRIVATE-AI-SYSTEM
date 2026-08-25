@@ -62,8 +62,6 @@ Themes, spheres, backgrounds and sounds will only be managed from inside ARLEN N
 
 ## Default Theme: Aurora AI (Theme 9)
 
-ARLEN NEXUS default interface will use Aurora AI instead of Cyber Dark.
-
 Design direction:
 - Dark glass UI
 - Aurora energy background
@@ -76,7 +74,7 @@ Design direction:
 
 # Default Dashboard Layout
 
-Main Windows desktop style interface:
+Windows-style desktop application interface:
 
 ## Top Area
 - ARLEN NEXUS branding
@@ -87,32 +85,24 @@ Main Windows desktop style interface:
 - Animated AI Sphere
 - Dynamic AI status visualization
 
-## Panels
+## System Panels
 
-System Overview:
 - CPU
 - RAM
 - Storage
 - AI Model
-- Status
-
-AI Panel:
-- AI state
-- Running tasks
 - Temperature
-
-Compact Controls:
 - Battery
 - Sound
 - Brightness
 
-These panels will remain compact to avoid visual overload.
+Battery, sound and brightness controls remain compact to keep the interface clean.
 
 ---
 
 # Quick Tools System
 
-Quick Tools will move to the left side panel.
+Quick Tools moved to the left side panel.
 
 Available tools:
 
@@ -145,6 +135,51 @@ Features:
 - Matrix calculation
 - Statistics
 - Unit conversion
+
+---
+
+# PC Assistant Scope (V1)
+
+ARLEN will provide practical PC assistance.
+
+## Application Launcher
+
+User commands:
+- Open Chrome
+- Open Brave
+- Open VS Code
+- Open Calculator
+- Open required applications
+
+## File and Document Helper
+
+Functions:
+- Find documents
+- Search local files
+- Open required files
+- Organize files
+
+## Web Search Helper
+
+Functions:
+- Open browser
+- Search required topics
+- Find useful documents
+- Find news and information
+
+---
+
+# Removed From Current Roadmap
+
+Not required for current version:
+
+- Messenger automation
+- Automatic message sending
+- Full mouse/keyboard takeover
+- Social media automation
+- Deep browser automation
+
+These may become optional future plugins.
 
 ---
 
@@ -208,8 +243,9 @@ Warning animation
 6. Image intelligence module
 7. PDF intelligence module
 8. File management tools
-9. Premium UI implementation
-10. EXE installer
+9. App launcher and search assistant
+10. Premium UI implementation
+11. EXE installer
 
 ---
 
@@ -221,7 +257,9 @@ ARLEN NEXUS will become a personal AI operating companion with:
 - Local memory
 - Smart automation
 - Image/PDF/document intelligence
-- PC management
+- Practical PC assistance
+- Application launcher
+- Document and web search helper
 - Dynamic futuristic interface
 - Modular expansion system
 - Professional desktop workstation experience
