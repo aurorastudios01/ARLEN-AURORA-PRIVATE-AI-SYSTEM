@@ -46,8 +46,8 @@ jobs:
         run: |
           $setup = Resolve-Path "installer-output/ARLEN-NEXUS-Setup-v0.6.exe"
           $testInstall = Join-Path $env:RUNNER_TEMP "ARLEN-NEXUS-v06"
-          & $setup /VERYSILENT /SUPPRESSMSGBOXES /NORESTART "/DIR=$testInstall"
-          if ($LASTEXITCODE -ne 0) { throw "Silent installer failed with code $LASTEXITCODE" }
+          $installProcess = Start-Process -FilePath $setup -ArgumentList @("/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=$testInstall") -Wait -PassThru
+          if ($installProcess.ExitCode -ne 0) { throw "Silent installer failed with code $($installProcess.ExitCode)" }
           $installed = Join-Path $testInstall "ARLEN NEXUS.exe"
           if (-not (Test-Path $installed)) {
             Get-ChildItem $testInstall -Recurse -ErrorAction SilentlyContinue | Select-Object FullName
