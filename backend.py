@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import gc
+import ast
 import ctypes
 from ctypes import wintypes
 import hashlib
 import json
+import math
 import os
 import platform
 import re
@@ -13,6 +15,7 @@ import socket
 import subprocess
 import threading
 import time
+import uuid
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import unquote, urlparse
@@ -20,7 +23,16 @@ from urllib.parse import quote_plus
 
 import psutil
 from PySide6.QtCore import QObject, Property, QTimer, Signal, Slot
+from PySide6.QtGui import QGuiApplication
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+
+from v1_services import (
+    APP_VERSION,
+    ArlenDatabase,
+    EnvironmentScanner,
+    OllamaClient,
+    launch_local_file,
+)
 
 
 ROOT = Path(getattr(__import__("sys"), "_MEIPASS", Path(__file__).resolve().parent))
@@ -36,14 +48,19 @@ COMMANDS_FILE = DATA / "custom_commands.json"
 UPDATE_STATE_FILE = DATA / "update_state.json"
 BACKUP_DIR = DATA / "backups"
 BACKUP_DIR.mkdir(exist_ok=True)
+DB_FILE = DATA / "arlen_memory.sqlite3"
+ORGANIZE_STATE_FILE = DATA / "last_organization.json"
+VISUAL_DIR = DATA / "visuals"
+VISUAL_DIR.mkdir(exist_ok=True)
 
 DEFAULT_SETTINGS = {
+    "app_version": APP_VERSION,
     "first_run": True,
     "pin_hash": "",
     "opening_duration": 12,
     "opening_sound": True,
-    "theme": "Obsidian",
-    "sphere": "Neural Sphere",
+    "theme": "Aurora AI",
+    "sphere": "Aurora Core",
     "background_image": "",
     "hotkey": "Ctrl+Alt+A",
     "internet_mode": "Smart Auto",
@@ -67,7 +84,24 @@ DEFAULT_SETTINGS = {
     "voice_pitch": 1.0,
     "wake_word": "ARLEN",
     "update_channel": "Stable",
+    "low_resource_mode": True,
+    "memory_enabled": True,
+    "ollama_url": "http://127.0.0.1:11434",
+    "chat_model": "qwen2.5:3b",
+    "vision_model": "qwen2.5vl:3b",
+    "animation_level": "Enhanced",
+    "sphere_scale": 1.0,
+    "sphere_glow": 0.78,
+    "sphere_pulse_speed": 1.0,
+    "sphere_animation": True,
+    "background_opacity": 0.24,
 }
+
+ALLOWED_THEMES = (
+    "Aurora AI", "Obsidian", "Ocean", "Crimson", "Emerald",
+    "Violet", "Arctic", "Solar", "Graphite", "Midnight",
+)
+ALLOWED_SPHERES = ("Aurora Core", "Pulse Bloom", "Particle Splash", "Orbit Matrix")
 
 
 def load_settings() -> dict:
@@ -91,6 +125,11 @@ class Backend(QObject):
     pdfResult = Signal(str)
     profileSaved = Signal(str)
     automationChanged = Signal()
+    conversationChanged = Signal()
+    environmentChanged = Signal()
+    recentFilesChanged = Signal()
+    fileIndexChanged = Signal()
+    busyChanged = Signal()
     updateStatusChanged = Signal(str)
     capabilityWarning = Signal(str, str)
 
@@ -111,14 +150,32 @@ class Backend(QObject):
         self._power_source = "UNKNOWN"
         self._battery_time = "N/A"
         self._top_apps = "Scanning processes…"
-        self._brain = None
+        self._brain = None  # Kept for safe migration from the v0.7 GGUF backend.
         self._brain_loading = False
+        self._busy = False
+        self._environment = {
+            "app_version": APP_VERSION,
+            "resource_profile": "Scanning…",
+            "ollama": {"installed": False, "running": False, "models": []},
+            "chat": {"model": self.settings["chat_model"], "ready": False},
+            "vision": {"model": self.settings["vision_model"], "ready": False},
+            "ffmpeg": {"installed": False, "path": ""},
+        }
+        self._file_index_status = "Not scanned yet"
+        self._database = ArlenDatabase(DB_FILE)
+        self._ollama = OllamaClient(self.settings["ollama_url"])
+        self._scanner = EnvironmentScanner(
+            self._ollama,
+            self.settings["chat_model"],
+            self.settings["vision_model"],
+        )
         self._custom_commands = self._load_custom_commands()
 
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.refresh_stats)
         self.timer.start(1000)
         self.refresh_stats()
+        threading.Thread(target=self._refresh_environment_worker, daemon=True).start()
         if os.name == "nt" and self.settings["opening_sound"]:
             threading.Thread(target=self._startup_sound, daemon=True).start()
         if os.name == "nt":
@@ -240,6 +297,48 @@ class Backend(QObject):
     def customCommands(self):
         return json.dumps(self._custom_commands, ensure_ascii=False)
 
+    @Property(str, constant=True)
+    def appVersion(self): return APP_VERSION
+
+    @Property(bool, notify=settingsChanged)
+    def lowResourceMode(self): return bool(self.settings.get("low_resource_mode", True))
+
+    @Property(bool, notify=busyChanged)
+    def busy(self): return self._busy
+
+    @Property(str, notify=environmentChanged)
+    def environmentStatus(self):
+        return json.dumps(self._environment, ensure_ascii=False)
+
+    @Property(str, notify=conversationChanged)
+    def conversationHistory(self):
+        return json.dumps(self._database.messages(80), ensure_ascii=False)
+
+    @Property(str, notify=recentFilesChanged)
+    def recentFiles(self):
+        return json.dumps(self._database.recent_files(12), ensure_ascii=False)
+
+    @Property(str, notify=fileIndexChanged)
+    def fileIndexStatus(self): return self._file_index_status
+
+    @Property(float, notify=settingsChanged)
+    def sphereScale(self): return float(self.settings.get("sphere_scale", 1.0))
+
+    @Property(float, notify=settingsChanged)
+    def sphereGlow(self): return float(self.settings.get("sphere_glow", .78))
+
+    @Property(float, notify=settingsChanged)
+    def spherePulseSpeed(self): return float(self.settings.get("sphere_pulse_speed", 1.0))
+
+    @Property(bool, notify=settingsChanged)
+    def sphereAnimation(self): return bool(self.settings.get("sphere_animation", True))
+
+    def _set_busy(self, value):
+        value = bool(value)
+        if self._busy != value:
+            self._busy = value
+            self.busyChanged.emit()
+
     @Slot()
     def refresh_stats(self):
         self._cpu = psutil.cpu_percent(interval=None)
@@ -346,13 +445,27 @@ class Backend(QObject):
 
     @Slot(str)
     def setTheme(self, theme):
-        if theme in ("Obsidian", "Crimson", "Emerald", "Violet", "Arctic"):
+        if theme in ALLOWED_THEMES:
             self.settings["theme"] = theme
             self._save()
 
     @Slot(str)
     def setSphere(self, name):
-        self.settings["sphere"] = name
+        if name in ALLOWED_SPHERES:
+            self.settings["sphere"] = name
+            self._save()
+
+    @Slot(bool)
+    def setLowResourceMode(self, enabled):
+        self.settings["low_resource_mode"] = bool(enabled)
+        self._save()
+
+    @Slot(float, float, float, bool)
+    def saveCoreSettings(self, scale, glow, speed, animated):
+        self.settings["sphere_scale"] = max(.65, min(1.35, float(scale)))
+        self.settings["sphere_glow"] = max(.1, min(1.0, float(glow)))
+        self.settings["sphere_pulse_speed"] = max(.35, min(2.5, float(speed)))
+        self.settings["sphere_animation"] = bool(animated)
         self._save()
 
     @Slot(str, result=bool)
@@ -405,19 +518,59 @@ class Backend(QObject):
             source_path = self._local_path(source)
             if source_path.suffix.lower() not in (".png", ".jpg", ".jpeg", ".webp", ".bmp"):
                 return "Choose a supported image file."
-            visual_dir = DATA / "visuals"
-            visual_dir.mkdir(parents=True, exist_ok=True)
-            destination = visual_dir / f"{kind}{source_path.suffix.lower()}"
+            destination = VISUAL_DIR / f"{kind}-{uuid.uuid4().hex[:12]}{source_path.suffix.lower()}"
             shutil.copy2(source_path, destination)
             key = {"avatar": "owner_avatar", "background": "background_image", "sphere": "custom_sphere"}[kind]
+            old_value = self.settings.get(key, "")
             self.settings[key] = str(destination)
             if kind == "sphere":
                 self.settings["sphere"] = "Custom Sphere"
             self._save()
+            self._safe_remove_visual(old_value)
             self._log(f"custom {kind}", str(source_path))
             return f"Custom {kind} saved."
         except Exception as exc:
             return f"Could not import {kind}: {exc}"
+
+    @staticmethod
+    def _safe_remove_visual(value):
+        try:
+            candidate = Path(value).resolve()
+            if candidate.is_file() and VISUAL_DIR.resolve() in candidate.parents:
+                candidate.unlink()
+        except (OSError, RuntimeError, ValueError):
+            pass
+
+    @Slot(str, result=str)
+    def removeProfileVisual(self, kind):
+        mapping = {
+            "avatar": "owner_avatar",
+            "background": "background_image",
+            "sphere": "custom_sphere",
+        }
+        key = mapping.get(kind)
+        if not key:
+            return "Unsupported visual type."
+        old_value = self.settings.get(key, "")
+        self.settings[key] = ""
+        if kind == "sphere":
+            self.settings["sphere"] = "Aurora Core"
+        self._save()
+        self._safe_remove_visual(old_value)
+        return f"Custom {kind} removed; Aurora default restored."
+
+    @Slot(result=str)
+    def resetVisuals(self):
+        for key in ("owner_avatar", "background_image", "custom_sphere"):
+            self._safe_remove_visual(self.settings.get(key, ""))
+            self.settings[key] = ""
+        self.settings.update({
+            "theme": "Aurora AI", "sphere": "Aurora Core",
+            "sphere_scale": 1.0, "sphere_glow": .78,
+            "sphere_pulse_speed": 1.0, "sphere_animation": True,
+        })
+        self._save()
+        return "Aurora AI visuals restored."
 
     @Slot(str, str, str, str, result=bool)
     def addCustomCommand(self, trigger, actions, response, pin):
@@ -542,7 +695,7 @@ class Backend(QObject):
         """Read a signed/local manifest foundation; no files are replaced silently."""
         manifest = ROOT / "updates" / "manifest.json"
         if not manifest.exists():
-            self.updateStatusChanged.emit("ARLEN v0.3 is current. No staged update manifest was found.")
+            self.updateStatusChanged.emit(f"ARLEN {APP_VERSION} development build: no staged update manifest was found.")
             return
         try:
             data = json.loads(manifest.read_text(encoding="utf-8"))
@@ -688,14 +841,45 @@ class Backend(QObject):
 
     @Slot(result=str)
     def packStatus(self):
+        chat = bool(self._environment.get("chat", {}).get("ready"))
+        vision = bool(self._environment.get("vision", {}).get("ready"))
+        ollama = bool(self._environment.get("ollama", {}).get("running"))
+        ffmpeg = bool(self._environment.get("ffmpeg", {}).get("installed"))
         packs = {
-            "Local Brain": any((ROOT/"models").glob("*.gguf")),
-            "Voice": (ROOT/"models"/"voice").exists(),
-            "Vision/OCR": (ROOT/"models"/"ocr").exists(),
-            "Image": True,
-            "PDF": True,
+            "Ollama Service": ollama,
+            f"Chat ({self.settings['chat_model']})": chat,
+            f"Vision ({self.settings['vision_model']})": vision,
+            "Image Studio": True,
+            "PDF Studio": True,
+            "FFmpeg": ffmpeg,
         }
-        return "\n".join(f"{name}: {'READY' if ready else 'NOT LOADED'}" for name, ready in packs.items())
+        return "\n".join(f"{name}: {'READY' if ready else 'NOT READY'}" for name, ready in packs.items())
+
+    @Slot()
+    def refreshEnvironment(self):
+        threading.Thread(target=self._refresh_environment_worker, daemon=True).start()
+
+    def _refresh_environment_worker(self):
+        try:
+            self._environment = self._scanner.scan()
+        except Exception as exc:
+            self._environment = {**self._environment, "scan_error": str(exc)}
+        self.environmentChanged.emit()
+
+    @Slot(result=str)
+    def installationReport(self):
+        env = self._environment
+        ollama = env.get("ollama", {})
+        lines = [
+            f"ARLEN NEXUS {APP_VERSION}",
+            f"Resource profile: {env.get('resource_profile', 'Unknown')}",
+            f"Python: {env.get('python', 'Unknown')}",
+            f"Ollama: {'RUNNING' if ollama.get('running') else 'NOT RUNNING'}",
+            f"Chat model {self.settings['chat_model']}: {'READY' if env.get('chat', {}).get('ready') else 'MISSING'}",
+            f"Vision model {self.settings['vision_model']}: {'READY' if env.get('vision', {}).get('ready') else 'MISSING'}",
+            f"FFmpeg: {'READY' if env.get('ffmpeg', {}).get('installed') else 'MISSING'}",
+        ]
+        return "\n".join(lines)
 
     @Slot(str, result=str)
     def backupOwnerData(self, pin):
@@ -741,36 +925,78 @@ class Backend(QObject):
         self.commandResult.emit("Pending Windows power action cancelled.", "success")
 
     @Slot(str)
-    def sendChat(self, message):
+    def routeInput(self, message):
         text = message.strip()
         if not text:
             return
+        self._database.add_message("user", text)
+        self.conversationChanged.emit()
+        if self._looks_like_pc_command(text):
+            self.execute(text)
+            return
+        self._set_busy(True)
         threading.Thread(target=self._chat_worker, args=(text,), daemon=True).start()
 
+    @Slot(str)
+    def sendChat(self, message):
+        self.routeInput(message)
+
+    @staticmethod
+    def _looks_like_pc_command(message):
+        text = message.casefold()
+        terms = (
+            "open ", "launch ", "kholo", "khol ", "চালু", "খোলো", "খুলে",
+            "restart", "shutdown", "শাটডাউন", "system refresh", "ram refresh",
+            "status", "সিস্টেম", "search online", "web search", "অনলাইনে খুঁজ",
+        )
+        return any(term in text for term in terms)
+
     def _chat_worker(self, message):
-        model = next((p for p in (ROOT/"models").glob("*.gguf")), None)
-        if model is None:
-            self.capabilityWarning.emit("LOCAL BRAIN NOT INSTALLED", "Private conversational chat needs a compatible GGUF Local Brain Pack. PC commands and built-in tools remain available.")
-            reply = "My local Conversational Brain is not installed yet. I can still execute PC commands. Add a compatible GGUF model in the models folder to enable private offline conversation."
-            self.chatReply.emit(reply, "brain_missing")
-            return
         try:
-            if self._brain is None:
-                from llama_cpp import Llama
-                self._brain = Llama(model_path=str(model), n_ctx=2048, n_threads=max(2, (os.cpu_count() or 4)-1), verbose=False)
-            prompt = f"You are ARLEN NEXUS, Jubaer Hossain's private offline PC assistant. Be concise, helpful and security-conscious. User: {message}\nARLEN:"
-            output = self._brain(prompt, max_tokens=260, stop=["User:"], temperature=0.65)
-            reply = output["choices"][0]["text"].strip()
+            installed = self._ollama.tags()
+            model = self.settings["chat_model"]
+            if not self._ollama.has_model(installed, model):
+                raise RuntimeError(f"Model {model} is not installed. Open Settings → AI Models for the exact command.")
+            system_prompt = (
+                "You are ARLEN NEXUS, Jubaer Hossain's private offline Windows assistant. "
+                "Reply in Bangla when the user writes Bangla or Banglish; otherwise reply in English. "
+                "Be concise, practical and honest. Never claim a PC action happened unless the app executed it. "
+                "The V1.1 build supports text chat, local vision, images, PDFs, files and safe PC tools; voice is not included."
+            )
+            context = self._database.ollama_context(12 if self.lowResourceMode else 24)
+            reply = self._ollama.chat(
+                model,
+                [{"role": "system", "content": system_prompt}, *context],
+                self.lowResourceMode,
+            )
+            self._database.add_message("assistant", reply, "success")
             self.chatReply.emit(reply, "success")
         except Exception as exc:
-            self.chatReply.emit(f"Local brain could not start: {exc}", "error")
+            reply = f"Local AI is not ready: {exc}"
+            self._database.add_message("assistant", reply, "error")
+            self.chatReply.emit(reply, "error")
+            self.capabilityWarning.emit("LOCAL AI NOT READY", str(exc))
+        finally:
+            self._set_busy(False)
+            self.conversationChanged.emit()
+
+    @Slot()
+    def clearConversation(self):
+        self._database.clear_messages()
+        self.conversationChanged.emit()
 
     @Slot(result=str)
     def systemRefresh(self):
         """Release ARLEN-owned memory without terminating unrelated applications."""
         before = psutil.Process(os.getpid()).memory_info().rss
-        brain_was_loaded = self._brain is not None
+        brain_was_loaded = bool(self._environment.get("ollama", {}).get("running"))
         self._brain = None
+        if brain_was_loaded:
+            try:
+                self._ollama.unload(self.settings["chat_model"])
+                self._ollama.unload(self.settings["vision_model"])
+            except Exception:
+                pass
         gc.collect()
 
         preview_dir = DATA / "image_previews"
@@ -805,17 +1031,18 @@ class Backend(QObject):
     @Slot()
     def unloadBrain(self):
         self._brain = None
+        try:
+            self._ollama.unload(self.settings["chat_model"])
+            self._ollama.unload(self.settings["vision_model"])
+        except Exception:
+            pass
         gc.collect()
-        self.chatReply.emit("Conversational Brain unloaded from memory.", "success")
+        self.chatReply.emit("Ollama models unloaded from memory.", "success")
 
     @Slot()
     def startVoice(self):
-        model_dir = ROOT / "models" / "voice"
-        if not model_dir.exists():
-            self.capabilityWarning.emit("VOICE NOT SUPPORTED YET", "The offline microphone, speech recognition and TTS pack is not bundled in this release. No microphone recording was started.")
-            self.voiceStateChanged.emit("Voice Pack not installed")
-            return
-        self.voiceStateChanged.emit("Voice module ready; microphone integration will use the selected local model")
+        self.capabilityWarning.emit("VOICE IS OUTSIDE V1.1", "V1.1 intentionally ships text chat and local vision first. No microphone recording was started.")
+        self.voiceStateChanged.emit("Voice is planned after the verified V1 text + vision release")
 
     @Slot(result=str)
     def systemDetails(self):
@@ -831,6 +1058,148 @@ class Backend(QObject):
         net = psutil.net_io_counters()
         return f"↓ {(net.bytes_recv-self._session_in)/1024**2:.1f} MB   ↑ {(net.bytes_sent-self._session_out)/1024**2:.1f} MB"
 
+    @Slot(int, result=bool)
+    def setBrightness(self, percent):
+        if os.name != "nt":
+            self.commandResult.emit("Brightness control is available in the Windows build.", "warning")
+            return False
+        value = max(0, min(100, int(percent)))
+        script = (
+            "$m=Get-CimInstance -Namespace root/WMI -ClassName WmiMonitorBrightnessMethods;"
+            f"if($m){{$m.WmiSetBrightness(1,{value})|Out-Null}}else{{exit 2}}"
+        )
+        try:
+            completed = subprocess.run(
+                ["powershell", "-NoProfile", "-NonInteractive", "-Command", script],
+                capture_output=True, text=True, timeout=12,
+                creationflags=0x08000000,
+            )
+            if completed.returncode != 0:
+                raise RuntimeError("This display does not expose Windows brightness control.")
+            self.commandResult.emit(f"Brightness set to {value}%.", "success")
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Brightness could not be changed: {exc}", "warning")
+            return False
+
+    @Slot(int)
+    def changeVolume(self, steps):
+        if os.name != "nt":
+            self.commandResult.emit("Volume control is available in the Windows build.", "warning")
+            return
+        count = max(-20, min(20, int(steps)))
+        key = 0xAF if count > 0 else 0xAE
+        try:
+            for _ in range(abs(count)):
+                ctypes.windll.user32.keybd_event(key, 0, 0, 0)
+                ctypes.windll.user32.keybd_event(key, 0, 2, 0)
+            self.commandResult.emit("Volume adjusted.", "success")
+        except Exception as exc:
+            self.commandResult.emit(f"Volume could not be changed: {exc}", "warning")
+
+    @Slot(result=str)
+    def discoverApplications(self):
+        return json.dumps(self._environment.get("browsers", {}), ensure_ascii=False)
+
+    @Slot(str, result=str)
+    def calculate(self, expression):
+        """Evaluate arithmetic only; names, calls, attributes and indexing are rejected."""
+        binary = {
+            ast.Add: lambda a, b: a + b, ast.Sub: lambda a, b: a - b,
+            ast.Mult: lambda a, b: a * b, ast.Div: lambda a, b: a / b,
+            ast.FloorDiv: lambda a, b: a // b, ast.Mod: lambda a, b: a % b,
+            ast.Pow: lambda a, b: a ** b,
+        }
+        unary = {ast.UAdd: lambda a: a, ast.USub: lambda a: -a}
+        functions = {
+            "sin": math.sin, "cos": math.cos, "tan": math.tan,
+            "sqrt": math.sqrt, "log": math.log10, "ln": math.log,
+            "abs": abs, "round": round,
+        }
+
+        def evaluate(node):
+            if isinstance(node, ast.Expression):
+                return evaluate(node.body)
+            if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+                return node.value
+            if isinstance(node, ast.Name) and node.id in {"pi", "e"}:
+                return {"pi": math.pi, "e": math.e}[node.id]
+            if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id in functions and not node.keywords:
+                return functions[node.func.id](*[evaluate(argument) for argument in node.args])
+            if isinstance(node, ast.BinOp) and type(node.op) in binary:
+                left, right = evaluate(node.left), evaluate(node.right)
+                if isinstance(node.op, ast.Pow) and abs(right) > 12:
+                    raise ValueError("power is too large")
+                return binary[type(node.op)](left, right)
+            if isinstance(node, ast.UnaryOp) and type(node.op) in unary:
+                return unary[type(node.op)](evaluate(node.operand))
+            raise ValueError("only arithmetic is allowed")
+
+        try:
+            cleaned = expression.strip().replace("×", "*").replace("÷", "/").replace("^", "**")
+            if len(cleaned) > 120:
+                raise ValueError("expression is too long")
+            result = evaluate(ast.parse(cleaned, mode="eval"))
+            return f"{result:.12g}" if isinstance(result, float) else str(result)
+        except Exception as exc:
+            return f"Error: {exc}"
+
+    @Slot(str, float, str, str, result=str)
+    def convertUnit(self, category, value, from_unit, to_unit):
+        try:
+            number = float(value)
+            if category == "Temperature":
+                celsius = {"Celsius": number, "Fahrenheit": (number-32)*5/9, "Kelvin": number-273.15}[from_unit]
+                result = {"Celsius": celsius, "Fahrenheit": celsius*9/5+32, "Kelvin": celsius+273.15}[to_unit]
+            else:
+                factors = {
+                    "Length": {"Meter":1, "Kilometer":1000, "Centimeter":.01, "Mile":1609.344, "Foot":.3048},
+                    "Weight": {"Kilogram":1, "Gram":.001, "Pound":.45359237, "Ounce":.028349523125},
+                    "Storage": {"Byte":1, "KB":1024, "MB":1024**2, "GB":1024**3, "TB":1024**4},
+                }
+                table = factors[category]
+                result = number * table[from_unit] / table[to_unit]
+            return f"{result:,.10g}"
+        except Exception as exc:
+            return f"Error: {exc}"
+
+    @Slot(str, str, result=bool)
+    def saveTextFile(self, destination, content):
+        try:
+            path = self._local_path(destination)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(content, encoding="utf-8")
+            self._database.remember_file(path, "note")
+            self.recentFilesChanged.emit()
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Could not save note: {exc}", "error")
+            return False
+
+    @Slot(result=str)
+    def clipboardText(self):
+        return QGuiApplication.clipboard().text()
+
+    @Slot(str)
+    def setClipboardText(self, text):
+        QGuiApplication.clipboard().setText(text)
+
+    @Slot(str, result=bool)
+    def captureScreenshot(self, destination):
+        try:
+            path = self._local_path(destination)
+            if path.suffix.lower() not in (".png", ".jpg", ".jpeg"):
+                path = path.with_suffix(".png")
+            screen = QGuiApplication.primaryScreen()
+            if screen is None or not screen.grabWindow(0).save(str(path)):
+                raise RuntimeError("Windows screen capture was unavailable")
+            self._database.remember_file(path, "screenshot")
+            self.recentFilesChanged.emit()
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Screenshot failed: {exc}", "error")
+            return False
+
     @Slot(str)
     def inspectImage(self, source):
         """Read local image metadata and OCR when a bundled OCR engine is available.
@@ -839,6 +1208,8 @@ class Backend(QObject):
         """
         try:
             path = self._local_path(source)
+            self._database.remember_file(path, "image")
+            self.recentFilesChanged.emit()
             with Image.open(path) as image:
                 details = [
                     f"FILE: {path.name}",
@@ -860,6 +1231,33 @@ class Backend(QObject):
             self.visionResult.emit(f"Image inspection failed: {exc}")
 
     @Slot(str, str)
+    def analyzeImage(self, source, prompt):
+        """Analyze one selected local image with the configured Ollama vision model."""
+        try:
+            path = self._local_path(source)
+        except Exception as exc:
+            self.visionResult.emit(f"Choose a valid local image: {exc}")
+            return
+        self._database.remember_file(path, "vision")
+        self.recentFilesChanged.emit()
+        self._set_busy(True)
+        threading.Thread(target=self._vision_worker, args=(path, prompt), daemon=True).start()
+
+    def _vision_worker(self, path, prompt):
+        try:
+            installed = self._ollama.tags()
+            model = self.settings["vision_model"]
+            if not self._ollama.has_model(installed, model):
+                raise RuntimeError(f"Model {model} is not installed. Open Settings → AI Models.")
+            result = self._ollama.analyze_image(model, path, prompt, self.lowResourceMode)
+            self.visionResult.emit(result)
+        except Exception as exc:
+            self.visionResult.emit(f"Local vision is not ready: {exc}")
+            self.capabilityWarning.emit("VISION MODEL NOT READY", str(exc))
+        finally:
+            self._set_busy(False)
+
+    @Slot(str, str)
     def imageToPdf(self, source, destination):
         try:
             source_path = self._local_path(source)
@@ -867,6 +1265,8 @@ class Backend(QObject):
             destination_path.parent.mkdir(parents=True, exist_ok=True)
             with Image.open(source_path) as image:
                 image.convert("RGB").save(destination_path, "PDF", resolution=150.0)
+            self._database.remember_file(destination_path, "pdf")
+            self.recentFilesChanged.emit()
             self._log("image to pdf", str(destination_path))
             self.pdfResult.emit(f"PDF created: {destination_path}")
         except Exception as exc:
@@ -897,6 +1297,8 @@ class Backend(QObject):
             output.parent.mkdir(parents=True, exist_ok=True)
             with output.open("wb") as handle:
                 writer.write(handle)
+            self._database.remember_file(output, "pdf")
+            self.recentFilesChanged.emit()
             self._log("pdf merge", str(output))
             self.pdfResult.emit(f"Merged PDF created: {output}")
             return True
@@ -932,8 +1334,9 @@ class Backend(QObject):
     def openPdf(self, source):
         try:
             path = self._local_path(source)
-            if os.name == "nt":
-                os.startfile(path)
+            launch_local_file(path)
+            self._database.remember_file(path, "pdf")
+            self.recentFilesChanged.emit()
             self.pdfResult.emit(f"Opened securely with your Windows default PDF application: {path.name}")
         except Exception as exc:
             self.pdfResult.emit(f"Could not open PDF: {exc}")
@@ -951,6 +1354,179 @@ class Backend(QObject):
             self.commandResult.emit("Opened a controlled Brave search. ARLEN remains local; no personal files were uploaded.", "success")
         except Exception as exc:
             self.commandResult.emit(f"Web search could not start: {exc}", "error")
+
+    @Slot(str, str, result=str)
+    def searchFiles(self, query, location):
+        """Bounded filename search; never reads file contents or follows symlinks."""
+        cleaned = query.strip().casefold()
+        if len(cleaned) < 2:
+            return "[]"
+        try:
+            root = self._local_path(location) if location.strip() else Path.home()
+            if not root.is_dir():
+                raise ValueError("search location is not a folder")
+            results, visited = [], 0
+            for current, directories, files in os.walk(root, followlinks=False):
+                directories[:] = [name for name in directories if not name.startswith(".")][:80]
+                visited += 1
+                if visited > 2500 or len(results) >= 80:
+                    break
+                for name in files:
+                    if cleaned in name.casefold():
+                        path = Path(current) / name
+                        try:
+                            stat = path.stat()
+                            results.append({
+                                "name": name, "path": str(path), "size": stat.st_size,
+                                "modified": datetime.fromtimestamp(stat.st_mtime).isoformat(timespec="minutes"),
+                            })
+                        except OSError:
+                            continue
+                        if len(results) >= 80:
+                            break
+            return json.dumps(results, ensure_ascii=False)
+        except Exception as exc:
+            self.commandResult.emit(f"File search failed: {exc}", "error")
+            return "[]"
+
+    @Slot()
+    def scanUserFiles(self):
+        self._file_index_status = "Scanning local folders…"
+        self.fileIndexChanged.emit()
+        threading.Thread(target=self._scan_user_files_worker, daemon=True).start()
+
+    @staticmethod
+    def _file_category(path):
+        extension = path.suffix.casefold()
+        groups = {
+            "Documents": {".pdf", ".doc", ".docx", ".txt", ".md", ".rtf", ".odt", ".xls", ".xlsx", ".csv", ".ppt", ".pptx"},
+            "Images": {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".gif", ".svg", ".heic"},
+            "Video": {".mp4", ".mkv", ".mov", ".avi", ".webm", ".m4v"},
+            "Audio": {".mp3", ".wav", ".flac", ".aac", ".m4a", ".ogg"},
+            "Archives": {".zip", ".7z", ".rar", ".tar", ".gz"},
+            "Installers": {".exe", ".msi", ".msix", ".appx"},
+            "Code": {".py", ".js", ".ts", ".html", ".css", ".json", ".qml", ".cpp", ".c", ".java"},
+        }
+        return next((name for name, values in groups.items() if extension in values), "Other")
+
+    def _scan_user_files_worker(self):
+        roots = [Path.home() / name for name in ("Desktop", "Documents", "Downloads", "Pictures")]
+        rows, visited = [], set()
+        try:
+            for root in roots:
+                if not root.is_dir():
+                    continue
+                for current, directories, files in os.walk(root, followlinks=False):
+                    directories[:] = [name for name in directories if not name.startswith(".")][:100]
+                    for name in files:
+                        path = Path(current) / name
+                        try:
+                            resolved = path.resolve()
+                            if resolved in visited or path.is_symlink():
+                                continue
+                            stat = path.stat()
+                            rows.append((str(resolved), name, path.suffix.casefold(), int(stat.st_size), float(stat.st_mtime), self._file_category(path)))
+                            visited.add(resolved)
+                        except OSError:
+                            continue
+                        if len(rows) >= 30000:
+                            break
+                    if len(rows) >= 30000:
+                        break
+                if len(rows) >= 30000:
+                    break
+            self._database.replace_file_index(rows)
+            summary = self._database.file_index_summary()
+            self._file_index_status = f"Indexed {summary['files']:,} files locally • {len(summary['categories'])} categories"
+        except Exception as exc:
+            self._file_index_status = f"Local scan failed: {exc}"
+        self.fileIndexChanged.emit()
+
+    @Slot(result=str)
+    def organizationPreview(self):
+        downloads = Path.home() / "Downloads"
+        plan = self._database.organization_candidates(downloads, 100) if downloads.is_dir() else []
+        return json.dumps(plan, ensure_ascii=False)
+
+    @Slot(str, str, result=bool)
+    def applyOrganizationPlan(self, plan_json, pin):
+        if not self.verifyPin(pin):
+            self.commandResult.emit("Owner PIN is required before files are moved.", "error")
+            return False
+        try:
+            plan = json.loads(plan_json)
+            if not isinstance(plan, list) or len(plan) > 100:
+                raise ValueError("organization plan is invalid")
+            home = Path.home().resolve()
+            downloads = (Path.home() / "Downloads").resolve()
+            completed = []
+            for item in plan:
+                source = Path(str(item.get("source", ""))).resolve()
+                destination = Path(str(item.get("destination", ""))).resolve()
+                if source.parent != downloads or home not in destination.parents:
+                    raise ValueError("plan contains a path outside the approved user folders")
+                if not source.is_file() or source.is_symlink():
+                    continue
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                if destination.exists():
+                    destination = destination.with_name(f"{destination.stem}-{int(time.time())}{destination.suffix}")
+                shutil.move(str(source), str(destination))
+                completed.append({"source": str(source), "destination": str(destination)})
+            ORGANIZE_STATE_FILE.write_text(json.dumps(completed, ensure_ascii=False, indent=2), encoding="utf-8")
+            self.commandResult.emit(f"Organized {len(completed)} file(s). Undo remains available.", "success")
+            self.scanUserFiles()
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Files were not organized: {exc}", "error")
+            return False
+
+    @Slot(str, result=bool)
+    def undoLastOrganization(self, pin):
+        if not self.verifyPin(pin):
+            self.commandResult.emit("Owner PIN is required to undo file organization.", "error")
+            return False
+        try:
+            moves = json.loads(ORGANIZE_STATE_FILE.read_text(encoding="utf-8"))
+            restored = 0
+            for item in reversed(moves):
+                source, destination = Path(item["source"]), Path(item["destination"])
+                if destination.is_file() and not source.exists():
+                    source.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.move(str(destination), str(source))
+                    restored += 1
+            ORGANIZE_STATE_FILE.unlink(missing_ok=True)
+            self.commandResult.emit(f"Restored {restored} file(s) to Downloads.", "success")
+            self.scanUserFiles()
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Undo could not complete: {exc}", "error")
+            return False
+
+    @Slot(str, result=bool)
+    def openLocalPath(self, source):
+        try:
+            path = self._local_path(source)
+            launch_local_file(path)
+            if path.is_file():
+                self._database.remember_file(path, "file")
+                self.recentFilesChanged.emit()
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Could not open item: {exc}", "error")
+            return False
+
+    @Slot(str, result=bool)
+    def revealLocalPath(self, source):
+        try:
+            path = self._local_path(source)
+            if os.name == "nt":
+                subprocess.Popen(["explorer.exe", "/select,", str(path)], creationflags=0x08000000)
+            else:
+                launch_local_file(path.parent)
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Could not reveal item: {exc}", "error")
+            return False
 
     @staticmethod
     def _local_path(url_or_path: str) -> Path:

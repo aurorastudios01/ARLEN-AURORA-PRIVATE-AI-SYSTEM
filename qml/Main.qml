@@ -21,16 +21,45 @@ ApplicationWindow {
     property var theme: themePalette(backend.currentTheme)
     property real flowTick: 0
     property double clockTick: Date.now()
+    property real coreStyleSpeed: backend.sphereName === "Pulse Bloom" ? .55 : (backend.sphereName === "Particle Splash" ? 1.65 : (backend.sphereName === "Orbit Matrix" ? .82 : 1.0))
+    property int coreParticleCount: backend.sphereName === "Particle Splash" ? (backend.lowResourceMode?38:72) : (backend.lowResourceMode?24:48)
 
-    Timer { interval: 45; running: root.dataFlow; repeat: true; onTriggered: root.flowTick += 5 }
+    ListModel { id: conversationModel }
+
+    function reloadConversation() {
+        var rows = []
+        try { rows = JSON.parse(backend.conversationHistory) } catch (error) { rows = [] }
+        conversationModel.clear()
+        if (!rows.length)
+            conversationModel.append({role:"ARLEN", body:"Aurora Command Center ready. Chat and vision run through your local Ollama service."})
+        for (var i = 0; i < rows.length; ++i)
+            conversationModel.append({role:rows[i].role === "user" ? "YOU" : "ARLEN", body:rows[i].body})
+    }
+    function jsonCount(value) { try { return JSON.parse(value).length } catch (error) { return 0 } }
+
+    Component.onCompleted: reloadConversation()
+    Connections {
+        target: backend
+        function onConversationChanged() { root.reloadConversation() }
+        function onCommandResult(message, state) {
+            conversationModel.append({role:"ARLEN", body:message})
+        }
+    }
+
+    Timer { interval: backend.lowResourceMode ? 66 : 33; running: true; repeat: true; onTriggered: root.flowTick += backend.lowResourceMode ? 4 : 6 }
     Timer { interval: 1000; running: true; repeat: true; onTriggered: root.clockTick = Date.now() }
 
     function themePalette(name) {
+        if (name === "Ocean") return {bg:"#020811", panel:"#061525", card:"#0a2034", line:"#164f73", text:"#e9f8ff", muted:"#789eb2", accent:"#2ec7ff", good:"#58e0aa", warn:"#ffc36a"}
         if (name === "Crimson") return {bg:"#070407", panel:"#11080d", card:"#190d14", line:"#4b1a2b", text:"#f5eef1", muted:"#9c7885", accent:"#e43f68", good:"#63d89b", warn:"#d8a84d"}
         if (name === "Emerald") return {bg:"#030806", panel:"#07130e", card:"#0a1d15", line:"#164b34", text:"#e9fff5", muted:"#6c9a84", accent:"#32df91", good:"#63eba8", warn:"#d2ae53"}
         if (name === "Violet") return {bg:"#06050a", panel:"#0e0b17", card:"#171125", line:"#39285d", text:"#f2effb", muted:"#8c83a7", accent:"#9d72f2", good:"#62d5a1", warn:"#d6ac54"}
         if (name === "Arctic") return {bg:"#e8f0f3", panel:"#f7fbfc", card:"#dce9ed", line:"#a9c4cd", text:"#12252d", muted:"#5e7780", accent:"#087f9e", good:"#087e5b", warn:"#996d13"}
-        return {bg:"#02070c", panel:"#06121b", card:"#091a26", line:"#133c50", text:"#e8f8fc", muted:"#6f909f", accent:"#28cce8", good:"#53d99a", warn:"#d5a449"}
+        if (name === "Solar") return {bg:"#0a0702", panel:"#171005", card:"#211809", line:"#5b4217", text:"#fff7e5", muted:"#ac9367", accent:"#ffbd45", good:"#69dda6", warn:"#ff7d5f"}
+        if (name === "Graphite") return {bg:"#080a0c", panel:"#101419", card:"#181e25", line:"#36414e", text:"#f0f4f8", muted:"#8a98a7", accent:"#78b8e8", good:"#69d2a0", warn:"#e6b85d"}
+        if (name === "Midnight") return {bg:"#02030a", panel:"#070a18", card:"#0d1326", line:"#242f57", text:"#edf0ff", muted:"#7d87ad", accent:"#6c8cff", good:"#55d6aa", warn:"#e4ae57"}
+        if (name === "Obsidian") return {bg:"#02070c", panel:"#06121b", card:"#091a26", line:"#133c50", text:"#e8f8fc", muted:"#6f909f", accent:"#28cce8", good:"#53d99a", warn:"#d5a449"}
+        return {bg:"#030711", panel:"#071321", card:"#0b1d30", line:"#194d68", text:"#edfaff", muted:"#7fa0af", accent:"#39d8ff", good:"#58e0ac", warn:"#f0bd63"}
     }
 
     component AppButton: Button {
@@ -77,15 +106,15 @@ ApplicationWindow {
         height: 72; color: theme.bg; border.color: theme.line
         MouseArea { anchors.fill: parent; acceptedButtons: Qt.LeftButton; onPressed: root.startSystemMove() }
         Row { anchors.left: parent.left; anchors.leftMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 12
-            Image { width: 42; height: 42; source: "../assets/arlen-nexus-icon.png"; fillMode: Image.PreserveAspectFit; mipmap: true }
+            Image { width: 28; height: 28; source: "../assets/arlen-nexus-icon.png"; fillMode: Image.PreserveAspectFit; mipmap: true }
             Column { spacing: 1
                 Text { text: "ARLEN NEXUS"; color: theme.text; font.pixelSize: 19; font.weight: Font.DemiBold }
                 Text { text: "PERSONAL INTELLIGENCE & SYSTEM CONTROL ENVIRONMENT"; color: theme.muted; font.pixelSize: 9 }
             }
         }
-        Row { anchors.centerIn: parent; spacing: 30; visible: root.width >= 1180
-            Column { Text { text: Qt.formatDateTime(new Date(root.clockTick), "hh:mm:ss AP"); color: theme.text; font.pixelSize: 17 } Text { text: Qt.formatDateTime(new Date(root.clockTick), "dddd, dd MMMM yyyy"); color: theme.muted; font.pixelSize: 10 } }
-            Column { Text { text: "●  " + backend.networkStatus.toUpperCase(); color: backend.networkStatus === "Online" ? theme.good : theme.warn; font.pixelSize: 12; font.weight: Font.DemiBold } Text { text: "PRIVATE LOCAL SESSION"; color: theme.muted; font.pixelSize: 9 } }
+        RowLayout { anchors.centerIn: parent; width:Math.min(520,root.width*.38); spacing:8; visible: root.width >= 1100
+            TextField { id:topCommand; Layout.fillWidth:true; placeholderText:"Ask ARLEN or type a command…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.panel;radius:12;border.color:topCommand.activeFocus?theme.accent:theme.line} onAccepted:{backend.routeInput(text);text=""} }
+            AppButton { Layout.preferredWidth:48; text:"➤"; onClicked:{backend.routeInput(topCommand.text);topCommand.text=""} }
         }
         Row { anchors.right: windowButtons.left; anchors.rightMargin: 24; anchors.verticalCenter: parent.verticalCenter; spacing: 8
             Text { text: backend.ownerName.toUpperCase(); color: theme.text; font.pixelSize: 12 }
@@ -108,7 +137,7 @@ ApplicationWindow {
     Rectangle {
         id: sidebar
         anchors.top: topbar.bottom; anchors.bottom: parent.bottom; anchors.left: parent.left
-        width: root.width < 1200 ? 176 : 232; color: theme.panel; border.color: theme.line
+        width: root.width < 1100 ? 84 : (root.width < 1450 ? 196 : 232); color: theme.panel; border.color: theme.line
         ScrollView {
             anchors.fill: parent
             clip: true
@@ -117,21 +146,18 @@ ApplicationWindow {
             Column { width: parent.width; padding: 12; spacing: 3
             Repeater {
                 model: [
-                    {icon:"⌂", title:"Home", sub:"Dashboard"},
-                    {icon:"◈", title:"Chat", sub:"AI Conversation"},
-                    {icon:"◉", title:"Voice", sub:"Push-to-Talk"},
-                    {icon:"▣", title:"System", sub:"Monitor & Control"},
-                    {icon:"⌁", title:"Network", sub:"Connection & Data"},
-                    {icon:"▤", title:"Files", sub:"Documents & Storage"},
-                    {icon:"↻", title:"Automation", sub:"Tasks & Macros"},
-                    {icon:"◇", title:"Cleanup", sub:"System Refresh"},
-                    {icon:"⬡", title:"Security", sub:"Protection Center"},
-                    {icon:"⚙", title:"Admin", sub:"Control Panel"},
-                    {icon:"▧", title:"Image Studio", sub:"Local Editing"},
-                    {icon:"◉", title:"Vision / OCR", sub:"Local Reading"},
-                    {icon:"▤", title:"PDF Studio", sub:"Document Tools"},
-                    {icon:"✦", title:"Themes", sub:"Customize ARLEN"},
-                    {icon:"ⓘ", title:"About", sub:"System Information"}
+                    {icon:"⌂", title:"Dashboard", sub:"Aurora Home", page:0},
+                    {icon:"▦", title:"Calculator", sub:"Basic", page:15},
+                    {icon:"∑", title:"Scientific", sub:"Advanced Math", page:15},
+                    {icon:"⇄", title:"Unit Converter", sub:"Length & More", page:16},
+                    {icon:"▤", title:"PDF Tools", sub:"Documents", page:12},
+                    {icon:"▧", title:"Image Tools", sub:"Local Editing", page:10},
+                    {icon:"▤", title:"File Manager", sub:"Search & Recent", page:5},
+                    {icon:"□", title:"Note Pad", sub:"Local Notes", page:17},
+                    {icon:"◫", title:"Screenshot", sub:"Capture", page:18},
+                    {icon:"▣", title:"Clipboard", sub:"Text Clipboard", page:19},
+                    {icon:"ⓘ", title:"System Info", sub:"Diagnostics", page:14},
+                    {icon:"⚙", title:"Settings", sub:"Control Center", page:9}
                 ]
                 delegate: Button {
                     required property var modelData
@@ -139,19 +165,20 @@ ApplicationWindow {
                     width: parent.width - 24
                     height: 58
                     text: modelData.title
-                    onClicked: root.activePage = index
+                    onClicked: root.activePage = modelData.page
                     background: Rectangle {
                         radius: 10
-                        color: root.activePage === index ? Qt.rgba(.05,.35,.58,.34) : (parent.hovered ? theme.card : "transparent")
-                        border.color: root.activePage === index ? theme.accent : "transparent"
+                        color: root.activePage === modelData.page ? Qt.rgba(.25,.12,.55,.34) : (parent.hovered ? theme.card : "transparent")
+                        border.color: root.activePage === modelData.page ? theme.accent : "transparent"
                     }
                     contentItem: Row {
                         spacing: 12
-                        Text { width: 22; anchors.verticalCenter: parent.verticalCenter; text: modelData.icon; color: root.activePage === index ? theme.accent : theme.text; font.pixelSize: 18; horizontalAlignment: Text.AlignHCenter }
+                        Text { width: sidebar.width < 120 ? parent.width : 22; anchors.verticalCenter: parent.verticalCenter; text: modelData.icon; color: root.activePage === modelData.page ? theme.accent : theme.text; font.pixelSize: 18; horizontalAlignment: Text.AlignHCenter }
                         Column {
+                            visible: sidebar.width >= 120
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 2
-                            Text { text: modelData.title; color: root.activePage === index ? theme.accent : theme.text; font.pixelSize: 13; font.weight: Font.Medium }
+                            Text { text: modelData.title; color: root.activePage === modelData.page ? theme.accent : theme.text; font.pixelSize: 13; font.weight: Font.Medium }
                             Text { text: modelData.sub; color: theme.muted; font.pixelSize: 10 }
                         }
                     }
@@ -159,9 +186,9 @@ ApplicationWindow {
             }
             Item { width: 1; height: 14 }
             Rectangle { width: parent.width; height: 1; color: theme.line }
-            Text { text: "GLOBAL ACCESS"; color: theme.muted; font.pixelSize: 9; leftPadding: 14; topPadding: 12 }
-            Text { text: "CTRL + ALT + A"; color: theme.accent; font.pixelSize: 12; leftPadding: 14; topPadding: 6 }
-            Text { text: "CORE STATUS  ● READY"; color: theme.good; font.pixelSize: 10; leftPadding: 14; topPadding: 12; bottomPadding: 16 }
+            Text { visible:sidebar.width>=120; text: "GLOBAL ACCESS"; color: theme.muted; font.pixelSize: 9; leftPadding: 14; topPadding: 12 }
+            Text { visible:sidebar.width>=120; text: "CTRL + ALT + A"; color: theme.accent; font.pixelSize: 12; leftPadding: 14; topPadding: 6 }
+            Text { visible:sidebar.width>=120; text: "CORE STATUS  ● READY"; color: theme.good; font.pixelSize: 10; leftPadding: 14; topPadding: 12; bottomPadding: 16 }
             }
         }
     }
@@ -170,9 +197,9 @@ ApplicationWindow {
         anchors.top: topbar.bottom; anchors.bottom: parent.bottom; anchors.left: sidebar.right; anchors.right: parent.right
         currentIndex: root.activePage
 
-        Item { // HOME — v0.7 NEXUS COMMAND CENTER
+        Item { // HOME — V1.1 AURORA COMMAND CENTER
             id: homePage
-            property bool compact: width < 820
+            property bool compact: width < 1050
 
             Flickable {
                 anchors.fill: parent
@@ -186,15 +213,47 @@ ApplicationWindow {
                 GridLayout {
                     id: homeGrid
                     width: parent.width
-                    columns: homePage.compact ? 1 : 2
+                    columns: homePage.compact ? 1 : 3
                     columnSpacing: 12
                     rowSpacing: 12
 
                     Panel {
                         Layout.row: 0
                         Layout.column: 0
+                        Layout.rowSpan: homePage.compact ? 1 : 2
+                        Layout.fillWidth: homePage.compact
+                        Layout.preferredWidth: homePage.compact ? -1 : 190
+                        Layout.preferredHeight: homePage.compact ? 190 : 757
+                        ColumnLayout {
+                            anchors.fill:parent; anchors.margins:14; spacing:7
+                            Text { text:"SYSTEM OVERVIEW"; color:theme.accent; font.pixelSize:11; font.weight:Font.DemiBold; font.letterSpacing:1.1 }
+                            GridLayout {
+                                Layout.fillWidth:true; columns:homePage.compact ? 3 : 1; rowSpacing:5; columnSpacing:5
+                                Metric { Layout.fillWidth:true; label:"CPU"; value:backend.cpu.toFixed(0)+"%"; progress:backend.cpu/100 }
+                                Metric { Layout.fillWidth:true; label:"RAM"; value:backend.ram.toFixed(0)+"%"; progress:backend.ram/100 }
+                                Metric { Layout.fillWidth:true; label:"STORAGE"; value:backend.disk.toFixed(0)+"%"; progress:backend.disk/100 }
+                            }
+                            Rectangle { Layout.fillWidth:true; height:1; color:theme.line; visible:!homePage.compact }
+                            Text { Layout.fillWidth:true; text:"AI MODEL\n"+(backend.busy?"WORKING":"READY")+"\nQwen2.5:3B\nQwen2.5VL:3B"; color:backend.busy?theme.warn:theme.good; font.pixelSize:10; lineHeight:1.5; visible:!homePage.compact }
+                            Rectangle { Layout.fillWidth:true; height:1; color:theme.line; visible:!homePage.compact }
+                            Text { text:"BATTERY • SOUND • BRIGHTNESS"; color:theme.muted; font.pixelSize:8; visible:!homePage.compact }
+                            Text { text:(backend.batteryPercent<0?"N/A":backend.batteryPercent.toFixed(0)+"%")+"     VOL     DISPLAY"; color:theme.text; font.pixelSize:11; visible:!homePage.compact }
+                            RowLayout { Layout.fillWidth:true; visible:!homePage.compact
+                                AppButton { Layout.fillWidth:true; text:"VOL −"; onClicked:backend.changeVolume(-2) }
+                                AppButton { Layout.fillWidth:true; text:"VOL +"; onClicked:backend.changeVolume(2) }
+                            }
+                            Slider { Layout.fillWidth:true; from:10; to:100; value:60; visible:!homePage.compact; onMoved:backend.setBrightness(Math.round(value)) }
+                            Text { text:"BRIGHTNESS"; color:theme.muted; font.pixelSize:9; visible:!homePage.compact }
+                            Item { Layout.fillHeight:true }
+                            AppButton { visible:!homePage.compact; Layout.fillWidth:true; text:"FULL SYSTEM INFO"; onClicked:root.activePage=14 }
+                        }
+                    }
+
+                    Panel {
+                        Layout.row: homePage.compact ? 1 : 0
+                        Layout.column: homePage.compact ? 0 : 1
                         Layout.fillWidth: true
-                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(540, homePage.width - 275)
+                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(450, homePage.width - 530)
                         Layout.preferredHeight: homePage.compact ? 430 : 455
                         clip: true
 
@@ -231,11 +290,26 @@ ApplicationWindow {
                             fillMode: Image.PreserveAspectFit
                             mipmap: true
                             opacity: .94
-                            RotationAnimator on rotation { from: 0; to: 360; duration: 90000; loops: Animation.Infinite }
+                            scale: backend.sphereScale
                             SequentialAnimation on scale {
+                                running: backend.sphereAnimation
                                 loops: Animation.Infinite
-                                NumberAnimation { to: 1.025; duration: 1700; easing.type: Easing.InOutSine }
-                                NumberAnimation { to: 1; duration: 1700; easing.type: Easing.InOutSine }
+                                NumberAnimation { to: backend.sphereScale * 1.035; duration: 1500 / backend.spherePulseSpeed; easing.type: Easing.InOutSine }
+                                NumberAnimation { to: backend.sphereScale; duration: 1500 / backend.spherePulseSpeed; easing.type: Easing.InOutSine }
+                            }
+                        }
+
+                        Repeater {
+                            model: root.coreParticleCount
+                            Rectangle {
+                                required property int index
+                                property real angle: (index * 137.5 + root.flowTick * root.coreStyleSpeed * (.18 + (index % 5) * .025)) * Math.PI / 180
+                                property real travel: 24 + ((root.flowTick * root.coreStyleSpeed * (1.1 + (index % 4) * .16) + index * 31) % Math.max(80, Math.min(parent.width, parent.height) * .48))
+                                width: 2 + index % 3; height: width; radius: width / 2
+                                x: parent.width / 2 + Math.cos(angle) * travel - width / 2
+                                y: homeSphere.y + homeSphere.height / 2 + Math.sin(angle) * travel - height / 2
+                                color: index % 7 === 0 ? theme.good : (index % 5 === 0 ? "#b68cff" : theme.accent)
+                                opacity: backend.sphereAnimation ? Math.max(.05, .9 - travel / Math.max(100, Math.min(parent.width, parent.height) * .5)) : .12
                             }
                         }
 
@@ -243,7 +317,7 @@ ApplicationWindow {
                             anchors.centerIn: homeSphere
                             width: homeSphere.width * .82; height: width; radius: width/2
                             color: "transparent"; border.width: 1; border.color: Qt.rgba(.15,.65,.82,.22)
-                            RotationAnimator on rotation { from: 0; to: -360; duration: 30000; loops: Animation.Infinite }
+                            RotationAnimator on rotation { running:backend.sphereAnimation; from:0; to:-360; duration:30000/backend.spherePulseSpeed; loops:Animation.Infinite }
                         }
 
                         Column {
@@ -268,10 +342,10 @@ ApplicationWindow {
                     }
 
                     Panel {
-                        Layout.row: 1
-                        Layout.column: 0
+                        Layout.row: homePage.compact ? 2 : 1
+                        Layout.column: homePage.compact ? 0 : 1
                         Layout.fillWidth: true
-                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(540, homePage.width - 275)
+                        Layout.preferredWidth: homePage.compact ? -1 : Math.max(450, homePage.width - 530)
                         Layout.preferredHeight: 290
                         ColumnLayout {
                             anchors.fill: parent
@@ -290,10 +364,7 @@ ApplicationWindow {
                                 Layout.fillHeight: true
                                 clip: true
                                 spacing: 7
-                                model: ListModel {
-                                    id: homeChatModel
-                                    ListElement { role: "ARLEN"; body: "Command Center ready. Local tools are available; missing capability packs will be reported honestly." }
-                                }
+                                model: conversationModel
                                 delegate: Rectangle {
                                     required property string role
                                     required property string body
@@ -342,11 +413,11 @@ ApplicationWindow {
                     }
 
                     ColumnLayout {
-                        Layout.row: homePage.compact ? 2 : 0
-                        Layout.column: homePage.compact ? 0 : 1
+                        Layout.row: homePage.compact ? 3 : 0
+                        Layout.column: homePage.compact ? 0 : 2
                         Layout.rowSpan: homePage.compact ? 1 : 2
                         Layout.fillWidth: true
-                        Layout.preferredWidth: homePage.compact ? -1 : 250
+                        Layout.preferredWidth: homePage.compact ? -1 : 280
                         Layout.preferredHeight: homePage.compact ? 620 : 757
                         spacing: 12
 
@@ -354,43 +425,14 @@ ApplicationWindow {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 248
                             ColumnLayout {
-                                anchors.fill: parent; anchors.margins: 11; spacing: 5
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    Text { text: "SYSTEM OVERVIEW"; color: theme.text; font.pixelSize: 11; font.weight: Font.DemiBold }
-                                    Item { Layout.fillWidth: true }
-                                    Text { text: "•••"; color: theme.muted }
+                                anchors.fill: parent; anchors.margins: 15; spacing: 8
+                                Text { text:"AI STATUS"; color:theme.muted; font.pixelSize:10 }
+                                Text { text:backend.busy?"Working":"Ready"; color:theme.text; font.pixelSize:22; font.weight:Font.DemiBold }
+                                Text { text:"●  "+(backend.busy?"Processing locally…":"Idle — local service standby"); color:backend.busy?theme.warn:theme.good; font.pixelSize:10 }
+                                RowLayout { Layout.fillWidth:true; Layout.fillHeight:true; spacing:2
+                                    Repeater { model:36; Rectangle { required property int index; Layout.fillWidth:true; height:8+Math.abs(Math.sin((root.flowTick+index*17)*.045))*52; radius:2; color:index<18?"#a44cff":theme.accent; opacity:.35+(index%5)*.11; Layout.alignment:Qt.AlignVCenter } }
                                 }
-                                Repeater {
-                                    model: [
-                                        {icon:"▣", label:"CPU Usage", detail:"Processor", value:backend.cpu.toFixed(0)+"%", p:backend.cpu/100, color:theme.accent},
-                                        {icon:"▤", label:"RAM Usage", detail:"System memory", value:backend.ram.toFixed(0)+"%", p:backend.ram/100, color:"#8d88e8"},
-                                        {icon:"◇", label:"Disk Usage", detail:"System drive", value:backend.disk.toFixed(0)+"%", p:backend.disk/100, color:theme.warn},
-                                        {icon:"▧", label:"GPU Telemetry", detail:"Not bundled", value:"N/A", p:0, color:theme.muted},
-                                        {icon:"⚡", label:"Battery / Charge", detail:backend.batteryState+" • "+backend.powerSource, value:backend.batteryPercent<0?"N/A":backend.batteryPercent.toFixed(0)+"%", p:Math.max(0,backend.batteryPercent)/100, color:backend.powerSource==="CHARGER CONNECTED"?theme.good:theme.accent}
-                                    ]
-                                    delegate: RowLayout {
-                                        required property var modelData
-                                        Layout.fillWidth: true
-                                        Layout.fillHeight: true
-                                        spacing: 9
-                                        Rectangle { width: 27; height: 27; radius: 13; color: Qt.rgba(.05,.22,.33,.55); border.color: modelData.color; Text { anchors.centerIn: parent; text:modelData.icon; color:modelData.color; font.pixelSize:11 } }
-                                        ColumnLayout { Layout.fillWidth: true; spacing: 2
-                                            Text { text:modelData.label; color:theme.text; font.pixelSize:10 }
-                                            Text { text:modelData.detail; color:theme.muted; font.pixelSize:8 }
-                                            Rectangle { Layout.fillWidth:true; height:2; color:theme.line; Rectangle { width:parent.width*Math.max(0,Math.min(1,modelData.p)); height:2; color:modelData.color } }
-                                        }
-                                        Text { text:modelData.value; color:modelData.color; font.pixelSize:13 }
-                                    }
-                                }
-                                RowLayout {
-                                    Layout.fillWidth: true
-                                    Text { text:"◷"; color:theme.accent; font.pixelSize:15 }
-                                    Text { text:"System Uptime"; color:theme.text; font.pixelSize:10 }
-                                    Item { Layout.fillWidth:true }
-                                    Text { text:backend.uptime; color:theme.text; font.pixelSize:12 }
-                                    Text { text:"  •  CHARGE TIME "+backend.batteryTime; color:theme.muted; font.pixelSize:8 }
-                                }
+                                Text { text:"Qwen2.5:3B  •  Qwen2.5VL:3B"; color:theme.muted; font.pixelSize:9 }
                             }
                         }
 
@@ -399,12 +441,12 @@ ApplicationWindow {
                             Layout.preferredHeight: 150
                             ColumnLayout {
                                 anchors.fill: parent; anchors.margins: 11; spacing: 5
-                                Text { text:"NETWORK STATUS"; color:theme.text; font.pixelSize:11; font.weight:Font.DemiBold }
+                                Text { text:"TASKS & NETWORK"; color:theme.text; font.pixelSize:11; font.weight:Font.DemiBold }
                                 Rectangle { Layout.fillWidth:true; height:1; color:theme.line }
-                                RowLayout { Layout.fillWidth:true; Text{text:"⌁  Wi-Fi";color:theme.text;font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:backend.wifiName;color:theme.muted;font.pixelSize:9} Text{text:backend.networkStatus;color:backend.networkStatus==="Online"?theme.good:theme.warn;font.pixelSize:9} }
+                                RowLayout { Layout.fillWidth:true; Text{text:"Custom commands";color:theme.text;font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:root.jsonCount(backend.customCommands);color:theme.accent;font.pixelSize:13} }
+                                RowLayout { Layout.fillWidth:true; Text{text:"⌁  "+backend.wifiName;color:theme.text;font.pixelSize:9} Item{Layout.fillWidth:true} Text{text:backend.networkStatus;color:backend.networkStatus==="Online"?theme.good:theme.warn;font.pixelSize:9} }
                                 RowLayout { Layout.fillWidth:true; Text{text:"↓  Download";color:theme.good;font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:backend.downloadSpeed.toFixed(2)+" Mbps";color:theme.text;font.pixelSize:10} }
-                                RowLayout { Layout.fillWidth:true; Text{text:"↑  Upload";color:"#de6b76";font.pixelSize:10} Item{Layout.fillWidth:true} Text{text:backend.uploadSpeed.toFixed(2)+" Mbps";color:theme.text;font.pixelSize:10} }
-                                RowLayout { Layout.fillWidth:true; Text{text:"Session";color:theme.muted;font.pixelSize:9} Item{Layout.fillWidth:true} Text{text:backend.sessionUsage;color:theme.text;font.pixelSize:9} }
+                                RowLayout { Layout.fillWidth:true; Text{text:"Uptime";color:theme.muted;font.pixelSize:9} Item{Layout.fillWidth:true} Text{text:backend.uptime;color:theme.text;font.pixelSize:9} }
                             }
                         }
 
@@ -413,35 +455,19 @@ ApplicationWindow {
                             Layout.fillHeight: true
                             ColumnLayout {
                                 anchors.fill: parent; anchors.margins: 14; spacing: 8
-                                Text { text:"QUICK ACTIONS"; color:theme.text; font.pixelSize:11; font.weight:Font.DemiBold }
-                                GridLayout {
-                                    Layout.fillWidth: true; Layout.fillHeight: true; columns: 2; rowSpacing:6; columnSpacing:6
-                                    Repeater {
-                                        model: [
-                                            {label:"SYSTEM REFRESH", cmd:"system refresh"},
-                                            {label:"OPEN BRAVE", cmd:"open brave"},
-                                            {label:"DOWNLOADS", cmd:"open downloads"},
-                                            {label:"SYSTEM STATUS", cmd:"system status"},
-                                            {label:"NOTEPAD", cmd:"open notepad"},
-                                            {label:"CALCULATOR", cmd:"open calculator"}
-                                        ]
-                                        delegate: AppButton {
-                                            required property var modelData
-                                            Layout.fillWidth: true
-                                            Layout.fillHeight: true
-                                            text: modelData.label
-                                            onClicked: backend.execute(modelData.cmd)
-                                        }
-                                    }
-                                }
+                                Text { text:"AI CORE STATUS"; color:theme.text; font.pixelSize:11; font.weight:Font.DemiBold }
+                                Rectangle { Layout.fillWidth:true; height:1; color:theme.line }
+                                Text { Layout.fillWidth:true; Layout.fillHeight:true; text:backend.installationReport(); color:theme.muted; font.pixelSize:10; wrapMode:Text.Wrap; lineHeight:1.35 }
+                                AppButton { Layout.fillWidth:true; text:"AI SETUP & DIAGNOSTICS"; onClicked:root.activePage=2 }
+                                AppButton { Layout.fillWidth:true; text:"SYSTEM REFRESH"; onClicked:backend.systemRefresh() }
                             }
                         }
                     }
 
                     Panel {
-                        Layout.row: homePage.compact ? 3 : 2
+                        Layout.row: homePage.compact ? 4 : 2
                         Layout.column: 0
-                        Layout.columnSpan: homePage.compact ? 1 : 2
+                        Layout.columnSpan: homePage.compact ? 1 : 3
                         Layout.fillWidth: true
                         Layout.preferredHeight: 70
                         RowLayout {
@@ -450,10 +476,10 @@ ApplicationWindow {
                                 model: [
                                     {label:"⌂  HOME", page:0},
                                     {label:"▣  CONSOLE", page:3},
-                                    {label:"◉  VOICE", page:2},
+                                    {label:"◉  AI SETUP", page:2},
                                     {label:"↻  AUTOMATION", page:6},
                                     {label:"▤  FILES", page:5},
-                                    {label:"⚙  ADMIN", page:9}
+                                    {label:"⚙  SETTINGS", page:9}
                                 ]
                                 delegate: AppButton {
                                     required property var modelData
@@ -464,7 +490,7 @@ ApplicationWindow {
                                     onClicked:root.activePage=modelData.page
                                 }
                             }
-                            Image { Layout.preferredWidth:46; Layout.preferredHeight:46; source:"../assets/neural-sphere.png"; fillMode:Image.PreserveAspectFit }
+                            Image { Layout.preferredWidth:46; Layout.preferredHeight:46; source:"../assets/arlen-nexus-icon.png"; fillMode:Image.PreserveAspectFit }
                         }
                     }
                 }
@@ -473,21 +499,9 @@ ApplicationWindow {
             function sendHomeMessage() {
                 var text = homeChatInput.text.trim()
                 if (!text.length) return
-                homeChatModel.append({role:"YOU", body:text})
-                if (text.toLowerCase().indexOf("system refresh") >= 0 || text.toLowerCase().indexOf("ram refresh") >= 0)
-                    backend.execute(text)
-                else
-                    backend.sendChat(text)
+                backend.routeInput(text)
                 homeChatInput.text = ""
                 homeChatList.positionViewAtEnd()
-            }
-
-            Connections {
-                target: backend
-                function onChatReply(reply, state) {
-                    homeChatModel.append({role:"ARLEN", body:reply})
-                    homeChatList.positionViewAtEnd()
-                }
             }
         }
 
@@ -495,7 +509,7 @@ ApplicationWindow {
             ColumnLayout { anchors.fill: parent; anchors.margins: 22; spacing: 12
                 PageTitle { title: "CONVERSATIONAL BRAIN"; subtitle: "PRIVATE • LOCAL MODEL • NO CLOUD" }
                 Panel { Layout.fillWidth: true; Layout.fillHeight: true
-                    ListView { id: chatList; anchors.fill: parent; anchors.margins: 18; spacing: 12; clip: true; model: ListModel { id: chatModel }
+                    ListView { id: chatList; anchors.fill: parent; anchors.margins: 18; spacing: 12; clip: true; model: conversationModel
                         delegate: Rectangle { required property string role; required property string body; width: Math.min(chatList.width*.75, bodyText.implicitWidth+38); height: bodyText.implicitHeight+28; radius: 10; color: role === "YOU" ? Qt.rgba(.12,.5,.8,.18) : theme.card; border.color: role === "YOU" ? theme.accent : theme.line; x: role === "YOU" ? chatList.width-width : 0
                             Text { id: bodyText; anchors.fill: parent; anchors.margins: 14; text: parent.body; color: theme.text; wrapMode: Text.Wrap; font.pixelSize: 13 }
                         }
@@ -504,35 +518,39 @@ ApplicationWindow {
                 RowLayout { Layout.fillWidth: true
                     TextField { id: chatInput; Layout.fillWidth: true; placeholderText: "Write to ARLEN…"; color: theme.text; placeholderTextColor: theme.muted; background: Rectangle { color: theme.panel; radius: 9; border.color: theme.line } onAccepted: sendChat() }
                     Button { text: "SEND"; onClicked: sendChat(); background: Rectangle { color: theme.accent; radius: 8 } }
-                    Button { text: "UNLOAD BRAIN"; onClicked: backend.unloadBrain(); background: Rectangle { color: theme.card; radius: 8; border.color: theme.line } contentItem: Text { text: parent.text; color: theme.text; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter } }
+                    Button { text: backend.busy ? "THINKING…" : "UNLOAD MODELS"; enabled:!backend.busy; onClicked: backend.unloadBrain(); background: Rectangle { color: theme.card; radius: 8; border.color: theme.line } contentItem: Text { text: parent.text; color: theme.text; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter } }
+                    Button { text:"CLEAR"; onClicked:backend.clearConversation(); background:Rectangle{color:theme.card;radius:8;border.color:theme.line} contentItem:Text{text:parent.text;color:theme.text;horizontalAlignment:Text.AlignHCenter;verticalAlignment:Text.AlignVCenter} }
                 }
             }
-            function sendChat() { if(chatInput.text.trim().length){ chatModel.append({role:"YOU",body:chatInput.text}); backend.sendChat(chatInput.text); chatInput.text="" } }
-            Connections { target: backend; function onChatReply(reply, state){ chatModel.append({role:"ARLEN",body:reply}); chatList.positionViewAtEnd() } }
+            function sendChat() { if(chatInput.text.trim().length){ backend.routeInput(chatInput.text); chatInput.text="" } }
         }
 
-        Item { // VOICE
-            ColumnLayout { anchors.fill: parent; anchors.margins: 24; spacing: 16
-                PageTitle { title: "VOICE CONTROL"; subtitle: "PUSH-TO-TALK • OFFLINE RECOGNITION" }
-                Panel { Layout.fillWidth: true; Layout.fillHeight: true
-                    Column { anchors.centerIn: parent; width:620; spacing: 16
-                        Rectangle { anchors.horizontalCenter: parent.horizontalCenter; width: 210; height: 210; radius: 105; color: theme.card; border.color: theme.accent; border.width: 2
-                            Text { anchors.centerIn: parent; text: "◉"; color: theme.accent; font.pixelSize: 70 }
-                            SequentialAnimation on scale { loops: Animation.Infinite; NumberAnimation { to:1.04; duration:1000 } NumberAnimation { to:1; duration:1000 } }
+        Item { // AI SETUP
+            property string report: backend.installationReport()
+            ColumnLayout { anchors.fill: parent; anchors.margins: 24; spacing: 14
+                PageTitle { title: "LOCAL AI SETUP"; subtitle: "OLLAMA • QWEN TEXT + VISION • V1.1" }
+                RowLayout { Layout.fillWidth:true; Layout.fillHeight:true; spacing:14
+                    Panel { Layout.preferredWidth:420; Layout.fillHeight:true
+                        ColumnLayout { anchors.fill:parent; anchors.margins:20; spacing:12
+                            Text { text:"REQUIRED MODELS"; color:theme.accent; font.pixelSize:12; font.weight:Font.DemiBold }
+                            Text { text:"1. Install and open Ollama\n2. Download the two models once\n3. Press Refresh Diagnostics\n\n4 GB PCs use Lite mode automatically. Models stay on this PC."; color:theme.text; font.pixelSize:13; wrapMode:Text.Wrap; Layout.fillWidth:true; lineHeight:1.45 }
+                            TextArea { Layout.fillWidth:true; Layout.preferredHeight:110; readOnly:true; selectByMouse:true; text:"ollama pull qwen2.5:3b\nollama pull qwen2.5vl:3b"; color:theme.good; background:Rectangle{color:theme.card;radius:9;border.color:theme.line} font.family:"Consolas" }
+                            CheckBox { text:"4 GB / Low Resource Mode"; checked:backend.lowResourceMode; onToggled:backend.setLowResourceMode(checked); contentItem:Text{text:parent.text;color:theme.text;leftPadding:parent.indicator.width+10;verticalAlignment:Text.AlignVCenter} }
+                            AppButton { Layout.fillWidth:true; text:"REFRESH DIAGNOSTICS"; onClicked:{backend.refreshEnvironment(); parent.parent.parent.report=backend.installationReport()} }
+                            AppButton { Layout.fillWidth:true; text:"UNLOAD MODELS FROM RAM"; onClicked:backend.unloadBrain() }
+                            Item { Layout.fillHeight:true }
+                            Text { text:"Voice/TTS is intentionally not included in V1.1. It will be considered only after text + vision are verified."; color:theme.muted; font.pixelSize:11; wrapMode:Text.Wrap; Layout.fillWidth:true }
                         }
-                        Text { id: voiceStatus; anchors.horizontalCenter: parent.horizontalCenter; text: "VOICE PACK STANDBY"; color: theme.text; font.pixelSize: 18 }
-                        AppButton { width: 260; text: "START LISTENING"; onClicked: backend.startVoice() }
-                        TextField { id:heardCommand; width:parent.width; placeholderText:"Voice interpretation test: Brave kholo / open calculator"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} onAccepted:backend.interpretVoiceText(text) }
-                        Row { anchors.horizontalCenter:parent.horizontalCenter; spacing:10
-                            TextField { id:wakeWordField; width:190; text:backend.wakeWord; placeholderText:"Wake word"; color:theme.text; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
-                            ComboBox { id:voiceLanguage; width:180; model:["Auto Detect","Bangla","Banglish","English"] }
-                            AppButton { width:190; text:"SAVE VOICE PROFILE"; onClicked:backend.saveVoicePreferences(wakeWordField.text,voiceLanguage.currentText) }
+                    }
+                    Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                        ColumnLayout { anchors.fill:parent; anchors.margins:20; spacing:10
+                            Text { text:"ENVIRONMENT DIAGNOSTICS"; color:theme.accent; font.pixelSize:12; font.weight:Font.DemiBold }
+                            TextArea { Layout.fillWidth:true; Layout.fillHeight:true; readOnly:true; selectByMouse:true; wrapMode:TextEdit.Wrap; text:backend.installationReport(); color:theme.text; background:Rectangle{color:theme.card;radius:10;border.color:theme.line} font.family:"Consolas" }
+                            Text { text:"Status is detected from the real PC. ARLEN will never show READY only because a folder exists."; color:theme.muted; font.pixelSize:11; wrapMode:Text.Wrap; Layout.fillWidth:true }
                         }
-                        Text { width: 520; horizontalAlignment: Text.AlignHCenter; wrapMode: Text.Wrap; text: "The microphone activates only when you press the button or use the configured shortcut. Audio remains on this PC."; color: theme.muted; font.pixelSize: 11 }
                     }
                 }
             }
-            Connections { target: backend; function onVoiceStateChanged(state){ voiceStatus.text=state } }
         }
 
         Item { // SYSTEM
@@ -572,14 +590,37 @@ ApplicationWindow {
         }
 
         Item { // FILES
+            id: filesPage
+            property var searchResults: []
+            property string organizationPlan: "[]"
             ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
-                PageTitle { title:"FILE INTELLIGENCE"; subtitle:"SEARCH • ORGANIZE • CONTROLLED MODIFICATION" }
+                PageTitle { title:"FILE MANAGER"; subtitle:"SEARCH • RECENT • OPEN / REVEAL" }
                 Panel { Layout.fillWidth:true; Layout.fillHeight:true
-                    Column { anchors.fill:parent; anchors.margins:20; spacing:12
-                        TextField { width:parent.width; placeholderText:"Search files by name…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
-                        Text { text:"Quick locations"; color:theme.accent; font.pixelSize:12 }
-                        Row { spacing:10; Repeater { model:["Downloads","Documents","Desktop","Pictures"]; delegate: AppButton { required property string modelData; width:150; text:modelData; onClicked:backend.execute("open "+modelData) } } }
-                        Text { text:"File modification, move, rename and deletion use preview + confirmation. Protected locations require Admin authorization."; color:theme.muted; font.pixelSize:11; wrapMode:Text.Wrap; width:parent.width }
+                    ColumnLayout { anchors.fill:parent; anchors.margins:20; spacing:10
+                        RowLayout { Layout.fillWidth:true
+                            TextField { id:fileQuery; Layout.fillWidth:true; placeholderText:"Search files by name…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} onAccepted:fileSearchButton.clicked() }
+                            TextField { id:fileLocation; Layout.preferredWidth:root.width<1200?180:260; placeholderText:"Folder (blank = Home)"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
+                            AppButton { id:fileSearchButton; Layout.preferredWidth:110; text:"SEARCH"; onClicked:{try{filesPage.searchResults=JSON.parse(backend.searchFiles(fileQuery.text,fileLocation.text))}catch(e){filesPage.searchResults=[]}} }
+                        }
+                        Row { spacing:8; Repeater { model:["Downloads","Documents","Desktop","Pictures"]; delegate: AppButton { required property string modelData; width:120; text:modelData; onClicked:backend.execute("open "+modelData) } } }
+                        Flow { Layout.fillWidth:true; spacing:7
+                            AppButton { width:150; text:"SCAN MY FILES"; onClicked:backend.scanUserFiles() }
+                            AppButton { width:175; text:"ORGANIZE PREVIEW"; onClicked:{filesPage.organizationPlan=backend.organizationPreview();toast.show(JSON.parse(filesPage.organizationPlan).length+" suggested Downloads move(s). Review-only; nothing moved.","success")} }
+                            TextField { id:organizePin; width:130; echoMode:TextInput.Password; placeholderText:"Owner PIN"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
+                            AppButton { width:150; text:"APPLY PREVIEW"; onClicked:backend.applyOrganizationPlan(filesPage.organizationPlan,organizePin.text) }
+                            AppButton { width:120; text:"UNDO LAST"; onClicked:backend.undoLastOrganization(organizePin.text) }
+                        }
+                        Text { Layout.fillWidth:true; text:backend.fileIndexStatus; color:theme.good; font.pixelSize:10; wrapMode:Text.Wrap }
+                        ListView { id:fileResults; Layout.fillWidth:true; Layout.fillHeight:true; clip:true; spacing:6; model:filesPage.searchResults
+                            delegate:Rectangle { required property var modelData; width:fileResults.width; height:58; radius:8; color:theme.card; border.color:theme.line
+                                RowLayout { anchors.fill:parent; anchors.margins:9
+                                    ColumnLayout { Layout.fillWidth:true; Text{text:modelData.name;color:theme.text;font.pixelSize:12;elide:Text.ElideRight;Layout.fillWidth:true} Text{text:modelData.path;color:theme.muted;font.pixelSize:9;elide:Text.ElideMiddle;Layout.fillWidth:true} }
+                                    AppButton { Layout.preferredWidth:76; text:"OPEN"; onClicked:backend.openLocalPath(modelData.path) }
+                                    AppButton { Layout.preferredWidth:76; text:"REVEAL"; onClicked:backend.revealLocalPath(modelData.path) }
+                                }
+                            }
+                        }
+                        Text { text:"Filename-only bounded search. Destructive file automation stays disabled until preview + confirmation is complete."; color:theme.muted; font.pixelSize:10; wrapMode:Text.Wrap; Layout.fillWidth:true }
                     }
                 }
             }
@@ -637,11 +678,11 @@ ApplicationWindow {
             }
         }
 
-        Item { // ADMIN
+        Item { // SETTINGS
             ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
-                PageTitle { title:"ADMIN CONTROL MATRIX"; subtitle:"PIN-PROTECTED OWNER CONFIGURATION" }
-                RowLayout { Layout.fillWidth:true; Layout.fillHeight:true; spacing:14
-                    Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                PageTitle { title:"SETTINGS & OWNER CONTROL"; subtitle:"PROFILE • CAPABILITIES • UPDATE SAFETY" }
+                Item { id:settingsRow; Layout.fillWidth:true; Layout.fillHeight:true
+                    Panel { id:ownerPanel; anchors.left:parent.left; anchors.top:parent.top; anchors.bottom:parent.bottom; width:Math.max(360,parent.width-settingsTools.width-14)
                         Flickable { anchors.fill:parent; anchors.margins:20; contentHeight:ownerForm.height; clip:true
                             Column { id:ownerForm; width:parent.width; spacing:10
                                 Text { text:"OWNER ACCOUNT"; color:theme.accent; font.pixelSize:12 }
@@ -657,12 +698,13 @@ ApplicationWindow {
                             }
                         }
                     }
-                    ColumnLayout { Layout.preferredWidth:470; Layout.fillHeight:true; spacing:14
+                    ColumnLayout { id:settingsTools; anchors.right:parent.right; anchors.top:parent.top; anchors.bottom:parent.bottom; width:Math.min(470,Math.max(330,settingsRow.width*.42)); spacing:14
                         Panel { Layout.fillWidth:true; Layout.fillHeight:true
                             Column { anchors.fill:parent; anchors.margins:18; spacing:12
                                 Text { text:"CAPABILITY PACKS"; color:theme.accent; font.pixelSize:12 }
                                 Text { width:parent.width; text:backend.packStatus(); color:theme.text; font.pixelSize:12; lineHeight:1.65 }
-                                AppButton { width:240; text:"REFRESH PACK STATUS"; onClicked:packText.text=backend.packStatus() }
+                                CheckBox { text:"4 GB / Low Resource Mode"; checked:backend.lowResourceMode; onToggled:backend.setLowResourceMode(checked); palette.windowText:root.theme.text }
+                                AppButton { width:240; text:"REFRESH PACK STATUS"; onClicked:{backend.refreshEnvironment();packText.text=backend.packStatus()} }
                                 Text { id:packText; width:parent.width; color:theme.muted; font.pixelSize:10 }
                             }
                         }
@@ -742,10 +784,12 @@ ApplicationWindow {
                     Panel { Layout.preferredWidth:470; Layout.fillHeight:true
                         Column { anchors.fill:parent; anchors.margins:18; spacing:12
                             Text { text:"LOCAL VISION CONSOLE"; color:theme.accent; font.pixelSize:12 }
-                            TextArea { id:visionOutput; width:parent.width; height:parent.height-145; readOnly:true; wrapMode:TextEdit.Wrap; text:"Choose an image. ARLEN will inspect dimensions and read visible text locally. Handwriting output includes uncertainty when the OCR pack is available."; color:theme.text; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
+                            TextArea { id:visionPrompt; width:parent.width; height:70; wrapMode:TextEdit.Wrap; placeholderText:"Ask about the selected image, text, objects, quality or editing suggestions…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
+                            TextArea { id:visionOutput; width:parent.width; height:Math.max(140,parent.height-230); readOnly:true; wrapMode:TextEdit.Wrap; text:"Choose an image. Metadata works immediately; Qwen2.5VL:3B provides local visual understanding when installed."; color:theme.text; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
                             Row { spacing:10
-                                AppButton { width:205; text:"CHOOSE IMAGE"; onClicked:visionOpen.open() }
-                                AppButton { width:205; text:"READ IMAGE"; onClicked:backend.inspectImage(visionPage.selectedImage) }
+                                AppButton { width:130; text:"CHOOSE"; onClicked:visionOpen.open() }
+                                AppButton { width:130; text:"METADATA"; onClicked:backend.inspectImage(visionPage.selectedImage) }
+                                AppButton { width:145; text:"AI ANALYZE"; onClicked:backend.analyzeImage(visionPage.selectedImage,visionPrompt.text) }
                             }
                             Text { text:"CONTENT POLICY  •  UNRESTRICTED LOCAL PROCESSING"; color:theme.good; font.pixelSize:10 }
                         }
@@ -788,40 +832,123 @@ ApplicationWindow {
                 Panel { Layout.fillWidth:true; Layout.fillHeight:true
                     Column { anchors.fill:parent; anchors.margins:20; spacing:16
                         Text { text:"THEMES"; color:theme.accent; font.pixelSize:11 }
-                        Row { spacing:10; Repeater { model:["Obsidian","Crimson","Emerald","Violet","Arctic"]; delegate: AppButton { required property string modelData; width:145; text:modelData; selected:backend.currentTheme===modelData; onClicked:backend.setTheme(modelData) } } }
+                        Flow { width:parent.width; spacing:8; Repeater { model:["Aurora AI","Obsidian","Ocean","Crimson","Emerald","Violet","Arctic","Solar","Graphite","Midnight"]; delegate: AppButton { required property string modelData; width:125; text:modelData; selected:backend.currentTheme===modelData; onClicked:backend.setTheme(modelData) } } }
                         Text { text:"OPENING DURATION"; color:theme.accent; font.pixelSize:11; topPadding:10 }
                         Row { spacing:10; Repeater { model:[12,7,3]; delegate: AppButton { required property int modelData; width:120; text:modelData+" SECONDS"; selected:backend.openingDuration===modelData; onClicked:backend.setOpeningDuration(String(modelData)) } } }
                         CheckBox { text:"Opening sound"; checked:backend.openingSound; onToggled:backend.setOpeningSound(checked); palette.windowText: root.theme.text }
                         Text { text:"SPHERE LIBRARY"; color:theme.accent; font.pixelSize:11; topPadding:10 }
-                        Row { spacing:10; Repeater { model:["Neural Sphere","Quantum Core","Digital Globe","Dark Matter","Holographic Eye"]; delegate: AppButton { required property string modelData; width:155; text:modelData; selected:backend.sphereName===modelData; onClicked:backend.setSphere(modelData) } } }
-                        AppButton { width:240; text:"ADD CUSTOM BACKGROUND"; onClicked:backgroundOpen.open() }
-                        AppButton { width:240; text:"ADD CUSTOM SPHERE"; onClicked:sphereOpen.open() }
-                        Text { text:"Custom image import will include crop, opacity, blur, dark overlay and parallax controls."; color:theme.muted; font.pixelSize:11 }
+                        Flow { width:parent.width; spacing:8; Repeater { model:["Aurora Core","Pulse Bloom","Particle Splash","Orbit Matrix"]; delegate: AppButton { required property string modelData; width:145; text:modelData; selected:backend.sphereName===modelData; onClicked:backend.setSphere(modelData) } } }
+                        Flow { width:parent.width; spacing:8
+                            AppButton { width:190; text:"ADD BACKGROUND"; onClicked:backgroundOpen.open() }
+                            AppButton { width:190; text:"REMOVE BACKGROUND"; onClicked:themeStatus.text=backend.removeProfileVisual("background") }
+                            AppButton { width:190; text:"ADD CUSTOM CORE"; onClicked:sphereOpen.open() }
+                            AppButton { width:190; text:"REMOVE CUSTOM CORE"; onClicked:themeStatus.text=backend.removeProfileVisual("sphere") }
+                        }
+                        Flow { width:parent.width; spacing:10
+                            Row { width:240; Text { text:"Core size"; color:theme.muted; width:60 } Slider { id:coreScale; width:175; from:.65; to:1.35; value:backend.sphereScale } }
+                            Row { width:240; Text { text:"Glow"; color:theme.muted; width:60 } Slider { id:coreGlow; width:175; from:.1; to:1; value:backend.sphereGlow } }
+                            Row { width:240; Text { text:"Speed"; color:theme.muted; width:60 } Slider { id:coreSpeed; width:175; from:.35; to:2.5; value:backend.spherePulseSpeed } }
+                        }
+                        Flow { width:parent.width; spacing:10; CheckBox{id:coreAnimated;text:"Animated splash";checked:backend.sphereAnimation;palette.windowText:root.theme.text} AppButton{width:190;text:"SAVE CORE SETTINGS";onClicked:backend.saveCoreSettings(coreScale.value,coreGlow.value,coreSpeed.value,coreAnimated.checked)} AppButton{width:160;text:"RESET AURORA";onClicked:themeStatus.text=backend.resetVisuals()} }
+                        Text { id:themeStatus; width:parent.width; text:"Custom visuals are removable. Aurora AI is always recoverable as the default."; color:theme.muted; font.pixelSize:11; wrapMode:Text.Wrap }
                     }
                 }
-                FileDialog { id:backgroundOpen; title:"Choose custom ARLEN background"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:backend.importProfileVisual(selectedFile,"background") }
-                FileDialog { id:sphereOpen; title:"Choose custom ARLEN sphere"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:backend.importProfileVisual(selectedFile,"sphere") }
+                FileDialog { id:backgroundOpen; title:"Choose custom ARLEN background"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:themeStatus.text=backend.importProfileVisual(selectedFile,"background") }
+                FileDialog { id:sphereOpen; title:"Choose custom ARLEN sphere"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:themeStatus.text=backend.importProfileVisual(selectedFile,"sphere") }
             }
         }
 
         Item { // ABOUT
             ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
-                PageTitle { title:"ABOUT ARLEN NEXUS"; subtitle:"SYSTEM IDENTITY & OWNERSHIP" }
+                PageTitle { title:"ABOUT ARLEN NEXUS"; subtitle:"V"+backend.appVersion+" • IDENTITY • OWNERSHIP" }
                 Panel { Layout.fillWidth:true; Layout.fillHeight:true
                     RowLayout { anchors.fill:parent; anchors.margins:34; spacing:45
-                        Image { Layout.preferredWidth:340; Layout.preferredHeight:340; source:backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"; fillMode:Image.PreserveAspectFit; RotationAnimator on rotation{from:0;to:360;duration:80000;loops:Animation.Infinite} }
+                        Image { Layout.preferredWidth:Math.min(300,parent.width*.32); Layout.preferredHeight:Math.min(300,parent.width*.32); source:backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"; fillMode:Image.PreserveAspectFit }
                         Column { Layout.fillWidth:true; spacing:14
                             Text { text:"ARLEN NEXUS"; color:theme.text; font.pixelSize:30; font.weight:Font.DemiBold }
-                            Text { text:"Adaptive Responsive Local Executive Neural-Assistant\nNeural Execution and Experience Unified System"; color:theme.accent; font.pixelSize:13; lineHeight:1.5 }
-                            Rectangle { width:500; height:1; color:theme.line }
-                            Text { text:"CONCEPT, DIRECTION & OWNERSHIP"; color:theme.muted; font.pixelSize:10 }
+                            Text { text:"Adaptive Responsive Local Executive Neural Assistant\nFull product name, concept, logo direction and system identity by Jubaer Hossain."; color:theme.accent; font.pixelSize:13; lineHeight:1.5 }
+                            Rectangle { width:Math.min(500,parent.width); height:1; color:theme.line }
+                            Text { text:"CONCEPT • PLANNING • SETUP • OWNERSHIP"; color:theme.muted; font.pixelSize:10 }
                             Text { text:backend.ownerName.toUpperCase(); color:theme.text; font.pixelSize:22; font.weight:Font.Medium }
-                            Text { width:560; wrapMode:Text.Wrap; text:"A private, offline-first intelligent environment created for secure personal computing, system control, automation and human–computer interaction. ARLEN is governed by owner authority, local privacy and transparent action controls."; color:theme.muted; font.pixelSize:12; lineHeight:1.45 }
+                            Text { width:parent.width; wrapMode:Text.Wrap; text:"From the first system plan to the feature structure, name, logo design direction, PC setup and final product decisions, ARLEN NEXUS was planned and built by Jubaer Hossain with AI-assisted engineering. The result became possible through Jubaer's direction, testing and setup together with AI's implementation support."; color:theme.muted; font.pixelSize:12; lineHeight:1.45 }
+                            Text { width:parent.width; wrapMode:Text.Wrap; text:"Used correctly, AI makes human work easier, saves time and helps turn a clear plan into a working system—human judgment and ownership remain in control."; color:theme.good; font.pixelSize:12; lineHeight:1.45 }
                             Text { text:"CORE PRINCIPLES\nPRIVACY  •  LOCAL CONTROL  •  USER AUTHORITY  •  MODULAR INTELLIGENCE"; color:theme.good; font.pixelSize:11; lineHeight:1.6 }
-                            Text { text:"Version 0.7.0  •  Nexus Command Center Build\nBuilt for "+backend.ownerName+" — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
+                            Text { text:"Version "+backend.appVersion+"  •  Aurora AI First Release\nBuilt by "+backend.ownerName+" with AI assistance — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
                         }
                     }
                 }
+            }
+        }
+
+        Item { // CALCULATOR
+            id: calculatorPage
+            property string expression: ""
+            property string answer: "0"
+            ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
+                PageTitle { title:"ARLEN CALCULATOR"; subtitle:"SAFE LOCAL BASIC + SCIENTIFIC MATH" }
+                Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                    ColumnLayout { anchors.centerIn:parent; width:Math.min(520,parent.width-40); spacing:10
+                        TextField { Layout.fillWidth:true; Layout.preferredHeight:64; text:calculatorPage.expression; placeholderText:"Example: sin(pi/3) * 25"; color:theme.text; font.pixelSize:22; horizontalAlignment:Text.AlignRight; background:Rectangle{color:theme.card;radius:10;border.color:theme.line} onTextChanged:calculatorPage.expression=text; onAccepted:calculatorPage.answer=backend.calculate(text) }
+                        Text { Layout.fillWidth:true; text:calculatorPage.answer; color:theme.accent; font.pixelSize:30; horizontalAlignment:Text.AlignRight }
+                        GridLayout { Layout.fillWidth:true; columns:5; rowSpacing:7; columnSpacing:7
+                            Repeater { model:["sin(","cos(","tan(","sqrt(","AC","7","8","9","/","(","4","5","6","*",")","1","2","3","-","^","0",".","pi","+","="]
+                                delegate:AppButton { required property string modelData; Layout.fillWidth:true; text:modelData; onClicked:{if(modelData==="AC"){calculatorPage.expression="";calculatorPage.answer="0"}else if(modelData==="="){calculatorPage.answer=backend.calculate(calculatorPage.expression)}else calculatorPage.expression+=modelData} }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        Item { // UNIT CONVERTER
+            id: converterPage
+            property var unitMap: ({"Length":["Meter","Kilometer","Centimeter","Mile","Foot"],"Weight":["Kilogram","Gram","Pound","Ounce"],"Temperature":["Celsius","Fahrenheit","Kelvin"],"Storage":["Byte","KB","MB","GB","TB"]})
+            ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
+                PageTitle { title:"UNIT CONVERTER"; subtitle:"LENGTH • WEIGHT • TEMPERATURE • STORAGE" }
+                Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                    ColumnLayout { anchors.centerIn:parent; width:Math.min(560,parent.width-40); spacing:12
+                        ComboBox { id:unitCategory; Layout.fillWidth:true; model:["Length","Weight","Temperature","Storage"]; onCurrentTextChanged:{unitFrom.model=converterPage.unitMap[currentText];unitTo.model=converterPage.unitMap[currentText];unitTo.currentIndex=1} }
+                        TextField { id:unitValue; Layout.fillWidth:true; text:"1"; color:theme.text; font.pixelSize:20; background:Rectangle{color:theme.card;radius:9;border.color:theme.line} }
+                        RowLayout { Layout.fillWidth:true; ComboBox{id:unitFrom;Layout.fillWidth:true;model:["Meter","Kilometer","Centimeter","Mile","Foot"]} Text{text:"→";color:theme.accent;font.pixelSize:22} ComboBox{id:unitTo;Layout.fillWidth:true;model:["Meter","Kilometer","Centimeter","Mile","Foot"];currentIndex:1} }
+                        AppButton { Layout.fillWidth:true; text:"CONVERT"; onClicked:unitResult.text=backend.convertUnit(unitCategory.currentText,Number(unitValue.text),unitFrom.currentText,unitTo.currentText) }
+                        Text { id:unitResult; Layout.fillWidth:true; text:"0"; color:theme.accent; font.pixelSize:32; horizontalAlignment:Text.AlignRight }
+                    }
+                }
+            }
+        }
+
+        Item { // NOTE PAD
+            ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:12
+                PageTitle { title:"ARLEN NOTE PAD"; subtitle:"LOCAL UTF-8 NOTES • BANGLA + ENGLISH" }
+                Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                    TextArea { id:noteEditor; anchors.fill:parent; anchors.margins:14; selectByMouse:true; wrapMode:TextEdit.Wrap; placeholderText:"Write a local note…"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:9;border.color:theme.line} }
+                }
+                RowLayout { Layout.fillWidth:true; AppButton{Layout.preferredWidth:140;text:"NEW";onClicked:noteEditor.clear()} AppButton{Layout.preferredWidth:160;text:"SAVE AS…";onClicked:noteSave.open()} Item{Layout.fillWidth:true} Text{text:noteEditor.length+" characters";color:theme.muted;font.pixelSize:10} }
+            }
+            FileDialog { id:noteSave; title:"Save local note"; fileMode:FileDialog.SaveFile; nameFilters:["Text (*.txt)","Markdown (*.md)"]; onAccepted:backend.saveTextFile(selectedFile,noteEditor.text) }
+        }
+
+        Item { // SCREENSHOT
+            ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
+                PageTitle { title:"SCREENSHOT"; subtitle:"FULL DISPLAY CAPTURE • LOCAL SAVE" }
+                Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                    Column { anchors.centerIn:parent; width:Math.min(520,parent.width-40); spacing:16
+                        Image { anchors.horizontalCenter:parent.horizontalCenter; width:170; height:170; source:"../assets/arlen-nexus-icon.png"; fillMode:Image.PreserveAspectFit }
+                        Text { width:parent.width; horizontalAlignment:Text.AlignHCenter; wrapMode:Text.Wrap; text:"Choose a destination, then ARLEN captures the primary Windows display. Nothing is uploaded."; color:theme.text; font.pixelSize:13 }
+                        AppButton { width:parent.width; text:"CAPTURE SCREEN…"; onClicked:screenshotSave.open() }
+                    }
+                }
+            }
+            FileDialog { id:screenshotSave; title:"Save screenshot"; fileMode:FileDialog.SaveFile; nameFilters:["PNG image (*.png)","JPEG image (*.jpg)"]; onAccepted:backend.captureScreenshot(selectedFile) }
+        }
+
+        Item { // CLIPBOARD
+            ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
+                PageTitle { title:"CLIPBOARD"; subtitle:"CURRENT TEXT • LOCAL ONLY" }
+                Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                    TextArea { id:clipboardEditor; anchors.fill:parent; anchors.margins:16; selectByMouse:true; wrapMode:TextEdit.Wrap; text:"Press Load Clipboard to read current text."; color:theme.text; background:Rectangle{color:theme.card;radius:9;border.color:theme.line} }
+                }
+                RowLayout { Layout.fillWidth:true; AppButton{Layout.preferredWidth:180;text:"LOAD CLIPBOARD";onClicked:clipboardEditor.text=backend.clipboardText()} AppButton{Layout.preferredWidth:180;text:"COPY TEXT";onClicked:backend.setClipboardText(clipboardEditor.text)} }
             }
         }
     }
@@ -921,9 +1048,7 @@ ApplicationWindow {
             anchors.left: parent.left; anchors.leftMargin: 34
             anchors.top: parent.top; anchors.topMargin: 28
             spacing: 12
-            Rectangle { width: 42; height: 42; radius: 21; color: "transparent"; border.width: 1; border.color: "#28cce8"
-                Text { anchors.centerIn: parent; text: "A"; color: "#28cce8"; font.pixelSize: 19; font.weight: Font.Bold }
-            }
+            Image { width:28; height:28; anchors.verticalCenter:parent.verticalCenter; source:"../assets/arlen-nexus-icon.png"; fillMode:Image.PreserveAspectFit }
             Column {
                 anchors.verticalCenter: parent.verticalCenter
                 Text { text: "ARLEN NEXUS"; color: "#eafaff"; font.pixelSize: 16; font.weight: Font.DemiBold; font.letterSpacing: 1.5 }
@@ -968,7 +1093,20 @@ ApplicationWindow {
                 width: parent.width * .62; height: width
                 source: backend.customSphere.length ? backend.customSphere : "../assets/neural-sphere.png"
                 fillMode: Image.PreserveAspectFit; opacity: .94
-                RotationAnimator on rotation { from:0; to:360; duration:18000; loops:Animation.Infinite; running:splash.visible }
+                SequentialAnimation on scale { running:splash.visible; loops:Animation.Infinite; NumberAnimation{to:1.045;duration:900} NumberAnimation{to:1;duration:900} }
+            }
+            Repeater {
+                model:backend.lowResourceMode?28:56
+                Rectangle {
+                    required property int index
+                    property real angle:(index*137.5+root.flowTick*.55)*Math.PI/180
+                    property real distance:18+((root.flowTick*(1.2+index%4*.18)+index*27)%(parent.width*.52))
+                    width:2+index%3;height:width;radius:width/2
+                    x:parent.width/2+Math.cos(angle)*distance-width/2
+                    y:parent.height/2+Math.sin(angle)*distance-height/2
+                    color:index%4?"#55dfff":"#b353ff"
+                    opacity:Math.max(.04,.9-distance/(parent.width*.55))
+                }
             }
             Rectangle {
                 anchors.centerIn: parent
