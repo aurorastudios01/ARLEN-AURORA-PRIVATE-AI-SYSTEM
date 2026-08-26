@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 from PySide6.QtCore import QSize, QTimer, QUrl
-from PySide6.QtGui import QGuiApplication, QIcon
+from PySide6.QtGui import QFont, QGuiApplication, QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow
 from shiboken6 import getCppPointer, wrapInstance
@@ -23,6 +23,9 @@ def main():
         os.environ.setdefault("QT_QUICK_BACKEND", "software")
         os.environ.setdefault("QSG_RHI_BACKEND", "software")
     app = QGuiApplication([sys.argv[0]] if capture_mode else sys.argv)
+    # Use a Windows-native family explicitly. The offscreen Windows renderer used
+    # by CI can otherwise select an empty fallback and turn every label into boxes.
+    app.setFont(QFont("Segoe UI", 10))
     app.setApplicationName("ARLEN NEXUS")
     app.setOrganizationName("Jubaer Hossain")
     app.setWindowIcon(QIcon(str(ROOT / "assets" / "arlen-nexus-icon.png")))
