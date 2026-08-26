@@ -54,6 +54,15 @@ jobs:
           python main.py --capture-ui ui-verification/aurora-1920x1080.png 1920 1080
           if ($LASTEXITCODE -ne 0) { throw "1920x1080 UI capture failed" }
 
+      - name: Emit responsive preview fallback
+        shell: pwsh
+        run: |
+          foreach ($file in Get-ChildItem ui-verification/*.png) {
+            "ARLEN_PREVIEW_BEGIN:$($file.Name)"
+            [Convert]::ToBase64String([IO.File]::ReadAllBytes($file.FullName))
+            "ARLEN_PREVIEW_END:$($file.Name)"
+          }
+
       - name: Build development application folder
         run: python -m PyInstaller --noconfirm --clean ARLEN_NEXUS.spec
 
@@ -65,6 +74,7 @@ jobs:
           "Verification-only build: $($exe.FullName)"
 
       - name: Upload internal verification bundle
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: ARLEN-NEXUS-V1-Development-Verification
@@ -73,6 +83,7 @@ jobs:
           retention-days: 7
 
       - name: Upload responsive UI screenshots
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: ARLEN-NEXUS-V1.1-Responsive-UI
