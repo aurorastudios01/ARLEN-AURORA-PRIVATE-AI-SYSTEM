@@ -24,7 +24,7 @@ from urllib.parse import quote_plus
 import psutil
 from PySide6.QtCore import QObject, Property, QTimer, Signal, Slot
 from PySide6.QtGui import QGuiApplication
-from PIL import Image, ImageEnhance, ImageFilter, ImageOps
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 
 from v1_services import (
     APP_VERSION,
@@ -1330,6 +1330,215 @@ class Backend(QObject):
             self.pdfResult.emit(f"PDF split failed: {exc}")
             return False
 
+
+    @Slot(str, str, int, result=bool)
+    def rotatePdf(self, source, destination, degrees):
+        """Rotate every page by 90/180/270 degrees into a new file."""
+        try:
+            angle = int(degrees) % 360
+            if angle not in (90, 180, 270):
+                raise ValueError("rotation must be 90, 180 or 270 degrees")
+            PdfReader, PdfWriter = self._pdf_library()
+            source_path = self._local_path(source)
+            output = self._local_path(destination)
+            reader = PdfReader(str(source_path))
+            if not reader.pages:
+                raise ValueError("PDF has no pages")
+            writer = PdfWriter()
+            for page in reader.pages:
+                page.rotate(angle)
+                writer.add_page(page)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            with output.open("wb") as handle:
+                writer.write(handle)
+            self._database.remember_file(output, "pdf")
+            self.recentFilesChanged.emit()
+            self._log("pdf rotate", f"{source_path} {angle}deg -> {output}")
+            self.pdfResult.emit(f"Rotated {len(reader.pages)} page(s) by {angle}\u00b0: {output}")
+            return True
+        except Exception as exc:
+            self.pdfResult.emit(f"PDF rotate failed: {exc}")
+            return False
+
+    @staticmethod
+    def _ui_font(size: int):
+        bundled = ROOT / "assets" / "DejaVuSans.ttf"
+        try:
+            if bundled.exists():
+                return ImageFont.truetype(str(bundled), size)
+        except OSError:
+            pass
+        return ImageFont.load_default()
+
+    def _watermark_page(self, width_pt: float, height_pt: float, text: str) -> Path:
+        """Render a single-page watermark PDF sized to the source page."""
+        scale = 2
+        width = max(64, int(width_pt * scale))
+        height = max(64, int(height_pt * scale))
+        canvas = Image.new("RGB", (width, height), "white")
+        layer = Image.new("RGBA", (width, height), (255, 255, 255, 0))
+        font = self._ui_font(max(18, int(min(width, height) * 0.085)))
+        draw = ImageDraw.Draw(layer)
+        box = draw.textbbox((0, 0), text, font=font)
+        draw.text(
+            ((width - (box[2] - box[0])) / 2, (height - (box[3] - box[1])) / 2),
+            text,
+            font=font,
+            fill=(120, 130, 150, 90),
+        )
+        layer = layer.rotate(35, resample=Image.Resampling.BICUBIC)
+        canvas.paste(layer, (0, 0), layer)
+        stamp_dir = DATA / "pdf_stamps"
+        stamp_dir.mkdir(exist_ok=True)
+        stamp = stamp_dir / f"watermark-{uuid.uuid4().hex}.pdf"
+        canvas.save(stamp, "PDF", resolution=72.0 * scale)
+        return stamp
+
+    @Slot(str, str, str, result=bool)
+    def watermarkPdf(self, source, destination, text):
+        """Stamp a light diagonal watermark behind the page content."""
+        stamp = None
+        try:
+            label = (text or "").strip()
+            if not label:
+                raise ValueError("watermark text is empty")
+            PdfReader, PdfWriter = self._pdf_library()
+            source_path = self._local_path(source)
+            output = self._local_path(destination)
+            reader = PdfReader(str(source_path))
+            if not reader.pages:
+                raise ValueError("PDF has no pages")
+            first = reader.pages[0]
+            stamp = self._watermark_page(
+                float(first.mediabox.width), float(first.mediabox.height), label
+            )
+            overlay = PdfReader(str(stamp)).pages[0]
+            writer = PdfWriter()
+            for page in reader.pages:
+                # over=False keeps the original text readable on top of the stamp.
+                page.merge_page(overlay, over=False)
+                writer.add_page(page)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            with output.open("wb") as handle:
+                writer.write(handle)
+            self._database.remember_file(output, "pdf")
+            self.recentFilesChanged.emit()
+            self._log("pdf watermark", str(output))
+            self.pdfResult.emit(f"Watermarked PDF created: {output}")
+            return True
+        except Exception as exc:
+            self.pdfResult.emit(f"PDF watermark failed: {exc}")
+            return False
+        finally:
+            if stamp is not None:
+                try:
+                    stamp.unlink(missing_ok=True)
+                except OSError:
+                    pass
+
+    def _pdf_text_pages(self, source) -> list[str]:
+        PdfReader, _ = self._pdf_library()
+        reader = PdfReader(str(self._local_path(source)))
+        pages = []
+        for page in reader.pages:
+            try:
+                pages.append(page.extract_text() or "")
+            except Exception:
+                pages.append("")
+        return pages
+
+    @Slot(str, str, result=bool)
+    def extractPdfText(self, source, destination):
+        """Write the digital text layer of a PDF to a UTF-8 text file."""
+        try:
+            pages = self._pdf_text_pages(source)
+            if not pages:
+                raise ValueError("PDF has no pages")
+            if not any(text.strip() for text in pages):
+                raise ValueError("no digital text layer found; this looks like a scanned PDF")
+            body = "\n\n".join(
+                f"--- Page {index} ---\n{text.strip()}" for index, text in enumerate(pages, start=1)
+            )
+            output = self._local_path(destination)
+            output.parent.mkdir(parents=True, exist_ok=True)
+            output.write_text(body, encoding="utf-8")
+            self._log("pdf text", str(output))
+            self.pdfResult.emit(f"Extracted text from {len(pages)} page(s): {output}")
+            return True
+        except Exception as exc:
+            self.pdfResult.emit(f"PDF text extraction failed: {exc}")
+            return False
+
+    @Slot(str, str, result=str)
+    def searchPdf(self, source, query):
+        """Return page numbers and short snippets containing the query."""
+        try:
+            needle = (query or "").strip()
+            if not needle:
+                raise ValueError("search text is empty")
+            matches = []
+            for index, text in enumerate(self._pdf_text_pages(source), start=1):
+                lowered = text.casefold()
+                position = lowered.find(needle.casefold())
+                if position >= 0:
+                    start = max(0, position - 60)
+                    snippet = " ".join(text[start:position + len(needle) + 60].split())
+                    matches.append({"page": index, "snippet": snippet})
+                if len(matches) >= 60:
+                    break
+            self._log("pdf search", f"{needle} -> {len(matches)}")
+            if not matches:
+                self.pdfResult.emit(f"No page contains \u201c{needle}\u201d.")
+            else:
+                self.pdfResult.emit(
+                    f"Found \u201c{needle}\u201d on {len(matches)} page(s): "
+                    + ", ".join(str(item["page"]) for item in matches[:15])
+                )
+            return json.dumps(matches)
+        except Exception as exc:
+            self.pdfResult.emit(f"PDF search failed: {exc}")
+            return "[]"
+
+    @Slot(str)
+    def summarizePdf(self, source):
+        """Summarize a PDF with the local text model; never uploads the file."""
+        self._set_busy(True)
+        threading.Thread(target=self._summarize_pdf_worker, args=(source,), daemon=True).start()
+
+    def _summarize_pdf_worker(self, source):
+        try:
+            pages = self._pdf_text_pages(source)
+            text = "\n".join(pages).strip()
+            if not text:
+                raise RuntimeError("no digital text layer found; this looks like a scanned PDF")
+            limit = 6000 if self.lowResourceMode else 12000
+            installed = self._ollama.tags()
+            model = self.settings["chat_model"]
+            if not self._ollama.has_model(installed, model):
+                raise RuntimeError(
+                    f"Model {model} is not installed. Open Settings \u2192 AI Models for the exact command."
+                )
+            summary = self._ollama.chat(
+                model,
+                [
+                    {
+                        "role": "system",
+                        "content": (
+                            "You summarize documents for ARLEN NEXUS. Answer in the language of the document. "
+                            "Give a short overview, then the key points as a bullet list. Never invent facts."
+                        ),
+                    },
+                    {"role": "user", "content": text[:limit]},
+                ],
+                self.lowResourceMode,
+            )
+            self._log("pdf summary", str(self._local_path(source)))
+            self.pdfResult.emit(summary)
+        except Exception as exc:
+            self.pdfResult.emit(f"PDF summary failed: {exc}")
+        finally:
+            self._set_busy(False)
+
     @Slot(str)
     def openPdf(self, source):
         try:
@@ -1580,6 +1789,75 @@ class Backend(QObject):
             return True
         except Exception as exc:
             self.commandResult.emit(f"Image export failed: {exc}", "error")
+            return False
+
+
+    @Slot(str, str, int, int, bool, result=bool)
+    def resizeImage(self, source, destination, width, height, keep_ratio):
+        """Save a resized copy; the original file is never modified."""
+        try:
+            target_w, target_h = int(width), int(height)
+            if target_w < 1 or target_h < 1:
+                raise ValueError("width and height must be positive")
+            source_path = self._local_path(source)
+            destination_path = self._local_path(destination)
+            with Image.open(source_path) as image:
+                image = image.convert("RGB") if destination_path.suffix.lower() in (".jpg", ".jpeg") else image.copy()
+                if keep_ratio:
+                    image.thumbnail((target_w, target_h), Image.Resampling.LANCZOS)
+                else:
+                    image = image.resize((target_w, target_h), Image.Resampling.LANCZOS)
+                destination_path.parent.mkdir(parents=True, exist_ok=True)
+                image.save(destination_path, quality=95)
+                final = image.size
+            self._log("image resize", f"{destination_path} {final[0]}x{final[1]}")
+            self.commandResult.emit(f"Resized copy saved ({final[0]}x{final[1]}): {destination_path}", "success")
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Image resize failed: {exc}", "error")
+            return False
+
+    @Slot(str, str, result=bool)
+    def convertImage(self, source, destination):
+        """Convert an image to the format implied by the destination extension."""
+        try:
+            source_path = self._local_path(source)
+            destination_path = self._local_path(destination)
+            suffix = destination_path.suffix.lower()
+            if suffix not in (".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tiff", ".pdf"):
+                raise ValueError(f"unsupported output format: {suffix or 'none'}")
+            with Image.open(source_path) as image:
+                if suffix in (".jpg", ".jpeg", ".bmp", ".pdf"):
+                    image = image.convert("RGB")
+                destination_path.parent.mkdir(parents=True, exist_ok=True)
+                image.save(destination_path, quality=95)
+            self._log("image convert", str(destination_path))
+            self.commandResult.emit(f"Converted copy saved: {destination_path}", "success")
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Image conversion failed: {exc}", "error")
+            return False
+
+    @Slot(str, str, str, result=bool)
+    def cropImage(self, source, destination, ratio):
+        """Centre-crop to a named ratio (1:1, 4:3, 3:2, 16:9, 9:16)."""
+        ratios = {"1:1": 1.0, "4:3": 4/3, "3:2": 1.5, "16:9": 16/9, "9:16": 9/16, "3:4": .75}
+        try:
+            key = (ratio or "").strip()
+            if key not in ratios:
+                raise ValueError(f"unsupported ratio: {key or 'none'}")
+            source_path = self._local_path(source)
+            destination_path = self._local_path(destination)
+            with Image.open(source_path) as opened:
+                image = self._center_crop(opened.convert("RGB"), ratios[key])
+                destination_path.parent.mkdir(parents=True, exist_ok=True)
+                image.save(destination_path, quality=95)
+                final = image.size
+            self._log("image crop", f"{destination_path} {key}")
+            self.commandResult.emit(f"Cropped copy saved ({final[0]}x{final[1]}): {destination_path}", "success")
+            return True
+        except Exception as exc:
+            self.commandResult.emit(f"Image crop failed: {exc}", "error")
             return False
 
     @Slot(str, str, result=bool)
