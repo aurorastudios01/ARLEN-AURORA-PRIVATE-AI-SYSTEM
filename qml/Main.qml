@@ -873,7 +873,7 @@ ApplicationWindow {
                             Text { width:parent.width; wrapMode:Text.Wrap; text:"From the first system plan to the feature structure, name, logo design direction, PC setup and final product decisions, ARLEN NEXUS was planned and built by Jubaer Hossain with AI-assisted engineering. The result became possible through Jubaer's direction, testing and setup together with AI's implementation support."; color:theme.muted; font.pixelSize:12; lineHeight:1.45 }
                             Text { width:parent.width; wrapMode:Text.Wrap; text:"Used correctly, AI makes human work easier, saves time and helps turn a clear plan into a working system—human judgment and ownership remain in control."; color:theme.good; font.pixelSize:12; lineHeight:1.45 }
                             Text { text:"CORE PRINCIPLES\nPRIVACY  •  LOCAL CONTROL  •  USER AUTHORITY  •  MODULAR INTELLIGENCE"; color:theme.good; font.pixelSize:11; lineHeight:1.6 }
-                            Text { text:"Version "+backend.appVersion+"  •  Aurora AI Development Build\nBuilt by "+backend.ownerName+" with AI assistance — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
+                            Text { text:"Version "+backend.appVersion+"  •  Aurora AI First Release\nBuilt by "+backend.ownerName+" with AI assistance — Controlled by its owner"; color:theme.muted; font.pixelSize:10; lineHeight:1.5 }
                         }
                     }
                 }

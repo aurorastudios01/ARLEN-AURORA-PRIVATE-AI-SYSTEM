@@ -73,6 +73,35 @@ jobs:
           if (-not $exe) { throw "ARLEN NEXUS.exe was not produced" }
           "Verification-only build: $($exe.FullName)"
 
+      - name: Smoke-test packaged application
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path dist -Recurse -Filter "ARLEN NEXUS.exe" | Select-Object -First 1
+          & $exe.FullName --capture-ui ui-verification/packaged-1366x768.png 1366 768
+          if ($LASTEXITCODE -ne 0) { throw "Packaged application launch test failed" }
+
+      - name: Build V1.1 Windows installer
+        shell: pwsh
+        run: |
+          choco install innosetup --yes --no-progress
+          $iscc = Get-ChildItem "C:\Program Files (x86)\Inno Setup*" -Recurse -Filter ISCC.exe | Select-Object -First 1
+          if (-not $iscc) { throw "Inno Setup compiler was not found" }
+          & $iscc.FullName installer/ARLEN-NEXUS.iss
+          if ($LASTEXITCODE -ne 0) { throw "Installer build failed" }
+
+      - name: Silent-install and launch-test V1.1
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem installer-output -Filter "ARLEN-NEXUS-Setup-v1.1.0.exe" | Select-Object -First 1
+          if (-not $setup) { throw "V1.1 installer was not produced" }
+          $installRoot = Join-Path $env:RUNNER_TEMP "ARLEN NEXUS V1.1 Installed"
+          $process = Start-Process $setup.FullName -ArgumentList "/VERYSILENT", "/SUPPRESSMSGBOXES", "/NORESTART", "/DIR=`"$installRoot`"" -Wait -PassThru
+          if ($process.ExitCode -ne 0) { throw "Silent installation failed" }
+          $installedExe = Join-Path $installRoot "ARLEN NEXUS.exe"
+          if (-not (Test-Path $installedExe)) { throw "Installed executable was not found" }
+          & $installedExe --capture-ui ui-verification/installed-1366x768.png 1366 768
+          if ($LASTEXITCODE -ne 0) { throw "Installed application launch test failed" }
+
       - name: Upload internal verification bundle
         continue-on-error: true
         uses: actions/upload-artifact@v4
@@ -91,5 +120,5 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-# This workflow intentionally does not create or modify a GitHub Release.
-# v0.7 remains untouched until a fully verified V1.x publishing workflow replaces it.
+# This workflow verifies the source, packaged EXE and installer. Publishing and
+# removal of an older release are separate owner-confirmed actions.

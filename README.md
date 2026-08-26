@@ -222,7 +222,7 @@ The current development branch now includes the first V1.1 foundations:
 - local calculator, unit converter, notes, screenshot and clipboard foundations
 - local file metadata index, real filename search, organization preview, PIN-approved Downloads grouping, undo, Open and Reveal
 
-This is development code, not a released V1.1 installer. The verified v0.7 Release remains available until a V1.x installer passes Windows build, QML lint, screen-size, upgrade and runtime checks.
+V1.1 is the first release line. Its installer is published only after Windows build, QML lint, screen-size, packaged-launch and silent-install checks pass.
 
 Detailed UI mapping, responsive breakpoints, historical bugs, fixes, benefits and remaining limitations are consolidated below so this README remains the single project guide.
 
@@ -238,7 +238,9 @@ ARLEN NEXUS was conceived, named, planned, directed, configured and tested by **
 
 ## Download for Windows
 
-The permanent verified V1.1 installer link will be placed here immediately after the signed release asset passes installation and launch checks. Development or temporary Actions artifacts are intentionally not linked because those links expire.
+[**Download ARLEN NEXUS V1.1 Setup for Windows**](https://github.com/arlenray0113-cyber/ARLEN-NEXUS-PRIVATE/releases/download/v1.1.0/ARLEN-NEXUS-Setup-v1.1.0.exe)
+
+This is the permanent private GitHub Release link. GitHub may ask the repository owner to sign in. Development or temporary Actions artifacts are intentionally not linked because those links expire.
 
 ## PC requirements
 

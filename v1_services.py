@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 
-APP_VERSION = "1.1.0-dev"
+APP_VERSION = "1.1.0"
 DEFAULT_OLLAMA_URL = "http://127.0.0.1:11434"
 DEFAULT_CHAT_MODEL = "qwen2.5:3b"
 DEFAULT_VISION_MODEL = "qwen2.5vl:3b"
