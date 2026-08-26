@@ -629,8 +629,8 @@ ApplicationWindow {
         Item { // AUTOMATION
             ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
                 PageTitle { title:"AUTOMATION LAB"; subtitle:"CUSTOM COMMANDS • MACROS • SCHEDULES" }
-                RowLayout { Layout.fillWidth:true; Layout.fillHeight:true; spacing:14
-                    Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                RowLayout { id:settingsRow; Layout.fillWidth:true; Layout.fillHeight:true; spacing:14
+                    Panel { Layout.fillWidth:true; Layout.fillHeight:true; Layout.minimumWidth:360; Layout.preferredWidth:Math.max(360,settingsRow.width-Math.min(470,Math.max(330,settingsRow.width*.42))-14)
                         Column { anchors.fill:parent; anchors.margins:20; spacing:12
                             Text { text:"TEACH ARLEN A COMMAND"; color:theme.accent; font.pixelSize:12 }
                             TextField { id:macroTrigger; width:parent.width; placeholderText:"Trigger: Start Work Mode"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
@@ -698,7 +698,7 @@ ApplicationWindow {
                             }
                         }
                     }
-                    ColumnLayout { Layout.preferredWidth:470; Layout.fillHeight:true; spacing:14
+                    ColumnLayout { id:settingsTools; Layout.preferredWidth:Math.min(470,Math.max(330,settingsRow.width*.42)); Layout.fillHeight:true; spacing:14
                         Panel { Layout.fillWidth:true; Layout.fillHeight:true
                             Column { anchors.fill:parent; anchors.margins:18; spacing:12
                                 Text { text:"CAPABILITY PACKS"; color:theme.accent; font.pixelSize:12 }

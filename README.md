@@ -236,11 +236,29 @@ ARLEN NEXUS was conceived, named, planned, directed, configured and tested by **
 
 # V1.1 First Release Guide
 
+## Click to open
+
+- [Download and install](#download-for-windows)
+- [PC requirements](#pc-requirements)
+- [Working capabilities](#what-v11-can-do)
+- [Interface and responsive rules](#aurora-ai-interface-map)
+- [Version history and fixed bugs](#historical-problems-fixed-for-v11)
+- [Button-to-backend flow](#what-happens-after-each-button-click)
+- [Safety, privacy and limitations](#safety-and-privacy)
+
+<details open>
+<summary><strong>Download ARLEN NEXUS V1.1</strong></summary>
+
 ## Download for Windows
 
 [**Download ARLEN NEXUS V1.1 Setup for Windows**](https://github.com/arlenray0113-cyber/ARLEN-NEXUS-PRIVATE/releases/download/v1.1.0/ARLEN-NEXUS-Setup-v1.1.0.exe)
 
 This is the permanent private GitHub Release link. GitHub may ask the repository owner to sign in. Development or temporary Actions artifacts are intentionally not linked because those links expire.
+
+</details>
+
+<details>
+<summary><strong>PC requirements and installation</strong></summary>
 
 ## PC requirements
 
@@ -262,6 +280,11 @@ The final installer includes the desktop application and its Python/Qt runtime. 
 3. Open ARLEN NEXUS and use AI Setup to check Ollama and the installed models.
 4. On a 4 GB PC, keep Low Resource mode enabled and use the text model alone when vision is not needed.
 
+</details>
+
+<details>
+<summary><strong>All working capabilities</strong></summary>
+
 ## What V1.1 can do
 
 | Workspace | Working behavior |
@@ -280,6 +303,11 @@ The final installer includes the desktop application and its Python/Qt runtime. 
 | PDF Studio | PDF reading and page-tool foundation; the interface must only advertise operations connected to tested handlers |
 | System Dashboard | Shows real CPU, RAM, disk, battery, network, environment and AI readiness where available |
 | Themes and Core | Ten themes, four core animation styles, custom visual import, remove and Aurora reset |
+
+</details>
+
+<details>
+<summary><strong>Interface map and responsive screen rules</strong></summary>
 
 ## Aurora AI interface map
 
@@ -309,6 +337,11 @@ The final installer includes the desktop application and its Python/Qt runtime. 
 
 The automated Windows gate renders and checks 1366×768 and 1920×1080 checkpoints. Release review also covers maximized/restored layouts, common Windows scaling, long labels, empty data and error messages.
 
+</details>
+
+<details>
+<summary><strong>Version bugs fixed and release tests</strong></summary>
+
 ## Historical problems fixed for V1.1
 
 | Earlier problem | V1.1 correction |
@@ -337,6 +370,11 @@ The automated Windows gate renders and checks 1366×768 and 1920×1080 checkpoin
 - executable existence check
 - final installer launch and upgrade test before the Release link is published
 
+</details>
+
+<details>
+<summary><strong>Safety, privacy and current limitations</strong></summary>
+
 ## Safety and privacy
 
 - Chat, memory, notes and metadata stay local unless the owner explicitly opens an external service.
@@ -353,6 +391,11 @@ The automated Windows gate renders and checks 1366×768 and 1920×1080 checkpoin
 - GPU temperature is omitted when a reliable provider is unavailable.
 - Full PC takeover, mouse/keyboard automation, background monitoring, social automation and silent deletion remain disabled.
 
+</details>
+
+<details>
+<summary><strong>Source structure and backend evolution</strong></summary>
+
 ## Source structure
 
 - `main.py` — Qt startup, bundled UI font and automated screenshot capture.
@@ -363,6 +406,66 @@ The automated Windows gate renders and checks 1366×768 and 1920×1080 checkpoin
 - `ARLEN_NEXUS.spec` — Windows portable application build.
 - `installer/ARLEN-NEXUS.iss` — fixed-AppId per-user installer definition.
 - `.github/workflows/v1-development-verify.yml` — Windows validation and build gate.
+
+## How the backend evolved
+
+```mermaid
+flowchart TD
+    A["v0.1–v0.3: Test Code / Early Beta"] --> B["v0.4–v0.7: Beta Development"]
+    B --> C["v0.8–v1.0: Prototype Development"]
+    C --> D["v1.1: First Release"]
+    A --> A1["Single-process experiments and local setup checks"]
+    B --> B1["Tool, memory, PDF and image foundations"]
+    C --> C1["PySide6/QML workstation UI and command routing"]
+    D --> D1["Ollama services, SQLite memory, permissioned tools and verified installer"]
+```
+
+| Version stage | Backend behavior |
+|---|---|
+| v0.1–v0.3 — Test Code / Early Beta | Tested Python desktop startup, offline-first concept and local model setup. State and capabilities were mostly experimental. |
+| v0.4–v0.7 — Beta Development | Added tool routing, early memory, document/image operations and the first downloadable beta. Some UI controls could exist before their full handler was connected. |
+| v0.8–v1.0 — Prototype Development | Reworked the futuristic workstation UI, themes, command center and capability layout. The prototype established the approved product direction but was not treated as a stable release. |
+| v1.1 — First Release | Separates UI, backend and services; checks real dependencies; stores bounded SQLite memory; requires confirmation for file movement; builds and launch-tests the Windows installer. |
+
+## What happens after each button click
+
+```mermaid
+flowchart LR
+    A["User clicks a button"] --> B["QML validates input"]
+    B --> C["Backend slot routes the request"]
+    C --> D["Local service or OS tool runs"]
+    D --> E["Result, preview or clear error returns"]
+    E --> F["UI updates without faking success"]
+```
+
+| Button / action | Backend flow | Result shown to the owner |
+|---|---|---|
+| Send / top command | QML input → `routeInput` → safe-command match or `OllamaClient.chat` → SQLite append | Local reply, command result, or honest model/setup error |
+| Analyze selected image | File picker → selected local path → vision request → `OllamaClient.vision` | Local vision explanation or missing-model message |
+| Calculator / Scientific equals | Expression → safe AST parser → allowed arithmetic/function table | Calculated value or validation error; arbitrary code cannot run |
+| Convert | Values/category/unit selection → conversion table | Converted number and unit |
+| Save Note | Editor text → local Save As path → UTF-8 write | Saved path or clear failure |
+| Capture Screenshot | Capture button → Qt screen capture → selected path | Saved PNG path |
+| Load / Replace Clipboard | Clipboard button → Qt clipboard read/write | Current or replaced local text |
+| Search Files | Query → bounded metadata index → matching existing paths | Results with Open and Reveal actions |
+| Scan My Folders | Owner action → common user-folder metadata scan → SQLite index | Counts/status; contents are not uploaded |
+| Preview Organization | Downloads metadata → category plan only | Proposed moves; no file changes yet |
+| Apply Organization | Preview → owner PIN verification → constrained move into `ARLEN Organized` | Move report plus one-level undo record |
+| Undo Organization | Last recorded move set → path checks → reverse moves | Restored files or conflict/error report |
+| Image adjustment/export | Selected image → Pillow preview/filter pipeline → new output path | Non-destructive exported copy |
+| PDF operation | Selected PDF(s) → validated pypdf handler | New output PDF or operation-specific error |
+| Theme / core mode | Setting click → persistent settings → QML palette/animation state | Immediate visual change retained after restart |
+| Add custom core/background | File picker → unique local visual copy → settings update | New visual plus Remove and Reset controls |
+| Remove / Reset visual | Owner click → settings/path cleanup → Aurora defaults | Custom selection removed without touching the supplied original |
+| Brightness / volume | Slider/button → supported Windows control | Real system adjustment or unsupported message |
+| AI Setup / Diagnostics | Refresh → `EnvironmentScanner` + Ollama health/model checks | Python, Ollama, model, FFmpeg and browser readiness |
+| System Refresh | Explicit safe refresh handler | Cache/UI refresh result; it does not pretend to add RAM |
+
+### Permission rule
+
+Read-only actions can run immediately. File moves or other meaningful changes require preview and/or owner confirmation. General deletion, silent background control and unrestricted keyboard/mouse takeover are not part of V1.1.
+
+</details>
 
 The active repository keeps only current V1.1 source, tests, assets, installer/build definitions, this README and the single verification workflow. Historical code remains available through Git history, not as duplicate active files.
 
