@@ -332,6 +332,7 @@ The automated Windows gate renders and checks 1366×768 and 1920×1080 checkpoin
 - QML syntax validation
 - 1366×768 responsive render
 - 1920×1080 responsive render
+- 1366×768 render of Calculator, Converter, PDF, Image, File Manager, Notes, Screenshot, Clipboard, System Info and Settings workspaces
 - Windows PyInstaller EXE creation
 - executable existence check
 - final installer launch and upgrade test before the Release link is published

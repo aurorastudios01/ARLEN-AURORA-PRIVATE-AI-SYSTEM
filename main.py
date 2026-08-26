@@ -48,6 +48,9 @@ def main():
         window = engine.rootObjects()[0]
         quick_window = wrapInstance(getCppPointer(window)[0], QQuickWindow)
         window.setProperty("openingVisible", False)
+        if "--capture-page" in sys.argv:
+            page_marker = sys.argv.index("--capture-page")
+            window.setProperty("activePage", int(sys.argv[page_marker + 1]))
         window.showNormal()
         window.setWidth(width)
         window.setHeight(height)

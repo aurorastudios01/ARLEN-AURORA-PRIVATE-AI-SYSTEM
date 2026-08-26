@@ -54,6 +54,32 @@ jobs:
           python main.py --capture-ui ui-verification/aurora-1920x1080.png 1920 1080
           if ($LASTEXITCODE -ne 0) { throw "1920x1080 UI capture failed" }
 
+      - name: Render every functional workspace at laptop size
+        shell: pwsh
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          New-Item -ItemType Directory -Force -Path ui-pages | Out-Null
+          $pages = @{
+            "calculator" = 15; "converter" = 16; "pdf" = 12;
+            "image" = 10; "files" = 5; "notes" = 17;
+            "screenshot" = 18; "clipboard" = 19;
+            "system-info" = 14; "settings" = 9
+          }
+          foreach ($name in $pages.Keys) {
+            python main.py --capture-ui "ui-pages/$name-1366x768.png" 1366 768 --capture-page $pages[$name]
+            if ($LASTEXITCODE -ne 0) { throw "$name responsive capture failed" }
+          }
+
+      - name: Emit workspace preview fallback
+        shell: pwsh
+        run: |
+          foreach ($file in Get-ChildItem ui-pages/*.png) {
+            "ARLEN_PAGE_BEGIN:$($file.Name)"
+            [Convert]::ToBase64String([IO.File]::ReadAllBytes($file.FullName))
+            "ARLEN_PAGE_END:$($file.Name)"
+          }
+
       - name: Emit responsive preview fallback
         shell: pwsh
         run: |
@@ -77,8 +103,8 @@ jobs:
         shell: pwsh
         run: |
           $exe = Get-ChildItem -Path dist -Recurse -Filter "ARLEN NEXUS.exe" | Select-Object -First 1
-          & $exe.FullName --capture-ui ui-verification/packaged-1366x768.png 1366 768
-          if ($LASTEXITCODE -ne 0) { throw "Packaged application launch test failed" }
+          $process = Start-Process $exe.FullName -ArgumentList "--capture-ui", "ui-verification/packaged-1366x768.png", "1366", "768" -Wait -PassThru
+          if ($process.ExitCode -ne 0 -or -not (Test-Path "ui-verification/packaged-1366x768.png")) { throw "Packaged application launch test failed with exit code $($process.ExitCode)" }
 
       - name: Build V1.1 Windows installer
         shell: pwsh
@@ -99,8 +125,8 @@ jobs:
           if ($process.ExitCode -ne 0) { throw "Silent installation failed" }
           $installedExe = Join-Path $installRoot "ARLEN NEXUS.exe"
           if (-not (Test-Path $installedExe)) { throw "Installed executable was not found" }
-          & $installedExe --capture-ui ui-verification/installed-1366x768.png 1366 768
-          if ($LASTEXITCODE -ne 0) { throw "Installed application launch test failed" }
+          $launch = Start-Process $installedExe -ArgumentList "--capture-ui", "ui-verification/installed-1366x768.png", "1366", "768" -Wait -PassThru
+          if ($launch.ExitCode -ne 0 -or -not (Test-Path "ui-verification/installed-1366x768.png")) { throw "Installed application launch test failed with exit code $($launch.ExitCode)" }
 
       - name: Upload internal verification bundle
         continue-on-error: true
