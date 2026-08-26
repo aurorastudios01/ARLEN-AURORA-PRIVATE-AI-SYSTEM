@@ -97,6 +97,12 @@ DEFAULT_SETTINGS = {
     "background_opacity": 0.24,
 }
 
+ALLOWED_THEMES = (
+    "Aurora AI", "Obsidian", "Ocean", "Crimson", "Emerald",
+    "Violet", "Arctic", "Solar", "Graphite", "Midnight",
+)
+ALLOWED_SPHERES = ("Aurora Core", "Pulse Bloom", "Particle Splash", "Orbit Matrix")
+
 
 def load_settings() -> dict:
     if SETTINGS_FILE.exists():
@@ -439,17 +445,15 @@ class Backend(QObject):
 
     @Slot(str)
     def setTheme(self, theme):
-        if theme in (
-            "Aurora AI", "Obsidian", "Ocean", "Crimson", "Emerald",
-            "Violet", "Arctic", "Solar", "Graphite", "Midnight",
-        ):
+        if theme in ALLOWED_THEMES:
             self.settings["theme"] = theme
             self._save()
 
     @Slot(str)
     def setSphere(self, name):
-        self.settings["sphere"] = name
-        self._save()
+        if name in ALLOWED_SPHERES:
+            self.settings["sphere"] = name
+            self._save()
 
     @Slot(bool)
     def setLowResourceMode(self, enabled):

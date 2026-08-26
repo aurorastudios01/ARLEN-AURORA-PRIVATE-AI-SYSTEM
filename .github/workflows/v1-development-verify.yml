@@ -64,7 +64,8 @@ jobs:
             "calculator" = 15; "converter" = 16; "pdf" = 12;
             "image" = 10; "files" = 5; "notes" = 17;
             "screenshot" = 18; "clipboard" = 19;
-            "system-info" = 14; "settings" = 9
+            "system-info" = 14; "settings" = 9;
+            "theme" = 13; "automation" = 6
           }
           foreach ($name in $pages.Keys) {
             python main.py --capture-ui "ui-pages/$name-1366x768.png" 1366 768 --capture-page $pages[$name]

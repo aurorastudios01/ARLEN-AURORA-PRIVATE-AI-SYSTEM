@@ -853,8 +853,8 @@ ApplicationWindow {
                         Text { id:themeStatus; width:parent.width; text:"Custom visuals are removable. Aurora AI is always recoverable as the default."; color:theme.muted; font.pixelSize:11; wrapMode:Text.Wrap }
                     }
                 }
-                FileDialog { id:backgroundOpen; title:"Choose custom ARLEN background"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:backend.importProfileVisual(selectedFile,"background") }
-                FileDialog { id:sphereOpen; title:"Choose custom ARLEN sphere"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:backend.importProfileVisual(selectedFile,"sphere") }
+                FileDialog { id:backgroundOpen; title:"Choose custom ARLEN background"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:themeStatus.text=backend.importProfileVisual(selectedFile,"background") }
+                FileDialog { id:sphereOpen; title:"Choose custom ARLEN sphere"; nameFilters:["Images (*.png *.jpg *.jpeg *.webp *.bmp)"]; onAccepted:themeStatus.text=backend.importProfileVisual(selectedFile,"sphere") }
             }
         }
 

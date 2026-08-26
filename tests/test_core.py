@@ -110,6 +110,77 @@ class ArlenCoreTests(unittest.TestCase):
         self.assertIn("saved", result)
         self.assertTrue(self.backend.settings["owner_avatar"])
 
+    def test_theme_and_sphere_choices_are_validated_and_persisted(self):
+        self.backend.setTheme("Ocean")
+        self.backend.setSphere("Particle Splash")
+        self.backend.setTheme("Unknown Theme")
+        self.backend.setSphere("Unknown Core")
+        saved = json.loads(self.settings_file.read_text(encoding="utf-8"))
+        self.assertEqual(saved["theme"], "Ocean")
+        self.assertEqual(saved["sphere"], "Particle Splash")
+
+        restarted = Backend()
+        restarted.timer.stop()
+        self.assertEqual(restarted.currentTheme, "Ocean")
+        self.assertEqual(restarted.sphereName, "Particle Splash")
+
+    def test_custom_core_add_replace_and_remove_preserves_sources(self):
+        first_source = self.base / "first-core.png"
+        second_source = self.base / "second-core.png"
+        Image.new("RGB", (180, 180), "#2255aa").save(first_source)
+        Image.new("RGB", (180, 180), "#aa55dd").save(second_source)
+
+        self.assertIn("saved", self.backend.importProfileVisual(str(first_source), "sphere"))
+        first_managed = Path(self.backend.settings["custom_sphere"])
+        self.assertTrue(first_managed.is_file())
+        self.assertEqual(self.backend.settings["sphere"], "Custom Sphere")
+
+        self.assertIn("saved", self.backend.importProfileVisual(str(second_source), "sphere"))
+        second_managed = Path(self.backend.settings["custom_sphere"])
+        self.assertNotEqual(first_managed, second_managed)
+        self.assertFalse(first_managed.exists())
+        self.assertTrue(second_managed.is_file())
+        self.assertTrue(first_source.is_file())
+        self.assertTrue(second_source.is_file())
+
+        self.assertIn("removed", self.backend.removeProfileVisual("sphere"))
+        self.assertFalse(second_managed.exists())
+        self.assertEqual(self.backend.settings["custom_sphere"], "")
+        self.assertEqual(self.backend.settings["sphere"], "Aurora Core")
+        self.assertTrue(second_source.is_file())
+
+    def test_background_remove_and_visual_reset_restore_aurora(self):
+        background = self.base / "background.jpg"
+        sphere = self.base / "sphere.png"
+        Image.new("RGB", (640, 360), "#17102e").save(background)
+        Image.new("RGB", (200, 200), "#12aadd").save(sphere)
+        self.backend.importProfileVisual(str(background), "background")
+        background_managed = Path(self.backend.settings["background_image"])
+        self.assertIn("removed", self.backend.removeProfileVisual("background"))
+        self.assertFalse(background_managed.exists())
+        self.assertTrue(background.exists())
+
+        self.backend.setTheme("Crimson")
+        self.backend.importProfileVisual(str(sphere), "sphere")
+        sphere_managed = Path(self.backend.settings["custom_sphere"])
+        self.backend.saveCoreSettings(.65, .1, 2.5, False)
+        self.assertIn("restored", self.backend.resetVisuals())
+        self.assertFalse(sphere_managed.exists())
+        self.assertTrue(sphere.exists())
+        self.assertEqual(self.backend.settings["theme"], "Aurora AI")
+        self.assertEqual(self.backend.settings["sphere"], "Aurora Core")
+        self.assertEqual(self.backend.settings["sphere_scale"], 1.0)
+        self.assertEqual(self.backend.settings["sphere_glow"], .78)
+        self.assertEqual(self.backend.settings["sphere_pulse_speed"], 1.0)
+        self.assertTrue(self.backend.settings["sphere_animation"])
+
+    def test_visual_import_rejects_invalid_kind_extension_and_missing_file(self):
+        text_file = self.base / "not-an-image.txt"
+        text_file.write_text("not an image", encoding="utf-8")
+        self.assertIn("Unsupported", self.backend.importProfileVisual(str(text_file), "video"))
+        self.assertIn("supported image", self.backend.importProfileVisual(str(text_file), "sphere"))
+        self.assertIn("Could not import", self.backend.importProfileVisual(str(self.base / "missing.png"), "sphere"))
+
     def test_pack_status_core_packs(self):
         status = self.backend.packStatus()
         self.assertIn("Image Studio: READY", status)
