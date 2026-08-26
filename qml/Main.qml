@@ -629,8 +629,8 @@ ApplicationWindow {
         Item { // AUTOMATION
             ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
                 PageTitle { title:"AUTOMATION LAB"; subtitle:"CUSTOM COMMANDS • MACROS • SCHEDULES" }
-                Item { id:settingsRow; Layout.fillWidth:true; Layout.fillHeight:true
-                    Panel { id:ownerPanel; anchors.left:parent.left; anchors.top:parent.top; anchors.bottom:parent.bottom; width:Math.max(360,parent.width-settingsTools.width-14)
+                RowLayout { Layout.fillWidth:true; Layout.fillHeight:true; spacing:14
+                    Panel { Layout.fillWidth:true; Layout.fillHeight:true
                         Column { anchors.fill:parent; anchors.margins:20; spacing:12
                             Text { text:"TEACH ARLEN A COMMAND"; color:theme.accent; font.pixelSize:12 }
                             TextField { id:macroTrigger; width:parent.width; placeholderText:"Trigger: Start Work Mode"; color:theme.text; placeholderTextColor:theme.muted; background:Rectangle{color:theme.card;radius:8;border.color:theme.line} }
@@ -681,8 +681,8 @@ ApplicationWindow {
         Item { // SETTINGS
             ColumnLayout { anchors.fill:parent; anchors.margins:22; spacing:14
                 PageTitle { title:"SETTINGS & OWNER CONTROL"; subtitle:"PROFILE • CAPABILITIES • UPDATE SAFETY" }
-                RowLayout { Layout.fillWidth:true; Layout.fillHeight:true; spacing:14
-                    Panel { Layout.fillWidth:true; Layout.fillHeight:true
+                Item { id:settingsRow; Layout.fillWidth:true; Layout.fillHeight:true
+                    Panel { id:ownerPanel; anchors.left:parent.left; anchors.top:parent.top; anchors.bottom:parent.bottom; width:Math.max(360,parent.width-settingsTools.width-14)
                         Flickable { anchors.fill:parent; anchors.margins:20; contentHeight:ownerForm.height; clip:true
                             Column { id:ownerForm; width:parent.width; spacing:10
                                 Text { text:"OWNER ACCOUNT"; color:theme.accent; font.pixelSize:12 }
