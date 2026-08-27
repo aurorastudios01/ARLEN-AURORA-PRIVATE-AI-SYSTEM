@@ -3,71 +3,63 @@
 ## ARLEN NEXUS → ARLEN AURORA
 
 > **Arlen Nexus becomes Arlen Aurora.**
->
-> Arlen Nexus is the original vision and foundation. Arlen Aurora is its complete architectural and product evolution into a unified, customizable, resource-aware personal AI desktop environment.
 
-**Former identity:** ARLEN NEXUS  
-**Original full name:** *Adaptive Responsive Local Executive Neural-Assistant*  
-**Current identity:** ARLEN AURORA  
-**Aurora full name:** *Adaptive Responsive Local Executive Neural-Assistant*  
-**Architecture identity:** *Autonomous Unified Reasoning & Orchestration Responsive Architecture*  
-**Target:** Windows desktop • offline-first • online-aware • single user-facing EXE
+**ARLEN NEXUS** is the original vision and foundation.  
+**ARLEN AURORA** is the fully evolved product and unified desktop AI environment built from that vision.
 
----
+- **Original identity:** ARLEN NEXUS
+- **Original full name:** *Adaptive Responsive Local Executive Neural-Assistant*
+- **Current identity:** ARLEN AURORA
+- **Aurora full name:** *Adaptive Responsive Local Executive Neural-Assistant*
+- **Architecture identity:** *Autonomous Unified Reasoning & Orchestration Responsive Architecture*
+- **Target:** Universal Windows desktop • online/offline adaptive • single user-facing EXE
 
-## Evolution
+### Evolution
 
 ```text
 ARLEN NEXUS
 Adaptive Responsive Local Executive Neural-Assistant
         │
-        │  ORIGINAL VISION + FOUNDATION
-        │
+        │ ORIGINAL VISION + FOUNDATION
         ▼
- COMPLETE EVOLUTION
+   COMPLETE EVOLUTION
         │
         ▼
 ARLEN AURORA
 Adaptive Responsive Local Executive Neural-Assistant
         │
-        ├── AURA       Reasoning / Personal AI
-        ├── VISION     Visual Intelligence
-        ├── NEXUS      PC / Files / Execution Core
-        ├── ORBIT      Internet / Research
-        └── PULSE      System / Resources
+        ├── AURORA CORE   AI / reasoning / orchestration
+        ├── VISION        visual intelligence
+        ├── NEXUS         files / PC execution
+        ├── ORBIT         internet / research
+        └── PULSE         system / resources
 ```
 
-**Nexus is not a separate target product. Nexus becomes Aurora.** The name is retained as the historical foundation and as the functional NEXUS execution core inside Aurora.
+Nexus is retained as the historical foundation and execution-core concept; **Aurora is the final product identity**.
 
 ---
 
-# Aurora Vision
+# 1. Product Vision
 
-One assistant, one interface, many capabilities. The user can speak naturally, including Banglish; Aurora understands intent, plans the workflow, selects internal tools, executes authorized actions, verifies results, and responds naturally in Bangla when appropriate.
+Arlen Aurora is designed as one unified desktop assistant rather than a collection of disconnected applications.
 
-The system is designed to combine:
+It should understand natural language and Banglish, answer in Bangla when appropriate, reason through problems, work with files and documents, edit images, process PDFs, prepare study material, research the web, monitor the PC, run multi-step missions, and provide a customizable desktop workspace.
 
-- AI conversation and reasoning
-- PC and application control
-- File organization
-- PDF reading/editing/processing
-- Professional image editing
-- Study and note generation
-- Web research and current information
-- System diagnostics and resource monitoring
-- Voice interaction
-- Multi-step missions/agents
-- Themes and deep customization
+```text
+ONE ASSISTANT
+ONE INTERFACE
+MANY CAPABILITIES
+LOCAL BY DEFAULT
+ONLINE WHEN AVAILABLE
+```
 
 ---
 
-# Master Dashboard
-
-The dashboard is the persistent Aurora shell. Clicking a sidebar item changes the central workspace rather than opening disconnected applications.
+# 2. Final Master Dashboard
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│ ARLEN AURORA       Ask Arlen...                     ● ONLINE │
+│ ARLEN AURORA       Ask Aurora...                    ● ONLINE │
 ├──────────────┬───────────────────────────────────┬──────────┤
 │              │                                   │ SYSTEM   │
 │ ✦ AI         │            AURORA CORE            │ CPU      │
@@ -84,23 +76,23 @@ The dashboard is the persistent Aurora shell. Clicking a sidebar item changes th
 └──────────────┴───────────────────────────────────┴──────────┘
 ```
 
-Right-side system panel is context-aware and can show **CPU, RAM, storage, temp, network, AI/core status, active tasks, notifications and battery**.
+The right panel is context-aware and can show CPU, RAM, storage, temperature, network, battery, Aurora core status, active missions and notifications.
 
-The universal `+` is the global import/input control for files, folders, images, PDFs, screenshots, audio/video, URLs and clipboard content. Drag-and-drop is also planned.
+The universal `+` is available throughout the shell for file, folder, image, PDF, document, screenshot, audio/video, URL and clipboard input.
 
 ---
 
-# Workspace UI Map
+# 3. Workspace Interfaces
 
-## ✦ AI — AURA AI Workspace
+## ✦ AI — AI / AURORA Workspace
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│ ← HOME    ✦ AURA AI                              ● READY    │
+│ ← HOME    ✦ AI / AURORA                           ● READY   │
 ├──────────────┬───────────────────────────────────┬──────────┤
 │ NEW CHAT     │       AURORA CONVERSATION         │ CONTEXT  │
 │ Today        │                                   │ Memory   │
-│ • Study      │ You: amar PDF ta summarize       │ ON       │
+│ • Study      │ You: amar PDF ta summarize       │ ON/OFF   │
 │ • Image      │ Aurora: অবশ্যই...                │          │
 │ • Research   │                                   │ MODE     │
 │              ├───────────────────────────────────┤ Smart    │
@@ -108,7 +100,9 @@ The universal `+` is the global import/input control for files, folders, images,
 └──────────────┴───────────────────────────────────┴──────────┘
 ```
 
-The AI can route requests to calculations, files, image, PDF, study, research, system or automation tools.
+AI handles reasoning, calculations, maths, problem solving, writing, rewriting, translation, planning, question answering and routing to Aurora tools.
+
+**`AURA` is not a separate product name. The product is AURORA.**
 
 ## ◈ IMAGE — Image Studio
 
@@ -130,7 +124,9 @@ The AI can route requests to calculations, files, image, PDF, study, research, s
 └────────┴──────────────────────────────────────┴─────────────┘
 ```
 
-Tools: crop/free-crop/multi-crop, rotate, perspective, resize, exposure, color, curves, HSL, masks, layers, text, fonts, shapes, gradients, presets, history, batch editing, OCR and AI-assisted enhancement/upscale/restoration/object cleanup/background work where the selected engine supports it.
+Planned: free crop, multi-crop, perspective, rotate, resize, exposure, color, curves, HSL, layers, masks, blend modes, text, fonts, shapes, gradients, filters, presets, batch editing, OCR and local AI-assisted enhancement/restoration where the bundled engine supports it.
+
+Aurora Image Studio is intended to be an **integrated image editor**, not a browser wrapper that silently sends every image to another AI.
 
 ## ▣ PDF — PDF Studio
 
@@ -139,16 +135,15 @@ Tools: crop/free-crop/multi-crop, rotate, perspective, resize, exposure, color, 
 │ ← HOME    ▣ PDF STUDIO                            ● READY   │
 ├──────────┬──────────────────────────────────────┬────────────┤
 │ FILE     │          PDF DOCUMENT VIEWER         │ AI         │
-│ ＋ Open  │                                      │ ✦ Summarize│
-│ PAGES    │          ┌──────────────┐            │ ✦ Rewrite  │
-│ 01 02 03 │          │   PAGE VIEW  │            │ ✦ Translate│
-│ 04 ...   │          └──────────────┘            │ ✦ Ask PDF  │
-│ MERGE    ├──────────────────────────────────────┤ OCR        │
-│ SPLIT    │ ◀ Prev     01/24     Next ▶  Export │ Compress   │
+│ ＋ Open  │          ┌──────────────┐            │ ✦ Summarize│
+│ PAGES    │          │   PAGE VIEW  │            │ ✦ Rewrite  │
+│ 01 02 03 │          └──────────────┘            │ ✦ Translate│
+│ MERGE    ├──────────────────────────────────────┤ ✦ Ask PDF  │
+│ SPLIT    │ ◀ Prev     01/24     Next ▶  Export │ OCR        │
 └──────────┴──────────────────────────────────────┴────────────┘
 ```
 
-Tools: read/preview, page reorder/rotate, merge/split, compression, extraction, OCR where supported, annotations, rewrite, translation, summarization, document Q&A, PDF↔image and image→PDF, with text editing where technically supported.
+Planned: read/search, page reorder/rotate/delete, merge/split, compression, extraction, OCR, annotations, image→PDF, PDF→image, text extraction, AI summarization/rewrite/translation/Q&A and text editing where technically supported.
 
 ## ▤ FILES — File Commander
 
@@ -167,9 +162,15 @@ Tools: read/preview, page reorder/rotate, merge/split, compression, extraction, 
 └──────────────┴─────────────────────────────────┴─────────────┘
 ```
 
-Natural-language file search, rename, batch rename, copy/move, folder creation, categorization, duplicate detection, storage analysis, smart organization proposals, execution preview and rollback journal.
+Natural-language file search, rename, batch rename, copy, move, folder creation, categorization, duplicate detection, large-file analysis, storage analysis and rollback where feasible.
 
-Example: `amar sob PDF alada folder e organize koro` → scan → plan → preview → authorized execution → verification.
+Example:
+
+```text
+"amar sob PDF alada folder e organize koro"
+        ↓
+SCAN → PLAN → PREVIEW → PERMISSION → EXECUTE → VERIFY
+```
 
 ## ◫ STUDY — Study Center
 
@@ -187,7 +188,7 @@ Example: `amar sob PDF alada folder e organize koro` → scan → plan → previ
 └──────────────┴──────────────────────────────┴───────────────┘
 ```
 
-Generate detailed/short notes, summaries, definitions, formulas, explanations, important questions, MCQs, Q&A, flashcards, quizzes and revision sheets from local study material.
+Local study material can become notes, summaries, explanations, formulas, important questions, MCQs, Q&A, flashcards, quizzes and revision sheets.
 
 ## ◌ RESEARCH — ORBIT Research Center
 
@@ -205,9 +206,9 @@ Generate detailed/short notes, summaries, definitions, formulas, explanations, i
 └─────────────────────────────────────────────────────────────┘
 ```
 
-Research depth: Quick, Standard, Deep, Academic. Online-only information is clearly distinguished from offline/local knowledge.
+Research modes: Quick → Standard → Deep → Academic. Online sources should be visible/cited and distinguished from offline knowledge.
 
-## ⚙ SYSTEM — Pulse System Center
+## ⚙ SYSTEM — System Center
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
@@ -215,7 +216,7 @@ Research depth: Quick, Standard, Deep, Academic. Online-only information is clea
 ├──────────────┬──────────────────────────────────┬───────────┤
 │ MONITOR      │             SYSTEM               │ ACTIONS   │
 │ CPU          │ CPU      █████░░░░ 18%           │ Refresh   │
-│ RAM          │ RAM      ██████░░░ 3.2/6 GB      │ Cleanup   │
+│ RAM          │ RAM      ██████░░░ 4.1/8 GB      │ Cleanup   │
 │ STORAGE      │ SSD      ███████░░ 61%           │ Processes │
 │ BATTERY      │ TEMP     47°C                    │ Diagnose  │
 │ NETWORK      │ BATTERY  ████████░ 87%            │ Optimize  │
@@ -224,7 +225,9 @@ Research depth: Quick, Standard, Deep, Academic. Online-only information is clea
 └─────────────────────────────────────────────────────────────┘
 ```
 
-CPU/RAM/storage/temp/battery/network/process telemetry, diagnostics and safe resource optimization. “RAM refresh” means supported resource cleanup/working-set optimization, not a claim that software can magically increase physical RAM.
+CPU/RAM/storage/temp/battery/network/process monitoring, diagnostics, startup/process inspection and safe resource cleanup.
+
+“RAM refresh” means supported resource cleanup/working-set optimization; software cannot magically increase physical RAM.
 
 ## ◉ TOOLS — Aurora Tools
 
@@ -239,6 +242,8 @@ CPU/RAM/storage/temp/battery/network/process telemetry, diagnostics and safe res
 └─────────────────────────────────────────────────────────────┘
 ```
 
+Additional utilities: checksum/hash, unit conversion, date/time tools, text cleanup, JSON/XML formatting, batch rename, image metadata inspection, screenshot capture and clipboard history.
+
 ## 🎨 THEMES — Aurora Customization Studio
 
 ```text
@@ -248,7 +253,7 @@ CPU/RAM/storage/temp/battery/network/process telemetry, diagnostics and safe res
 │ THEMES       │          LIVE PREVIEW            │ CUSTOMIZE  │
 │ ◉ Aurora     │       ARLEN AURORA              │ Accent     │
 │ ○ Obsidian   │            ◉                     │ Background │
-│ ○ Nebula     │        Ask Arlen...             │ Cards      │
+│ ○ Nebula     │        Ask Aurora...            │ Cards      │
 │ ○ Arctic     │                                  │ Glow       │
 │ ○ Emerald    │                                  │ Font       │
 │ ○ Crimson    │                                  │ Animation  │
@@ -259,46 +264,35 @@ CPU/RAM/storage/temp/battery/network/process telemetry, diagnostics and safe res
 └──────────────┴──────────────────────────────────┴────────────┘
 ```
 
-Ten themes: Aurora, Obsidian, Nebula, Arctic, Emerald, Crimson, Solar, Cyber, Minimal and Midnight. Deep customization includes accent, surfaces, gradients, glow, typography, icons, animations, Aurora Core visualization and wallpaper/background.
+Ten initial themes: Aurora, Obsidian, Nebula, Arctic, Emerald, Crimson, Solar, Cyber, Minimal and Midnight.
 
 ---
 
-# Global Interaction Layer
+# 4. Global Interaction Layer
 
 ### Universal `+`
 
-Available throughout the shell. Import file/folder/image/PDF/document/screenshot/audio/video/URL/clipboard and let Aurora infer the appropriate workflow.
+```text
+┌──────────────────────────────────────┐
+│           ADD TO AURORA              │
+├──────────────────────────────────────┤
+│ 📄 File        📁 Folder             │
+│ 🖼 Image       ▣ PDF                 │
+│ 🔗 URL         📋 Clipboard          │
+│ 📸 Screenshot  🎵 Audio              │
+│ 🎬 Video                              │
+│                                      │
+│        Drag & Drop anything          │
+└──────────────────────────────────────┘
+```
 
 ### 🎙 Voice
 
-```text
-┌────────────────────────────────────────┐
-│              ◉ LISTENING               │
-│          "I'm listening..."            │
-│          ▁▃▅▇▅▃▁▃▆▇▆▃▁                │
-│              [ CANCEL ]                │
-└────────────────────────────────────────┘
-```
-
-Banglish voice → intent understanding → Bangla response where appropriate.
+Banglish → intent understanding → Bangla response where appropriate.
 
 ### 🔔 Notifications
 
-Task completion, warnings, failures, exports, organization results and system alerts.
-
-### TASKS
-
-Every active task can expand into a mission view:
-
-```text
-MISSION — Organize PDF Files
-✓ Scan Downloads
-✓ Identify PDF files
-◉ Move files
-○ Verify results
-Progress ███████████░░░ 78%
-[Pause] [Cancel]
-```
+Task completion, warnings, failures, exports, organization results, network changes and system alerts.
 
 ### ◉ Aurora Mission
 
@@ -306,62 +300,279 @@ Progress ███████████░░░ 78%
 Goal → Plan → Steps → Permissions → Execute → Verify → Recover → Report
 ```
 
-A completed mission reports what actually happened, not merely what Aurora attempted.
-
 ---
 
-# Agent Architecture
+# 5. Agent Architecture
 
 ```text
-User Intent
+USER INTENT
     ↓
-Understand
+UNDERSTAND
     ↓
-Plan
+PLAN
     ↓
-Select Core / Tool / Agent
+SELECT CORE / TOOL / AGENT
     ↓
-Permission Check
+PERMISSION CHECK
     ↓
-Execute
+EXECUTE
     ↓
-Verify
+VERIFY
     ↓
-Retry / Recover when appropriate
+RETRY / RECOVER WHEN APPROPRIATE
     ↓
-Remember useful context
-    ↓
-Report
+REPORT
 ```
 
-Agents include File Agent, Screen Agent, Research Agent and Mission Agent. Authorized screen/application workflows use the target loop **Observe → Understand → Plan → Act → Verify**.
+Agents: File, Screen/Application, Research, Study, Image, PDF, System and Mission.
 
----
-
-# Online + Offline
-
-Offline-first capabilities are intended to include local conversation/reasoning where an appropriate local engine is available, calculations, file management, document/PDF operations, image processing, study processing, OCR where supported, system monitoring and supported local automation.
-
-When online, Aurora can use web search, research, current news, weather, fresh public information and optional cloud intelligence. Aurora must never present stale/local information as live online information.
-
----
-
-# 6 GB RAM Strategy
-
-Low-resource Windows systems are a first-class target.
+Authorized screen/application workflows:
 
 ```text
-IDLE → Core services only → Detect task → Load required engine
-→ Execute → Verify → Release unused resources
+OBSERVE → UNDERSTAND → PLAN → ACT → VERIFY
 ```
-
-Use lazy loading, model lifecycle management, memory-pressure detection, adaptive quality, throttling, cache management, background-task control and resource prioritization. Heavy engines should not remain resident unnecessarily.
-
-Heavy AI generation/vision workloads can exceed the practical limits of a 6 GB machine; the architecture should degrade gracefully rather than promise impossible performance.
 
 ---
 
-# Single-EXE Goal
+# 6. API & Connectivity
+
+Aurora should be **free-first, provider-agnostic and permission-controlled**.
+
+```text
+AI / REASONING
+ ├── Free-tier cloud provider(s)
+ └── Local reasoning engine when available
+
+SEARCH / RESEARCH
+ ├── Configurable search provider
+ └── Web retrieval where permitted
+
+VOICE
+ ├── ElevenLabs or compatible provider
+ └── Local voice engine when available
+
+IMAGE / PDF
+ ├── LOCAL CORE ← PRIMARY
+ └── Optional online APIs ← NEVER automatic
+```
+
+Provider quotas, pricing and availability can change, so providers must be configurable rather than hard-coded into Aurora's core.
+
+### API Settings UI
+
+```text
+┌────────────────────────────────────────────────────────────────┐
+│ ← SYSTEM     ⚙ API & CONNECTIVITY                    ● SECURE │
+├────────────────┬───────────────────────────────────┬───────────┤
+│ CONNECTION     │          API CONTROL CENTER       │ STATUS    │
+│ ● INTERNET     │ Internet Mode                    │ ONLINE ✓  │
+│ ○ OFFLINE      │ [● Auto] [Online] [Offline]     │           │
+│                │                                   │           │
+│ AI             │ AI / Reasoning                    │ READY ✓  │
+│ SEARCH         │ Search Provider                   │ READY ✓  │
+│ VOICE          │ Voice Provider                    │ READY ✓  │
+│ IMAGE          │ Online Image Tools                │ BLOCKED   │
+│ PDF            │ Online PDF Tools                  │ BLOCKED   │
+│                │                                   │           │
+│ SECURITY       │ Cloud Upload Policy               │ NEVER     │
+│ PRIVACY        │ [NEVER] [ASK EVERY TIME]          │           │
+│ LOGS           │ [ALLOW SELECTED]                  │           │
+└────────────────┴───────────────────────────────────┴───────────┘
+```
+
+Default cloud policy:
+
+```text
+● NEVER
+  No personal file/image/document is uploaded.
+
+○ ASK EVERY TIME
+  Show destination + purpose before any upload.
+
+○ ALLOW SELECTED
+  Only explicitly selected providers/actions may upload.
+```
+
+Default = **NEVER**.
+
+---
+
+# 7. Privacy Firewall
+
+```text
+┌──────────────────────────────────────────────┐
+│             AURORA PRIVACY FIREWALL          │
+├──────────────────────────────────────────────┤
+│ Local Files                  ✓ LOCAL ONLY    │
+│ Personal Images              ✓ LOCAL ONLY    │
+│ Private PDFs                 ✓ LOCAL ONLY    │
+│ Clipboard                    ✓ LOCAL ONLY    │
+│ Personal Memory              ✓ LOCAL ONLY    │
+│                                              │
+│ Web Search                   → QUERY ONLY    │
+│ Cloud AI                     → ASK FIRST     │
+│ Cloud Image                  → ASK FIRST     │
+│ Cloud PDF                    → ASK FIRST     │
+│ Voice Cloud                  → ASK FIRST     │
+│                                              │
+│ Cloud Uploads:                 BLOCKED       │
+└──────────────────────────────────────────────┘
+```
+
+Every cloud action should show:
+
+```text
+WHAT:        image restoration
+DESTINATION: selected provider
+DATA:        selected image
+PURPOSE:     image processing
+
+[Cancel] [Allow Once]
+```
+
+No silent upload. Personal files, images, PDFs, clipboard data and memory must not be sent to an external AI merely because the user asked a normal question.
+
+---
+
+# 8. Online / Offline Switching
+
+```text
+                    AURORA
+                       │
+                NETWORK DETECTOR
+                       │
+             ┌─────────┴─────────┐
+             │                   │
+          ONLINE              OFFLINE
+             │                   │
+      Online connectors       Local engines
+             │                   │
+      Search / current        Files
+      news / weather          PDF
+      optional cloud AI       Image
+      optional voice          Study
+             │                Calculator
+             │                System
+             └────────┬────────┘
+                      ↓
+                 AURORA CORE
+```
+
+Examples:
+
+```text
+ONLINE:
+"আজকের latest news বলো"
+→ web research
+
+OFFLINE:
+"এই PDF-এর summary করো"
+→ local PDF/document pipeline
+
+OFFLINE:
+"২৫ × ৩৭ কত?"
+→ local calculation
+```
+
+Aurora must never present an offline answer as live web information.
+
+---
+
+# 9. Integrated Image & PDF Principle
+
+Aurora should not behave like:
+
+```text
+USER IMAGE
+   ↓
+UPLOAD TO RANDOM AI WEBSITE
+   ↓
+WAIT
+   ↓
+RETURN IMAGE
+```
+
+Instead:
+
+```text
+USER IMAGE
+   ↓
+AURORA IMAGE CORE
+   ├── Canvas
+   ├── Layers
+   ├── Masks
+   ├── Adjustments
+   ├── Filters
+   ├── Local processing
+   └── Optional cloud connector
+             ↑
+        ONLY WITH PERMISSION
+```
+
+The same principle applies to PDFs. Cloud services are optional connectors, not hidden dependencies.
+
+---
+
+# 10. Universal Windows Hardware Target
+
+Aurora should be designed for a broad range of Windows x64 PCs, not locked to one machine.
+
+### Baseline target
+
+```text
+OS:           Windows 10/11 x64
+CPU:          Modern Intel/AMD x64 processor
+RAM:          4 GB minimum target
+Storage:      SSD recommended
+Architecture: x64
+```
+
+### Recommended
+
+```text
+RAM:          8 GB+
+CPU:          Intel Core i5 8th Gen or equivalent+
+Storage:      SSD
+```
+
+### Better
+
+```text
+RAM:          16 GB+
+CPU:          Modern i5/i7/Ryzen equivalent
+GPU:          Optional; useful for supported local AI workloads
+SSD:          Recommended
+```
+
+Hardware detection should dynamically adjust AI engine, image quality, concurrent tasks, cache size, background services, voice processing, local model selection and mission concurrency.
+
+Heavy local generative AI/vision workloads may exceed low-RAM hardware; Aurora should degrade gracefully.
+
+---
+
+# 11. Resource Management
+
+```text
+IDLE
+ ↓
+CORE SERVICES ONLY
+ ↓
+DETECT TASK
+ ↓
+LOAD REQUIRED ENGINE
+ ↓
+EXECUTE
+ ↓
+VERIFY
+ ↓
+RELEASE UNUSED RESOURCES
+```
+
+Use lazy loading, model lifecycle management, memory-pressure detection, adaptive quality, background-task throttling, cache management, resource budgets and engine unload/release.
+
+---
+
+# 12. Single-EXE Goal
 
 User-facing target:
 
@@ -369,65 +580,77 @@ User-facing target:
 ArlenAurora.exe
 ```
 
-The internal architecture may be modular, but the end-user experience should be unified. A genuinely self-contained EXE containing heavyweight local AI models can become very large; model size, runtime, licensing and Windows constraints must be handled honestly during implementation.
+The architecture may remain internally modular, but the user's experience should be one unified application.
+
+A self-contained EXE containing large local AI models can become very large; runtime dependencies, model sizes, licensing and Windows packaging constraints must be handled honestly.
 
 ---
 
-# Identity & Branding
+# 13. Memory & Personalization
 
-**Original product:** ARLEN NEXUS  
-**Original full name:** Adaptive Responsive Local Executive Neural-Assistant  
-**Current product:** ARLEN AURORA  
-**Aurora full name:** Adaptive Responsive Local Executive Neural-Assistant  
-**Architecture:** Autonomous Unified Reasoning & Orchestration Responsive Architecture
+Memory should be user-controlled, viewable, editable, deletable and disable-able.
 
-Brand system: Aurora logo, application icon, startup sequence, Core visualization, typography, icon language, optional sound identity and consistent desktop branding.
+Useful memory may include preferences, preferred language, writing style, recurring workflows and non-sensitive task context.
+
+Personal memory must never be silently uploaded to external AI providers.
 
 ---
 
-# Memory
+# 14. Reliability & Permission Model
 
-Configurable personal context can include preferences, output style, repeated workflows and useful task context. Memory should be viewable, editable, deletable, disable-able and privacy-aware.
-
----
-
-# Reliability & Safety
-
-Aurora is designed to be powerful without silently performing irreversible operations.
+Aurora should be powerful but predictable.
 
 - Explicit permission boundaries
-- Safe defaults
-- Confirmation for destructive/high-impact actions
+- Confirmation for destructive/high-impact operations
 - Operation history
 - Undo/rollback where feasible
 - Verification after execution
 - Clear error states
 - No fabricated success
-- User-visible task status
+- User-visible mission status
 - Local privacy by default
-- Configurable memory and capabilities
+- Configurable cloud permissions
+- Configurable memory
 
-PC/application automation remains within the user's authorized environment and applicable OS/application permissions.
+Example:
+
+```text
+"Delete these 500 files"
+        ↓
+Identify exact scope
+        ↓
+Show preview
+        ↓
+Request confirmation
+        ↓
+Execute
+        ↓
+Verify
+        ↓
+Report result
+```
 
 ---
 
-# Planned Architecture
+# 15. Planned Architecture
 
 ```text
 ARLEN AURORA
 │
 ├── Aurora UI
 │   ├── Dashboard
+│   ├── AI Workspace
 │   ├── Image Studio
 │   ├── PDF Studio
-│   ├── Study Center
 │   ├── File Commander
+│   ├── Study Center
 │   ├── Research Center
 │   ├── System Center
 │   ├── Aurora Tools
 │   ├── Mission View
-│   ├── Settings
-│   └── Theme Engine
+│   ├── API Settings
+│   ├── Privacy Center
+│   └── Theme Studio
 │
 ├── Aurora Core
 │   ├── Intent Understanding
@@ -439,26 +662,36 @@ ARLEN AURORA
 │   ├── Recovery Manager
 │   └── Memory
 │
-├── Engines
-│   ├── AI
+├── Local Engines
+│   ├── AI / Reasoning
 │   ├── Vision
 │   ├── Image
 │   ├── PDF
 │   ├── OCR
 │   ├── Files
 │   ├── Study
-│   ├── Browser / Research
 │   └── System
+│
+├── Online Connectors
+│   ├── Search
+│   ├── Research
+│   ├── Current Information
+│   ├── Optional AI
+│   ├── Optional Voice
+│   ├── Optional Image
+│   └── Optional PDF
 │
 ├── Agents
 │   ├── File Agent
 │   ├── Screen Agent
 │   ├── Research Agent
+│   ├── Study Agent
 │   └── Mission Agent
 │
 └── Runtime
     ├── Resource Manager
     ├── Model Lifecycle Manager
+    ├── Secure Credential Store
     ├── Logging
     ├── Updates
     └── Packaging
@@ -466,28 +699,26 @@ ARLEN AURORA
 
 ---
 
-# Development Roadmap
+# 16. Development Roadmap
 
-1. **Aurora Foundation** — shell, identity, dashboard, universal input, themes, core contracts.
-2. **Aurora Brain** — intent router, planner, tools, permissions, verification, memory.
-3. **File + System** — File Commander, diagnostics, telemetry, battery, processes, safe automation.
-4. **PDF Studio** — document operations, OCR and document intelligence.
-5. **Image Studio** — professional editing, canvas, layers and AI-assisted workflows.
-6. **Study Center** — notes, quizzes, flashcards and revision.
-7. **Orbit Research** — web search, sources and live information.
-8. **Vision / Screen Agent** — visual understanding and authorized UI workflows.
-9. **Mission System** — multi-step execution, verification, retry and recovery.
-10. **6 GB Optimization** — resource budgets, lazy loading and profiling.
-11. **Windows Packaging** — user-facing EXE, crash handling, logging and updates.
-12. **Full QA** — unit, integration, UI, offline, low-RAM and end-to-end testing.
-
----
-
-# Repository Direction
-
-The repository has intentionally transitioned from the former **Arlen Nexus** implementation to the **Arlen Aurora** architecture. Legacy Nexus implementation files are not part of the target product. New implementation should follow this Aurora specification.
-
-The repository name may retain `ARLEN-NEXUS-PRIVATE` for continuity, while the product identity is **ARLEN AURORA**.
+1. Aurora foundation and identity
+2. Unified dashboard shell
+3. Aurora Core and intent router
+4. Permission and privacy firewall
+5. File Commander
+6. System Center
+7. PDF Studio
+8. Image Studio
+9. Study Center
+10. Research/Orbit
+11. Voice integration
+12. Screen/application agent
+13. Mission engine
+14. API/provider manager
+15. Low-RAM optimization
+16. Offline/online capability switching
+17. Windows packaging
+18. Full QA and recovery testing
 
 ---
 
@@ -495,6 +726,8 @@ The repository name may retain `ARLEN-NEXUS-PRIVATE` for continuity, while the p
 
 > **ARLEN NEXUS becomes ARLEN AURORA.**
 >
+> The original Nexus vision is not discarded; it is fully evolved into Aurora.
+>
 > **One assistant. One interface. Many capabilities.**
 >
-> The original Nexus vision is not discarded; it is fully evolved into Aurora.
+> **Local by default. Online when available. Private by permission.**
