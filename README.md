@@ -1,146 +1,314 @@
 # ARLEN AURORA
 
-## Adaptive Responsive Local Executive Neural-Assistant
+## ARLEN NEXUS → ARLEN AURORA
+
+> **Arlen Nexus becomes Arlen Aurora.**
+>
+> This repository is the complete architectural evolution of the former **Arlen Nexus** project into **Arlen Aurora** — a unified, customizable, offline-first personal AI desktop environment.
+
+**Former identity:** ARLEN NEXUS  
+**New identity:** ARLEN AURORA  
+**Transformation:** Complete architectural and product evolution  
+**Target:** Windows desktop, resource-aware, user-facing single EXE
+
+---
+
+## What Aurora Is
+
+**ARLEN AURORA** is designed as one personal AI environment rather than a collection of disconnected applications.
+
+The user communicates naturally — including Banglish — and Aurora should understand the intent, choose the appropriate internal core/tool, execute the task, verify the result, and respond naturally in Bangla when appropriate.
+
+```text
+ARLEN NEXUS
+     │
+     │  COMPLETE EVOLUTION
+     ▼
+ARLEN AURORA
+     │
+     ├── AI
+     ├── VISION
+     ├── PC / FILES
+     ├── IMAGE
+     ├── PDF
+     ├── STUDY
+     ├── RESEARCH
+     ├── AUTOMATION
+     └── SYSTEM
+```
+
+Nexus is not a separate product in the target architecture. **Nexus becomes Aurora.**
+
+---
+
+## Full Name
+
+### Adaptive Responsive Local Executive Neural-Assistant
+
+And the architecture identity:
+
 ### Autonomous Unified Reasoning & Orchestration Responsive Architecture
 
-> **ARLEN AURORA** is the next-generation evolution of the Arlen Nexus concept: a unified, offline-first personal AI operating environment designed to understand natural language, plan tasks, use internal tools, operate the PC with explicit authorization, process documents and images, research online when connected, and provide a coherent JARVIS-style desktop experience.
+The name describes the intended experience: a responsive personal executive assistant whose intelligence, tools, automation and user experience are unified under one system.
 
 ---
 
-## Vision
+# Aurora Principles
 
-Aurora is not intended to be a collection of disconnected utilities. The goal is one intelligent desktop environment in which the user can express an intent and Aurora selects the appropriate engine, executes the workflow, verifies the result, and reports what happened.
-
-Example:
-
-> "ei PDF ta pore amar college exam er notes banao, tarpor PDF kore save koro."
-
-Aurora should be able to understand the Banglish request, read the supplied document, create structured notes, export them, verify the output, and explain the result in Bangla.
-
----
-
-## Five Functional Cores
-
-### 01 — AURA
-Reasoning, conversation, planning, calculations, mathematics, problem solving, writing, explanations, memory and personal assistance.
-
-### 02 — VISION
-Image understanding, OCR, screenshot understanding, visual analysis and vision-assisted workflows.
-
-### 03 — NEXUS
-PC, files, folders, applications, settings, safe automation and task execution.
-
-### 04 — ORBIT
-Internet search, research, current information, weather, news and source-aware online intelligence.
-
-### 05 — PULSE
-CPU, RAM, storage, battery, network, processes, diagnostics, performance and resource management.
-
-The cores are functional subsystems, not merely visual animations.
+1. **One identity, one interface, many capabilities.**
+2. **The user describes intent; Aurora coordinates the workflow.**
+3. **AI selects tools; deterministic engines perform the work.**
+4. **Every meaningful action should have a verification path.**
+5. **Offline functionality remains useful.**
+6. **Online intelligence is clearly separated from local capabilities.**
+7. **6 GB RAM is a first-class optimization target.**
+8. **Heavy engines are loaded on demand.**
+9. **The UI remains responsive during long-running work.**
+10. **The system reports failures and limitations honestly.**
 
 ---
 
-## Unified Aurora Dashboard
+# Five Aurora Cores
 
-The main experience is centered around:
+## 01 — AURA
 
-- ARLEN AURORA identity and status
-- Aurora Core visualization
-- Universal command/input bar
-- Universal `+` uploader
-- Voice input entry point
-- System telemetry
-- Running tasks
-- Battery status
-- Network status
-- AI/core status
-- Theme controls
-- Quick access to every major studio
+**Reasoning & Personal Intelligence**
+
+- Natural conversation
+- Intent understanding
+- Planning
+- Problem solving
+- Mathematics and calculations
+- Writing and rewriting
+- Explanations
+- Personal assistance
+- Memory
+- Task reasoning
+
+## 02 — VISION
+
+**Visual Intelligence**
+
+- Image understanding
+- OCR
+- Screenshot analysis
+- UI/visual understanding
+- Document/image vision
+- Vision-assisted workflows
+
+## 03 — NEXUS
+
+**PC, Files & Execution**
+
+- Files and folders
+- Applications
+- Windows interaction
+- Settings
+- Local automation
+- Task execution
+- File organization
+
+NEXUS remains as a functional core name inside Aurora, while **Arlen Nexus as the old product identity has become Arlen Aurora**.
+
+## 04 — ORBIT
+
+**Internet & Research Intelligence**
+
+- Web search
+- Research
+- Source aggregation
+- Current information
+- News
+- Weather
+- Online knowledge
+
+## 05 — PULSE
+
+**System & Resource Intelligence**
+
+- CPU
+- RAM
+- Storage
+- Battery
+- Network
+- Processes
+- Diagnostics
+- Performance/resource state
+
+These are functional subsystems, not merely visual effects.
+
+---
+
+# Unified Aurora Dashboard
+
+The main interface is built around an intelligent command center.
+
+```text
+┌──────────────────────────────────────────────────────────────┐
+│ ARLEN AURORA       Ask Arlen...                    ● ONLINE  │
+├───────────────┬───────────────────────────────┬──────────────┤
+│               │                               │ SYSTEM       │
+│ ✦ AI          │          AURORA CORE         │ CPU          │
+│ ◈ IMAGE       │              ◉                │ RAM          │
+│ ▣ PDF         │                               │ STORAGE      │
+│ ▤ FILES       │       "How can I help?"      │ TEMP         │
+│ ◫ STUDY       ├───────────────────────────────┤              │
+│ ◌ RESEARCH    │ ＋  Type a command...    🎙 ➤│ TASKS        │
+│ ⚙ SYSTEM      │                               │              │
+│ ◉ TOOLS       │                               │ BATTERY      │
+│ 🎨 THEMES     │                               │ 🔋 87%       │
+└───────────────┴───────────────────────────────┴──────────────┘
+```
 
 ### Universal `+` Input
 
-The `+` button is a global input/import entry point. It can accept supported:
+The `+` button is a global import/input control.
 
-- Images
-- PDFs
-- Documents
-- Files
-- Folders
-- Screenshots
+Supported targets can include:
+
+- Image
+- PDF
+- Document
+- File
+- Folder
+- Screenshot
 - Audio
 - Video
-- URLs
-- Clipboard content
+- URL
+- Clipboard
 
-Drag-and-drop should also be supported. Context determines the most useful actions.
+Drag-and-drop should work across the main command area and relevant studios. Aurora should infer context and suggest the most useful actions.
 
 ---
 
-## Core Studios
+# Image Studio
 
-### Image Studio
+A unified professional image workspace inspired by modern photo editors and design/canvas tools.
 
-A unified professional image workspace inspired by the workflow of modern photo editors and canvas/design tools.
+## Editing
 
-Planned capabilities:
-
-- Crop, free crop and multi-crop
-- Rotate, flip and perspective correction
-- Resize and canvas control
-- Exposure, brightness and contrast
-- Highlights and shadows
-- Whites and blacks
-- Temperature and tint
-- Saturation and vibrance
-- Curves and HSL
+- Crop
+- Free crop
+- Multi-crop
+- Rotate
+- Flip
+- Perspective correction
+- Resize
+- Canvas control
+- Exposure
+- Brightness
+- Contrast
+- Highlights
+- Shadows
+- Whites/blacks
+- Temperature
+- Tint
+- Saturation
+- Vibrance
+- Curves
+- HSL
 - Color grading
-- Blur, sharpen and denoise
-- Dehaze, vignette and grain
-- Masks and selective editing
-- Layers and non-destructive history
-- Background removal/replacement where supported
-- Object cleanup/removal where supported
-- Upscaling and restoration where supported
-- Text, fonts, shapes, stickers and design elements
-- Stroke, shadow, gradients and alignment
-- Templates and presets
-- Before/after comparison
+- Blur
+- Sharpen
+- Denoise
+- Dehaze
+- Vignette
+- Grain
+
+## Creative tools
+
+- Layers
+- Masks
+- Text
+- Fonts
+- Custom fonts
+- Shapes
+- Stickers
+- Stroke
+- Shadow
+- Gradients
+- Alignment
+- Templates
+- Presets
+- Before/after
+- History
+- Undo/redo
+- Non-destructive workflow
 - Batch processing
-- Natural-language editing commands
 
-Aurora should translate requests such as `image ta professional kore dao` into an appropriate editing workflow rather than forcing the user to operate every control manually.
+## AI-assisted image workflows
 
-### PDF Studio
+Where supported by the selected local/online engine:
 
-A complete document workspace built around local files and AI-assisted document understanding.
+- Upscaling
+- Restoration
+- Deblurring
+- Object cleanup/removal
+- Background removal/replacement
+- Selective enhancement
+- Generative editing
+- Natural-language editing
 
-Planned capabilities:
+Example:
 
-- Read and preview
-- Page thumbnails and navigation
-- Merge and split
-- Page reorder and rotation
-- Compression
-- Extract pages/images/text
-- Image to PDF
-- PDF to image
-- OCR for supported documents
-- Annotations, highlights and comments
-- Text editing where technically supported
-- Rewrite and translation
+> `image ta professional kore dao`
+
+Aurora should translate the request into an appropriate image-editing workflow instead of requiring manual adjustment of every control.
+
+---
+
+# PDF Studio
+
+A complete document workspace for local PDF processing and AI-assisted document understanding.
+
+## PDF operations
+
+- Read
+- Preview
+- Page thumbnails
+- Page navigation
+- Merge
+- Split
+- Reorder
+- Rotate
+- Compress
+- Extract pages
+- Extract images
+- Extract text
+- PDF → image
+- Image → PDF
+
+## Editing & document intelligence
+
+- OCR where supported
+- Highlights
+- Annotations
+- Comments
+- Signatures where supported
+- Text editing where technically possible
+- Rewrite
+- Translation
 - Summarization
 - Document Q&A
 - Structured extraction
 - Study-note generation
-- Export and verification
+- Export verification
 
-### Study Center
+---
+
+# Study Center
 
 A dedicated academic workspace.
 
-Input can be a PDF, document, image, notes or local study material.
+Input:
 
-Outputs can include:
+- PDF
+- Book/document
+- Image
+- Existing notes
+- Local study material
+
+Output:
 
 - Detailed notes
 - Short notes
@@ -150,39 +318,55 @@ Outputs can include:
 - Worked explanations
 - Important questions
 - MCQs
-- Question/answer sets
+- Q&A
 - Flashcards
 - Revision sheets
-- Exam-focused summaries
+- Exam-focused notes
 
-Banglish input should be understood and Bangla output should be available by default when requested.
+Example:
 
-### File Commander
+> `ei chapter ta pore amar college exam er jonno important notes banao`
 
-An AI layer over the local filesystem.
+Banglish should be understood naturally, with Bangla responses available as the preferred response language when appropriate.
 
-Planned capabilities:
+---
 
-- Browse and search
+# File Commander
+
+Aurora's AI layer over the local filesystem.
+
+Capabilities should include:
+
+- Browse
+- Search
 - Natural-language file discovery
-- Rename and batch rename
-- Copy/move/delete with safety controls
-- Folder creation
-- File categorization
+- Rename
+- Batch rename
+- Copy
+- Move
+- Delete with safeguards
+- Create folders
+- Categorize
 - Duplicate detection
 - Storage analysis
 - Smart organization proposals
 - Batch organization
 - Undo/rollback journal
-- Verification after file operations
+- Post-operation verification
 
-Example: `sob PDF alada folder e organize koro`.
+Example:
 
-### System Center
+> `amar sob PDF alada folder e organize kore dao`
 
-A local control and diagnostics center exposing safe system information and supported controls.
+Aurora should inspect, plan, execute and verify rather than blindly moving files.
 
-Dashboard telemetry includes:
+---
+
+# System Center
+
+The system control and diagnostic surface.
+
+## Dashboard telemetry
 
 - CPU
 - RAM
@@ -192,15 +376,22 @@ Dashboard telemetry includes:
 - Network
 - Processes
 - System information
-- Task status
+- Running tasks
+- AI/core status
 
-Aurora should diagnose before applying optimization and should distinguish safe actions from potentially destructive operations.
+## Diagnostics
+
+Example:
+
+> `amar PC slow keno?`
+
+Aurora should analyze available system information, explain likely causes and distinguish safe optimization from potentially disruptive operations.
 
 ---
 
-## Agent Architecture
+# Agent Architecture
 
-Aurora is designed around an orchestrated execution loop:
+Aurora is centered around an orchestration loop:
 
 ```text
 User Intent
@@ -217,16 +408,16 @@ Execute
     ↓
 Verify
     ↓
-Recover / Retry if appropriate
+Recover / Retry when appropriate
     ↓
 Remember useful context
     ↓
-Report in natural language
+Report
 ```
 
-### Mission Mode
+## Mission Mode
 
-High-level requests can become multi-step missions.
+A high-level request can become a multi-step mission.
 
 ```text
 MISSION
@@ -241,51 +432,51 @@ MISSION
 └── Final Report
 ```
 
-The system should never claim a task succeeded merely because an action was attempted. It should verify the resulting state whenever technically possible.
+Aurora should not report success merely because an action was attempted. It should verify the resulting state whenever technically possible.
 
 ---
 
-## Vision and Screen Agent
+# Vision & Screen Agent
 
-Where supported and authorized, Aurora can use visual context to understand:
+Where technically supported and explicitly authorized, Aurora can use visual context to understand:
 
 - Screenshots
 - Application windows
 - UI states
 - Visible errors
-- Document/image content
+- Documents
+- Images
 
-The intended workflow is:
+Target loop:
 
 ```text
 Observe → Understand → Plan → Act → Verify
 ```
 
-Application interaction must respect OS permissions, application constraints and user authorization.
+Application interaction remains subject to Windows permissions, application constraints and user authorization.
 
 ---
 
-## Online + Offline Architecture
+# Online + Offline Architecture
 
-Aurora is designed to remain useful without an internet connection.
+Aurora is designed to remain useful when the internet is unavailable.
 
-### Offline-capable layer
-
-Local functionality should include as much as the machine can realistically support:
+## Offline-capable direction
 
 - Local conversation/reasoning
+- Local calculations
 - Local file management
 - Local document processing
 - Local PDF operations
 - Local image processing
-- Local calculations
-- Local notes/study processing over available files
+- Local study processing over available material
+- Local OCR where the installed engine supports it
 - Local system monitoring
-- Local automation supported by the OS and application environment
+- Supported local automation
 
-### Online layer
+## Online direction
 
-When connected, Aurora can use online capabilities for:
+When connected:
 
 - Web search
 - Research
@@ -293,68 +484,76 @@ When connected, Aurora can use online capabilities for:
 - Weather
 - Fresh public information
 - Online sources
-- Cloud intelligence where configured
+- Optional cloud intelligence
 
-Online-only information must not be presented as current when the system is offline.
+Aurora must never present stale/local information as live online information.
 
 ---
 
-## Resource-Aware Design
+# 6 GB RAM Resource Strategy
 
-The primary target environment includes low-resource Windows machines, including approximately 6 GB RAM.
-
-Aurora therefore uses a resource-aware lifecycle:
+Low-resource Windows systems are a first-class target.
 
 ```text
-Idle
+IDLE
  ↓
 Core services only
  ↓
+Detect task
+ ↓
 Load required engine
  ↓
-Execute task
+Execute
  ↓
-Verify result
+Verify
  ↓
 Release unused resources
 ```
 
-Heavy engines should not remain resident unnecessarily. Text, vision, image AI and other resource-intensive components should be loaded according to the active task and hardware capability.
+Requirements:
 
-Adaptive quality, throttling, caching and memory-pressure handling are part of the architecture.
+- Lazy engine loading
+- Model lifecycle management
+- Memory pressure detection
+- Adaptive quality
+- Throttling
+- Cache management
+- Background-task control
+- Resource prioritization
+- Text/vision/image engines not unnecessarily resident together
+
+The goal is a useful Aurora experience on approximately 6 GB RAM, while acknowledging that heavyweight AI generation and vision workloads can exceed that machine's practical limits.
 
 ---
 
-## Single-EXE Product Goal
+# Single-EXE Goal
 
-The user-facing product target is:
+User-facing target:
 
 ```text
 ArlenAurora.exe
 ```
 
-The internal architecture may remain modular, but the end-user experience should not require separately installing the project's individual runtime modules.
+The internal architecture can remain modular. The user experience should be unified and should not require manually installing each project module.
 
-The final packaging target is a self-contained Windows application as far as technically and legally feasible.
-
-Important engineering constraint: truly embedded local AI models and heavyweight AI engines can be very large and memory intensive. The project must distinguish between a self-contained executable and external model/runtime dependencies, and optimize accordingly rather than pretending those constraints do not exist.
+A truly self-contained EXE may become very large when local AI models are embedded. Model size, memory requirements, licensing and Windows packaging constraints must be handled honestly during implementation.
 
 ---
 
-## Ten Aurora Themes
+# Ten Aurora Themes
 
-1. Aurora — cyan/purple futuristic
-2. Obsidian — black premium
-3. Nebula — deep violet
-4. Arctic — clean ice blue
-5. Emerald — green futuristic
-6. Crimson — red/black cinematic
-7. Solar — gold/orange
-8. Cyber — neon cyberpunk
-9. Minimal — clean professional
-10. Midnight — cinematic dark
+1. **Aurora** — futuristic cyan/purple
+2. **Obsidian** — premium black
+3. **Nebula** — deep violet
+4. **Arctic** — clean ice blue
+5. **Emerald** — green futuristic
+6. **Crimson** — red/black cinematic
+7. **Solar** — gold/orange
+8. **Cyber** — neon cyberpunk
+9. **Minimal** — clean professional
+10. **Midnight** — cinematic dark
 
-Theme customization should cover more than background color:
+Theme customization should cover:
 
 - Accent colors
 - Surfaces/cards
@@ -368,29 +567,56 @@ Theme customization should cover more than background color:
 
 ---
 
-## Identity
+# Identity System
 
-Product identity:
+**Product:** ARLEN AURORA
 
-**ARLEN AURORA**
+**Former product:** ARLEN NEXUS
 
-Primary expansion:
+**Transformation:** Nexus becomes Aurora
 
-**Adaptive Responsive Local Executive Neural-Assistant**
+**Primary expansion:** Adaptive Responsive Local Executive Neural-Assistant
 
-Architecture expansion:
+**Architecture expansion:** Autonomous Unified Reasoning & Orchestration Responsive Architecture
 
-**Autonomous Unified Reasoning & Orchestration Responsive Architecture**
+Identity components:
 
-Branding should include a dedicated logo, iconography, typography, startup sequence, Aurora Core visual language and consistent application identity.
+- Aurora logo
+- Application icon
+- Startup sequence
+- Core visualization
+- Typography
+- Icon language
+- Sound identity where desired
+- Consistent desktop branding
 
 ---
 
-## Reliability and Safety by Design
+# Memory
+
+Aurora can maintain configurable personal context such as:
+
+- Preferences
+- Frequently used locations
+- Preferred output style
+- Repeated workflows
+- Useful task context
+
+Memory must be:
+
+- Viewable
+- Editable
+- Deletable
+- Disable-able
+- Privacy-aware
+
+---
+
+# Reliability & Safety
 
 Aurora is intended to be powerful without silently performing irreversible operations.
 
-Required engineering principles:
+Engineering requirements:
 
 - Explicit permission boundaries
 - Safe defaults
@@ -398,33 +624,18 @@ Required engineering principles:
 - Operation history
 - Undo/rollback where feasible
 - Verification after execution
-- Clear errors
-- No fabricated success states
+- Clear error states
+- No fabricated success
 - User-visible task status
 - Local privacy by default
 - Configurable memory
-- Ability to disable capabilities
+- Capability controls
 
-Powerful automation should operate only within the user's authorized environment and applicable platform/application permissions.
-
----
-
-## Engineering Principles
-
-1. **One identity, many engines.**
-2. **AI chooses tools; tools perform deterministic work.**
-3. **Every meaningful action has a verification path.**
-4. **Offline functionality remains useful.**
-5. **Online intelligence is clearly distinguished from local knowledge.**
-6. **6 GB RAM is a first-class optimization target.**
-7. **Heavy modules are loaded on demand.**
-8. **UI remains responsive during long tasks.**
-9. **Features are modular internally but unified to the user.**
-10. **The system must report limitations honestly.**
+Powerful PC automation must remain within the user's authorized environment and the applicable OS/application permissions.
 
 ---
 
-## Planned Architecture
+# Planned Architecture
 
 ```text
 ARLEN AURORA
@@ -477,56 +688,60 @@ ARLEN AURORA
 
 ---
 
-## Development Roadmap
+# Development Roadmap
 
 ### Phase 1 — Aurora Foundation
-Dashboard, branding, command interface, universal input, theme system and core contracts.
+Dashboard, identity, command interface, universal input, themes and core contracts.
 
 ### Phase 2 — Aurora Brain
 Intent router, planner, tool registry, permissions, verification and memory.
 
 ### Phase 3 — File + System
-File Commander, system diagnostics, telemetry, battery, task manager and safe automation.
+File Commander, diagnostics, telemetry, battery, processes and safe automation.
 
 ### Phase 4 — PDF Studio
-Document workspace, PDF operations, OCR and document AI.
+PDF workspace, document operations, OCR and document intelligence.
 
 ### Phase 5 — Image Studio
-Professional editing, canvas, layers and AI-assisted workflows.
+Professional image editing, canvas, layers and AI-assisted workflows.
 
 ### Phase 6 — Study Center
-Academic extraction, notes, quizzes, flashcards and revision workflows.
+Notes, quizzes, flashcards, revision and document-based learning.
 
 ### Phase 7 — Orbit / Research
-Web search, source aggregation, research workflows and live information.
+Web search, source aggregation, research and live information.
 
 ### Phase 8 — Vision / Screen Agent
-Screen understanding and authorized UI workflows.
+Visual understanding and authorized UI workflows.
 
 ### Phase 9 — Mission System
-Multi-step autonomous workflows, verification, retry and recovery.
+Multi-step missions, verification, retry, recovery and rollback where possible.
 
 ### Phase 10 — 6 GB Optimization
-Resource budgets, lazy loading, memory pressure handling and performance profiling.
+Resource budgets, lazy loading and performance profiling.
 
 ### Phase 11 — Windows Packaging
-Self-contained user-facing application, crash handling, logging and update architecture.
+Self-contained user-facing application, logging, crash handling and update architecture.
 
 ### Phase 12 — Full QA
-Unit tests, integration tests, UI tests, offline tests, low-RAM tests and end-to-end mission tests.
+Unit, integration, UI, offline, low-RAM and end-to-end mission testing.
 
 ---
 
-## Current Repository Direction
+# Repository Direction
 
-This repository is intentionally being transformed from the former **Arlen Nexus** implementation into the **Arlen Aurora** architecture described above.
+This repository has intentionally transitioned from the former **Arlen Nexus** implementation to the **Arlen Aurora** architecture.
 
-The repository should contain only Aurora-specific implementation as development proceeds. Legacy Nexus modules are not part of the target architecture.
+Legacy Nexus implementation files are not part of the target product. New implementation should follow this Aurora specification rather than rebuilding the former architecture unchanged.
+
+The repository name may retain `ARLEN-NEXUS-PRIVATE` for continuity, while the product identity is now **ARLEN AURORA**.
 
 ---
 
-## Product Statement
+# Final Product Statement
 
-> **ARLEN AURORA — one assistant, one interface, many capabilities.**
-
-The objective is not to imitate a movie character. The objective is to build a practical, resource-aware, customizable personal AI environment that feels coherent, intelligent and genuinely useful on a Windows desktop.
+> **ARLEN NEXUS becomes ARLEN AURORA.**
+>
+> **One assistant. One interface. Many capabilities.**
+>
+> A practical, customizable, resource-aware personal AI environment for Windows — designed to work locally where possible, use online intelligence when connected, and coordinate its tools through one coherent Aurora Core.
